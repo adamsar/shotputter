@@ -1,22 +1,12 @@
 import * as React from "react";
-import {storeContext, useStores} from "./ts/stores";
+import {storeContext} from "./ts/stores";
 import {GlobalStateStore} from "./ts/stores/GlobalStateStore";
-import {observer} from "mobx-react-lite";
-
-const WindowWatcher = observer(({title}: {title: string}) => {
-    const {global} = useStores();
-    return (
-        <>
-            <h1>{title}</h1>
-            <div>{JSON.stringify(global.windowSize)} ({JSON.stringify(global.isMobile)})</div>
-        </>
-    );
-});
+import {FeedbackTab} from "./ts/components/FeedbackTab";
 
 export const App: React.FC<{}> = ({}) => {
     return <storeContext.Provider value={{
         global: new GlobalStateStore()
     }}>
-        <WindowWatcher title={"test"}/>
+        <FeedbackTab text={"Hello"} position={"right"}/>
     </storeContext.Provider>;
 }
