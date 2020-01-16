@@ -30,6 +30,8 @@ export class GlobalStateStore {
 
     @observable displayMode: DisplayMode = "unclicked";
 
+    @observable canvas: HTMLCanvasElement | null = null;
+
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 
 }
