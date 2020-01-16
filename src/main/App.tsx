@@ -1,12 +1,12 @@
 import * as React from "react";
 import {storeContext} from "./ts/stores";
 import {GlobalStateStore} from "./ts/stores/GlobalStateStore";
-import {FeedbackTab} from "./ts/components/FeedbackTab";
+import {Routes} from "./ts/components/Routes";
 
 export const App: React.FC<{}> = ({}) => {
     return <storeContext.Provider value={{
         global: new GlobalStateStore()
     }}>
-        <FeedbackTab text={"Hello"} position={"right"}/>
+        <Routes/>
     </storeContext.Provider>;
 }
