@@ -16,6 +16,8 @@ const computeWindowSize = (): WindowSize => {
     return { width, height }
 }
 
+export type DisplayMode = "unclicked" | "processing_screenshot" | "display_screenshot";
+
 export class GlobalStateStore {
 
     constructor() {
@@ -24,7 +26,9 @@ export class GlobalStateStore {
         })
     }
 
-    @observable.struct windowSize: WindowSize =     computeWindowSize();
+    @observable.struct windowSize: WindowSize = computeWindowSize();
+
+    @observable displayMode: DisplayMode = "unclicked";
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 
