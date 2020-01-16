@@ -1,3 +1,74 @@
-body {
-  background: bisque;
+#shotputter-id {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0px;
+  height: 0px;
+}
+
+.shotput-feedback-tab-container {
+  position: fixed;
+
+  .shotput-feedback-tab {
+    cursor: pointer;
+    padding: 5px 2px;
+    border: 1px dotted black;
+  }
+
+  &.shotput-tab-top {
+    top: 0;
+    width:100%;
+    .shotput-feedback-tab {
+      display: inline-block;
+      margin: 0 auto;
+    }
+  }
+
+  &.shotput-tab-bottom {
+    bottom: 0;
+    width:100%;
+    .shotput-feedback-tab {
+      display: inline-block;
+      margin: 0 auto;
+    }
+  }
+
+  &.shotput-tab-left {
+    left: 0;
+    height:100%;
+
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      margin-right: -0.25em; /* Adjusts for spacing */
+    }
+
+    .shotput-feedback-tab {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  &.shotput-tab-right {
+    right: 0;
+    height:100%;
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      margin-right: -0.25em; /* Adjusts for spacing */
+    }
+    .shotput-feedback-tab {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
 }
