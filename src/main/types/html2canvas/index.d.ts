@@ -1,6 +1,6 @@
 declare module "html2canvas" {
 
-    export interface HTML2CanvasOptions {
+    interface HTML2CanvasOptions {
         allowTaint?: boolean;
         backgroundColor?: string;
         canvas?: HTMLCanvasElement;
@@ -22,10 +22,9 @@ declare module "html2canvas" {
         windowWidth?: number;
         windowHeight?: number;
 
-
     }
 
-    function html2canvas(element: HTMLElement, options?: HTML2CanvasOptions = {}): Promise<HTMLElement>;
+    function html2canvas(element: HTMLElement, options?: HTML2CanvasOptions = {}): Promise<HTMLCanvasElement>;
 
     export default html2canvas;
 
