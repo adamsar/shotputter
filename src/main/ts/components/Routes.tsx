@@ -3,11 +3,13 @@ import {useStores} from "../stores";
 import {FeedbackTab} from "./tab/FeedbackTab";
 import * as React from "react";
 import {ProcessScreenshotContainer} from "./processor/ProcessScreenshotContainer";
+import {EditorToolbar} from "./editor/EditorToolbar";
 
 export const Routes = observer<{}>(() => {
         const { global } = useStores();
 
         switch (global.displayMode) {
+
             case "unclicked":
                 return <FeedbackTab text={"Feedback"}/>;
 
@@ -15,7 +17,7 @@ export const Routes = observer<{}>(() => {
                 return <ProcessScreenshotContainer/>;
 
             case "display_screenshot":
-                return <>display</>;
+                return <EditorToolbar/>;
 
         }
 })
