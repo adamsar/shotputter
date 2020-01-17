@@ -5,8 +5,7 @@ import {useStores} from "../../stores";
 import {useEffect} from "react";
 import InlineSVG from "react-inlinesvg";
 import {ModalBackground} from "../common/ModalBackground";
-//import {runInAction} from "mobx";
-const loader = require("../../../img/loader.svg") as string;
+const loader = require("../../../img/loader.svg");
 
 export const ProcessScreenshotContainer = observer(() => {
     const { screenshot, global } = useStores();

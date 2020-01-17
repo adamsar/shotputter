@@ -13,4 +13,8 @@ export class ScreenshotStore {
         this.screenshotCanvas = canvas;
     }
 
+    resetCanvas() {
+        this.screenshotCanvas = null;
+    }
+
 }

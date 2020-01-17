@@ -13,6 +13,7 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-es2015": "^7.0.0-beta.53",
+    "@types/fabric": "^3.5.1",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "babel": "^6.23.0",
@@ -32,6 +33,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
+    "fabric": "^3.6.0",
     "html2canvas": "^1.0.0-rc.5",
     "mobx": "^5.15.2",
     "mobx-react-lite": "^1.5.2",
