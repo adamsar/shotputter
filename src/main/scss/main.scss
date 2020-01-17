@@ -112,9 +112,9 @@
   bottom: 0;
   display:inline-block;
   padding: 1em;
-  border-top: 1px solid gray;
-  border-left: 1px solid gray;
-  border-right: 1px solid gray;
+  border-top: 2px solid gray;
+  border-left: 2px solid gray;
+  border-right: 2px solid gray;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 
@@ -138,6 +138,11 @@
         padding-right: 1em;
         padding-left: 1em;
         border-right: 1px solid gray;
+        cursor: pointer;
+        &.active {
+          font-weight: bold;
+        }
+
         &:last-child {
           padding-right: 0;
           border-right: none;
