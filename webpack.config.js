@@ -15,7 +15,7 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ],
+        extensions: [ '.tsx', '.ts', '.js', '.svg' ],
     },
 
     module: {
@@ -50,6 +50,10 @@ module.exports = {
                         name: '[name].[ext]'
         ***REMOVED***
     ***REMOVED***]
+***REMOVED***
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline-loader'
 ***REMOVED***
         ]
     }
