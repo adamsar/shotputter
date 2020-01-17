@@ -8,20 +8,37 @@ interface EditorCanvasProps {
 }
 
 export const EditorCanvas = observer<EditorCanvasProps>(() => {
-    const { screenshot } = useStores();
-
-    // @ts-ignore
-    let canvas: fabric.Canvas = null;
+    const { screenshot, tools } = useStores();
+    const [canvas, setCanvas] = React.useState<fabric.Canvas>(null);
 
     React.useEffect(() => {
         const canvasElement = document.getElementById("shotput-canvas-container");
-        if (canvasElement.children.length === 0) {
+        if (canvasElement.children.length === 0 && !canvas) {
             screenshot.screenshotCanvas.id = "shotput-canvas";
             canvasElement.appendChild(screenshot.screenshotCanvas);
-            canvas = new fabric.Canvas('shotput-canvas');
-            canvas.isDrawingMode = true;
+            setCanvas(new fabric.Canvas('shotput-canvas'));
         }
     });
+
+    React.useEffect(() => {
+        if (canvas) {
+            switch (tools.currentTool) {
+                case "draw":
+                    canvas.isDrawingMode = true;
+                    break;
+
+                case "shape":
+                    break;
+
+                case "text":
+                    break;
+
+                default:
+                    canvas.isDrawingMode = false;
+                    break;
+            }
+        }
+    }, [tools.currentTool]);
 
     return <div id={"shotput-canvas-container"} />;
 });

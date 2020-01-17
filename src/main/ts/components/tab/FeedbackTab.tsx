@@ -14,13 +14,12 @@ export const FeedbackTab = observer<FeedbackTabProps>(({position, text}) => {
     const { global } = useStores();
 
     const handleClick = async () => {
-        const canvas = await html2canvas(document.body, {
+        global.canvas = await html2canvas(document.body, {
             ignoreElements: (element) => {
                 return element.id === MAIN_ID
             },
             windowWidth: 600
         });
-        global.canvas = canvas;
         global.displayMode = "processing_screenshot";
     };
 

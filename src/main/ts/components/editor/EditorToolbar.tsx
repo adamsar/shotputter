@@ -1,9 +1,10 @@
 import * as React from "react";
 import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
+import {action} from "mobx";
 
 export const EditorToolbar = observer(() => {
-    const { global, screenshot } = useStores();
+    const { global, screenshot, tools } = useStores();
     const commentRef = React.createRef<HTMLTextAreaElement>();
     const divRef = React.createRef<HTMLDivElement>();
     const [width, setWidth] = React.useState<number>(0);
@@ -16,6 +17,14 @@ export const EditorToolbar = observer(() => {
     const onSubmit = () => {
 
     };
+
+    const onClickTool = (tool: "text" | "draw" | "shape") => action(() => {
+        if (tools.currentTool === tool) {
+            tools.currentTool = null;
+        } else {
+            tools.currentTool = tool;
+        }
+    });
 
     React.useEffect(() => {
         const onResize = () => {
@@ -40,13 +49,13 @@ export const EditorToolbar = observer(() => {
            </div>
            <div className={"shotput-editor-toolbar-body"}>
                <ul className={"shotput-editor-tools"}>
-                   <li>
+                   <li onClick={onClickTool("shape")} className={tools.currentTool === "shape" ? "active" : null}>
                        Box
                    </li>
-                   <li>
+                   <li onClick={onClickTool("draw")} className={tools.currentTool === "draw" ? "active" : null}>
                        Draw
                    </li>
-                   <li>
+                   <li onClick={onClickTool("text")} className={tools.currentTool === "text" ? "active" : null}>
                        Text
                    </li>
                </ul>
