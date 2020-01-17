@@ -3,7 +3,7 @@ import {useStores} from "../stores";
 import {FeedbackTab} from "./tab/FeedbackTab";
 import * as React from "react";
 import {ProcessScreenshotContainer} from "./processor/ProcessScreenshotContainer";
-import {EditorToolbar} from "./editor/EditorToolbar";
+import {ScreenshotEditor} from "./editor/ScreenshotEditor";
 
 export const Routes = observer<{}>(() => {
         const { global } = useStores();
@@ -17,7 +17,7 @@ export const Routes = observer<{}>(() => {
                 return <ProcessScreenshotContainer/>;
 
             case "display_screenshot":
-                return <EditorToolbar/>;
+                return <ScreenshotEditor/>;
 
         }
 })
