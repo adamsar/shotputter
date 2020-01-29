@@ -5,6 +5,7 @@ import {fabric} from "fabric";
 import {IObservableArray, observable} from "mobx";
 import {Rectangle, RectangleEditor} from "./RectangleEditor";
 import {TextInputEditor} from "./TextInputEditor";
+import {ArrowEditor} from "./ArrowEditor";
 
 interface EditorCanvasProps {
 
@@ -17,7 +18,8 @@ interface EditorCanvasLocalState {
 export const EditorCanvas = observer<EditorCanvasProps>(() => {
     const { screenshot, tools } = useStores();
     const localStore = useLocalStore<EditorCanvasLocalState>(() => ({
-        savedObjects: observable.array([])
+        savedObjects: observable.array([]),
+        currentColor: "DF151A"
     }));
 
     const [canvas, setCanvas] = React.useState<fabric.Canvas>(null);
@@ -41,7 +43,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             top,
             width: right - left,
             height: -(top - bottom),
-            stroke: 'red',
+            stroke: tools.color,
             strokeWidth: 2,
             fill: 'transparent'
         });
@@ -63,10 +65,18 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
     });
 
     React.useEffect(() => {
+        if (tools.currentTool === "draw") {
+            canvas.freeDrawingBrush.color = tools.color;
+        }
+    }, [tools.color]);
+
+    React.useEffect(() => {
         if (canvas) {
             switch (tools.currentTool) {
                 case "draw":
                     canvas.isDrawingMode = true;
+                    canvas.freeDrawingBrush.color = tools.color;
+                    canvas.freeDrawingBrush.width = 5;
                     break;
 
                 case "shape":
@@ -74,6 +84,10 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
                     break;
 
                 case "text":
+                    canvas.isDrawingMode = false;
+                    break;
+
+                case "arrow":
                     canvas.isDrawingMode = false;
                     break;
 
@@ -94,6 +108,9 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
                 break;
             case "text":
                 _Component = <TextInputEditor canvas={canvas}/>;
+                break;
+            case "arrow":
+                _Component = <ArrowEditor canvas={canvas} />;
                 break;
 
         }

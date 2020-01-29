@@ -153,6 +153,45 @@
       }
     }
 
+    ul.shotput-editor-colors {
+      list-style: none;
+      margin-top: .5em;
+      margin-bottom: .5em;
+      padding: 0;
+      display: block;
+
+      li {
+        display: inline-block;
+        padding-right: 1em;
+        padding-left: 1em;
+        border-right: 1px solid gray;
+        cursor: pointer;
+
+        &:last-child {
+          padding-right: 0;
+          border-right: none;
+        }
+        &:first-child {
+          padding-left: 0;
+        }
+
+        .shotput-list-color-block {
+          width: 1.5em;
+          height: 1.5em;
+          display: inline-block;
+          border: 1px dotted black;
+          &.active {
+            width: 2em;
+            height: 2em;
+          }
+        }
+      }
+    }
+
+    &.active {
+      width: 2em;
+      height: 2em;
+    }
     .shotput-editor-comment-container {
       padding-top: 1em;
       padding-bottom: 1em;
