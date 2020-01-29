@@ -2,6 +2,7 @@ import * as React from "react";
 import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
 import {action} from "mobx";
+import {colors} from "../../stores/ToolStore";
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
@@ -14,16 +15,18 @@ export const EditorToolbar = observer(() => {
         screenshot.resetCanvas();
     };
 
-    const onSubmit = () => {
+    const onSubmit = () => {};
 
-    };
-
-    const onClickTool = (tool: "text" | "draw" | "shape") => action(() => {
+    const onClickTool = (tool: "text" | "draw" | "shape" | "arrow") => action(() => {
         if (tools.currentTool === tool) {
             tools.currentTool = null;
         } else {
             tools.currentTool = tool;
         }
+    });
+
+    const onColorClick = (color: string) => action(() => {
+        tools.color = color;
     });
 
     React.useEffect(() => {
@@ -58,6 +61,20 @@ export const EditorToolbar = observer(() => {
                    <li onClick={onClickTool("text")} className={tools.currentTool === "text" ? "active" : null}>
                        Text
    ***REMOVED***
+                   <li onClick={onClickTool("arrow")} className={tools.currentTool === "arrow" ? "active" : null}>
+                       Arrow
+   ***REMOVED***
+   ***REMOVED***
+               <ul className={"shotput-editor-colors"}>
+                   {
+                       colors.map(color => {
+                           return (
+                               <li key={color} className="shotput-list-color">
+                                   <div className={"shotput-list-color-block" + (color === tools.color ? " active" : "")} style={{backgroundColor: color}} onClick={onColorClick(color)}/>
+               ***REMOVED***
+                           )
+           ***REMOVED***)
+       ***REMOVED***
    ***REMOVED***
                <div className={"shotput-editor-comment-container"}>
                    <textarea ref={commentRef} placeholder={"Comments"}/>

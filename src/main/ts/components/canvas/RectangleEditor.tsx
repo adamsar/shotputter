@@ -24,6 +24,7 @@ export const RectangleEditor = ({canvas, onAddRectangle}: {canvas: fabric.Canvas
         },
         isDragging: false
     }));
+
     const onMouseDown = (e: fabric.IEvent) => {
         const pointer = canvas.getPointer(e.e);
         rectangle.start = {
