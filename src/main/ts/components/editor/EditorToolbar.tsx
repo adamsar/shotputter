@@ -15,7 +15,20 @@ export const EditorToolbar = observer(() => {
         screenshot.resetCanvas();
     };
 
-    const onSubmit = () => {};
+    const onSubmit = () => {
+        const pom = document.createElement('a');
+        pom.setAttribute('href', screenshot.screenshotCanvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream"));
+        pom.setAttribute('download', 'screenshot');
+
+        if (document.createEvent) {
+            var event = document.createEvent('MouseEvents');
+            event.initEvent('click', true, true);
+            pom.dispatchEvent(event);
+        }
+        else {
+            pom.click();
+        }
+    };
 
     const onClickTool = (tool: "text" | "draw" | "shape" | "arrow") => action(() => {
         if (tools.currentTool === tool) {

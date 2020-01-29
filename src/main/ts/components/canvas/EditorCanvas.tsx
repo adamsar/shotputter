@@ -55,14 +55,14 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
         if (canvasElement.children.length === 0 && !canvas) {
             screenshot.screenshotCanvas.id = "shotput-canvas";
             canvasElement.appendChild(screenshot.screenshotCanvas);
-            const _canvas = new fabric.Canvas('shotput-canvas');
+            const _canvas = new fabric.Canvas('shotput-canvas', {backgroundImage: screenshot.screenshotCanvas.toDataURL()});
             _canvas.on({
                 "object:added": onAddObject,
                 "object:removed": onRemoveObject
 ***REMOVED***);
             setCanvas(_canvas);
         }
-    });
+    }, []);
 
     React.useEffect(() => {
         if (tools.currentTool === "draw") {
