@@ -44,7 +44,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             width: right - left,
             height: -(top - bottom),
             stroke: tools.color,
-            strokeWidth: 2,
+            strokeWidth: tools.strokeWidth,
             fill: 'transparent'
         });
         canvas.add(rectangle);
@@ -72,11 +72,17 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
 
     React.useEffect(() => {
         if (canvas) {
+            canvas.freeDrawingBrush.width = tools.strokeWidth;
+        }
+    }, [tools.strokeWidth]);
+
+    React.useEffect(() => {
+        if (canvas) {
             switch (tools.currentTool) {
                 case "draw":
                     canvas.isDrawingMode = true;
                     canvas.freeDrawingBrush.color = tools.color;
-                    canvas.freeDrawingBrush.width = 5;
+                    canvas.freeDrawingBrush.width = tools.strokeWidth;
                     break;
 
                 case "shape":

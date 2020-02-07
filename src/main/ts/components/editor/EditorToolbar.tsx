@@ -3,6 +3,7 @@ import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
 import {action} from "mobx";
 import {colors} from "../../stores/ToolStore";
+import {SubToolSection} from "./subtools/SubToolSection";
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
@@ -61,7 +62,7 @@ export const EditorToolbar = observer(() => {
    return (
        <div className={"shotput-editor-toolbar"} style={style} ref={divRef}>
            <div className={"shotput-editor-toolbar-top"}>
-               Select tool to get started, or just leave a comment.
+               <SubToolSection/>
            </div>
            <div className={"shotput-editor-toolbar-body"}>
                <ul className={"shotput-editor-tools"}>

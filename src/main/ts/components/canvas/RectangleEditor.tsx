@@ -53,6 +53,5 @@ export const RectangleEditor = ({canvas, onAddRectangle}: {canvas: fabric.Canvas
              canvas.off('mouse:up');
          }
     });
-
     return <></>
 }
