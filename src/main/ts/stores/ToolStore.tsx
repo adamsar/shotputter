@@ -12,9 +12,16 @@ export const colors: string[] = [
     "#000000"
 ];
 
+export const DEFAULT_STROKE_WIDTH = 2;
+
 export class ToolStore {
 
     @observable currentTool: CurrentTool = null;
     @observable color: string = colors[1];
+    @observable strokeWidth: number = DEFAULT_STROKE_WIDTH;
+
+    setStrokeWidth(modifier?: number) {
+        this.strokeWidth = modifier ? Math.max(Math.min(this.strokeWidth + modifier, 10), 1) : DEFAULT_STROKE_WIDTH;
+    }
 
 }
