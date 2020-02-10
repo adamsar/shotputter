@@ -4,6 +4,7 @@ import {FeedbackTab} from "./tab/FeedbackTab";
 import * as React from "react";
 import {ProcessScreenshotContainer} from "./processor/ProcessScreenshotContainer";
 import {ScreenshotEditor} from "./editor/ScreenshotEditor";
+import {PostModal} from "./post/PostModal";
 
 export const Routes = observer<{}>(() => {
         const { global } = useStores();
@@ -19,5 +20,8 @@ export const Routes = observer<{}>(() => {
             case "display_screenshot":
                 return <ScreenshotEditor/>;
 
+            case "display_poster":
+                return <PostModal/>;
+                
         }
 })

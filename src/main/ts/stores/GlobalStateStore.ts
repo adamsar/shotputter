@@ -16,7 +16,7 @@ const computeWindowSize = (): WindowSize => {
     return { width, height }
 }
 
-export type DisplayMode = "unclicked" | "processing_screenshot" | "display_screenshot";
+export type DisplayMode = "unclicked" | "processing_screenshot" | "display_screenshot" | "display_poster";
 
 export class GlobalStateStore {
 

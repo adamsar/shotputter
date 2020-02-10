@@ -4,6 +4,7 @@ import {useStores} from "../../stores";
 import {action} from "mobx";
 import {colors} from "../../stores/ToolStore";
 import {SubToolSection} from "./subtools/SubToolSection";
+import {Post} from "../../services/poster/Post";
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
@@ -17,18 +18,12 @@ export const EditorToolbar = observer(() => {
     };
 
     const onSubmit = () => {
-        const pom = document.createElement('a');
-        pom.setAttribute('href', screenshot.screenshotCanvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream"));
-        pom.setAttribute('download', 'screenshot');
-
-        if (document.createEvent) {
-            var event = document.createEvent('MouseEvents');
-            event.initEvent('click', true, true);
-            pom.dispatchEvent(event);
-        }
-        else {
-            pom.click();
-        }
+        const post: Post = {
+            image: screenshot.screenshotCanvas.toDataURL("image/jpeg"),
+            message: commentRef.current.value || undefined
+        };
+        screenshot.setPost(post);
+        global.displayMode = "display_poster";
     };
 
     const onClickTool = (tool: "text" | "draw" | "shape" | "arrow") => action(() => {
