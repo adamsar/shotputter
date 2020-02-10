@@ -16,7 +16,7 @@ interface EditorCanvasLocalState {
 }
 
 export const EditorCanvas = observer<EditorCanvasProps>(() => {
-    const { screenshot, tools } = useStores();
+    const { screenshot, tools, global } = useStores();
     const localStore = useLocalStore<EditorCanvasLocalState>(() => ({
         savedObjects: observable.array([]),
         currentColor: "DF151A"
@@ -55,12 +55,20 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
         if (canvasElement.children.length === 0 && !canvas) {
             screenshot.screenshotCanvas.id = "shotput-canvas";
             canvasElement.appendChild(screenshot.screenshotCanvas);
-            const _canvas = new fabric.Canvas('shotput-canvas', {backgroundImage: screenshot.screenshotCanvas.toDataURL()});
+            const _canvas = new fabric.Canvas('shotput-canvas', {
+                backgroundImage: screenshot.screenshotCanvas.toDataURL()
+***REMOVED***);
+            _canvas.setHeight(global.windowSize.height);
+            _canvas.setWidth(global.windowSize.width);
             _canvas.on({
                 "object:added": onAddObject,
                 "object:removed": onRemoveObject
 ***REMOVED***);
             setCanvas(_canvas);
+        }
+        return () => {
+            canvas?.dispose();
+            setCanvas(null);
         }
     }, []);
 
