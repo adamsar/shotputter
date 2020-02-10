@@ -271,4 +271,47 @@
   border-radius: 10px;
   z-index: 3;
   position: fixed;
+  text-align: center;
+
+  .shotput-poster-list {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+
+    li {
+      display: inline-block;
+      cursor: pointer;
+      padding-left: 1em;
+      padding-right: 1em;
+      border-right: 1px solid gray;
+      &:last-child {
+        padding-right: 0;
+        border-right: none;
+      }
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+  }
+
+  .shotput-bottom-buttons {
+
+    text-align: right;
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid black;
+    width: 100%;
+    display:block;
+
+    .shotput-bottom-button {
+      display: inline-block;
+      padding: .5em 1em;
+      border: 1px solid black;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  }
 }
+

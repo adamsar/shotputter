@@ -5,6 +5,7 @@ import {PostResult} from "./PostResult";
 export const DownloadPoster = (document: Document): Poster => {
 
     return {
+        typeName: "download",
         async send(post: Post): Promise<PostResult> {
             try {
                 const pom = document.createElement('a');
@@ -12,7 +13,7 @@ export const DownloadPoster = (document: Document): Poster => {
                 pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}`);
 
                 if (document.createEvent) {
-                    var event = document.createEvent('MouseEvents');
+                    const event = document.createEvent('MouseEvents');
                     event.initEvent('click', true, true);
                     pom.dispatchEvent(event);
     ***REMOVED***
