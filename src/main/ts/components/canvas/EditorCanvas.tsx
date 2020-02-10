@@ -45,7 +45,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             height: -(top - bottom),
             stroke: tools.color,
             strokeWidth: tools.strokeWidth,
-            fill: 'transparent'
+            fill: tools.isFill ? tools.color : 'transparent'
 ***REMOVED***
         canvas.add(rectangle);
     };

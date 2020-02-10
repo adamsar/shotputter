@@ -141,7 +141,10 @@
           }
           &.shotput-disabled {
             cursor: inherit;
-            opacity: .9;
+            opacity: .8;
+          }
+          &.shotput-active {
+            font-weight: bolder;
           }
         }
       }
