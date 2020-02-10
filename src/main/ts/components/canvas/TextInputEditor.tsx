@@ -20,7 +20,8 @@ export const TextInputEditor = observer(({canvas}: TextInputEditorProps) => {
                 left: pointer.x,
                 top: pointer.y,
                 stroke: tools.color,
-                fontSize: 16
+                fontSize: tools.fontSize,
+                fontWeight: tools.isBold ? "bold" : undefined
             });
             canvas.add(store.currentText);
             setTimeout(() => store.currentText.enterEditing(), 0);

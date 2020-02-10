@@ -25,7 +25,7 @@ export const DrawingSubTool = observer(() => {
                     -Width
                 </li>
                 <li>
-                    {tools.strokeWidth}
+                    {tools.strokeWidth}px
                 </li>
                 <li onClick={onClick(1)} className={isMax ? "shotput-disabled" : undefined}>
                     +Width

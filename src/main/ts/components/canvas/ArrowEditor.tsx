@@ -48,7 +48,7 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
         angle *= 180 / Math.PI;
         angle -= 90;
         return angle;
-    }
+    };
 
     const onMouseMove = (e: fabric.IEvent) => {
         if (store.isDrawing) {
@@ -62,10 +62,10 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
                 if (!store.line) {
                     store.line = new fabric.Line([store.start.x, store.start.y, dimensions.x, dimensions.y], {
                         stroke: tools.color,
-                        strokeWidth: 2
+                        strokeWidth: tools.strokeWidth
                     });
                     canvas.add(store.line);
-                    const headLength = 15;
+                    const headLength = 15 * (tools.strokeWidth / 2);
 
                     store.lineTip = new fabric.Triangle({
                         angle: getAngle(dimensions),
