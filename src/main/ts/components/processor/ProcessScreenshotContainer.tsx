@@ -1,11 +1,10 @@
 import * as React from "react";
+import {useEffect} from "react";
 
 import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
-import {useEffect} from "react";
-import InlineSVG from "react-inlinesvg";
-import {ModalBackground} from "../common/ModalBackground";
-const loader = require("../../../img/loader.svg");
+import {Loader} from "./Loader";
+
 
 export const ProcessScreenshotContainer = observer(() => {
     const { screenshot, global } = useStores();
@@ -24,14 +23,5 @@ export const ProcessScreenshotContainer = observer(() => {
        }
     }, [screenshot.screenshotCanvas]);
 
-    return (
-        <>
-            <ModalBackground/>
-            <div className={"shotput-loading-modal"}>
-                <div className={"shotput-loading-container"}>
-                    <InlineSVG src={loader} style={{width: "100%"}}/>
-                </div>
-            </div>
-        </>
-    );
+    return <Loader/>
 });

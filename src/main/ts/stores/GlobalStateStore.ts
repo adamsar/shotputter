@@ -1,4 +1,6 @@
 import {computed, observable} from "mobx";
+import {AppOptions} from "../App";
+import {SlackService, SlackServiceClient} from "../services/poster/slack/SlackPoster";
 
 interface WindowSize {
     width: number;
@@ -20,10 +22,14 @@ export type DisplayMode = "unclicked" | "processing_screenshot" | "display_scree
 
 export class GlobalStateStore {
 
-    constructor() {
+    constructor(appOptions: AppOptions) {
         window.addEventListener("resize", () => {
             this.windowSize = computeWindowSize();
-        })
+        });
+        this.appOptions = appOptions;
+        if (appOptions.slack?.token) {
+            this.slackService = SlackService(appOptions.slack?.token);
+        }
     }
 
     @observable.struct windowSize: WindowSize = computeWindowSize();
@@ -31,6 +37,10 @@ export class GlobalStateStore {
     @observable displayMode: DisplayMode = "unclicked";
 
     @observable canvas: HTMLCanvasElement | null = null;
+
+    @observable appOptions: AppOptions | null = null;
+
+    slackService: SlackServiceClient | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

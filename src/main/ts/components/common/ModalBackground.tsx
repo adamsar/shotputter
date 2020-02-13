@@ -1,3 +1,3 @@
 import * as React from "react";
 
-export const ModalBackground = () =>  <div className={"shotput-modal-background"}/>;
+export const ModalBackground = ({onClick}: {onClick?: () => void;}) =>  <div className={"shotput-modal-background"} onClick={onClick}/>;

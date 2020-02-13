@@ -20,6 +20,7 @@
     "babel-loader": "^8.0.6",
     "css-loader": "^3.4.1",
     "file-loader": "^5.0.2",
+    "html-webpack-plugin": "^4.0.0-beta.11",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.2",
     "scss-loader": "0.0.1",
@@ -33,6 +34,8 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
+    "@slack/web-api": "^5.7.0",
+    "base64-blob": "^1.4.1",
     "fabric": "^3.6.0",
     "html2canvas": "^1.0.0-rc.5",
     "mobx": "^5.15.2",
