@@ -4,12 +4,22 @@ import {MAIN_ID} from "../constants";
 import {Post} from "../services/poster/Post";
 import {Poster} from "../services/poster/Poster";
 import {DownloadPoster} from "../services/poster/DownloadPoster";
+import {AppOptions} from "../App";
+import {SlackPoster} from "../services/poster/slack/SlackPoster";
 
 export class ScreenshotStore {
 
     @observable screenshotCanvas: HTMLCanvasElement | null = null;
     @observable post: Post | null = null;
-    @observable availablePosters: Poster[] = [DownloadPoster(document)];
+    @observable availablePosters: Poster[] = [];
+
+    constructor(appOptions: AppOptions) {
+        const availablePosters = [DownloadPoster(document)];
+        if (appOptions.slack?.token) {
+            availablePosters.push(SlackPoster({...appOptions.slack, channel: appOptions.slack.channel || ""}));
+        }
+        this.availablePosters = availablePosters;
+    }
 
     async takeScreenshot() {
         const canvas = await html2canvas(document.body, {
