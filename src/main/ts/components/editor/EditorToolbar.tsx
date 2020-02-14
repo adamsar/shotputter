@@ -18,6 +18,7 @@ export const EditorToolbar = observer(() => {
     };
 
     const onSubmit = () => {
+        screenshot.screenshotCanvas.style.backgroundImage = `url(${screenshot.screenshot})`;
         const post: Post = {
             image: screenshot.screenshotCanvas.toDataURL("image/jpeg"),
             message: commentRef.current.value || undefined

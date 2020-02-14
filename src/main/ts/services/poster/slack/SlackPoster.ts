@@ -62,8 +62,9 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
     };
 };
 
+export type SlackPoster = Poster & {setChannel: (channel: string) => void;};
 
-export const SlackPoster = (slackConfiguration: SlackConfiguration): Poster & {setChannel: (channel: string) => void;} => {
+export const SlackPoster = (slackConfiguration: SlackConfiguration): SlackPoster  => {
     const service = SlackService(slackConfiguration.token);
 
     return {

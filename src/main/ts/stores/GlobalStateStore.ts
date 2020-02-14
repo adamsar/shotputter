@@ -1,6 +1,7 @@
 import {computed, observable} from "mobx";
 import {AppOptions} from "../App";
 import {SlackService, SlackServiceClient} from "../services/poster/slack/SlackPoster";
+import {ImgurUploader} from "../services/images/imgur";
 
 interface WindowSize {
     width: number;
@@ -30,6 +31,9 @@ export class GlobalStateStore {
         if (appOptions.slack?.token) {
             this.slackService = SlackService(appOptions.slack?.token);
         }
+        if (appOptions.imgur?.clientId) {
+            this.imgurService = ImgurUploader(appOptions.imgur?.clientId);
+        }
     }
 
     @observable.struct windowSize: WindowSize = computeWindowSize();
@@ -41,6 +45,8 @@ export class GlobalStateStore {
     @observable appOptions: AppOptions | null = null;
 
     slackService: SlackServiceClient | null = null;
+
+    imgurService: ImgurUploader | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

@@ -56,7 +56,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             screenshot.screenshotCanvas.id = "shotput-canvas";
             canvasElement.appendChild(screenshot.screenshotCanvas);
             const _canvas = new fabric.Canvas('shotput-canvas');
-            _canvas.setBackgroundImage(screenshot.screenshotCanvas.toDataURL(), () => ({}));
+            _canvas.setBackgroundImage(screenshot.screenshot, () => ({}));
             _canvas.setHeight(global.windowSize.height);
             _canvas.setWidth(global.windowSize.width);
             _canvas.on({

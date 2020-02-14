@@ -11,9 +11,7 @@ export const SlackModal = observer(({onFinish, onClose}: {onFinish: () => void; 
     const [channels, setChannels] = React.useState<SlackChannel[]>([]);
     const [errored, setErrored] = React.useState<boolean>(false);
     const channelRef = React.createRef<HTMLSelectElement>();
-    const poster = screenshot.availablePosters.find((poster) => poster.typeName === "slack");
-
-    onFinish;
+    const poster = screenshot.slackPoster;
 
     const setChannel = (channel: string) => {
         // @ts-ignore
@@ -35,7 +33,7 @@ export const SlackModal = observer(({onFinish, onClose}: {onFinish: () => void; 
     const onPost = () => {
         setLoadingChannels(true);
         poster.send(screenshot.post).then(() => {
-            onClose();
+            onFinish();
         }).catch(error => {
             console.log(error);
             setErrored(true)
