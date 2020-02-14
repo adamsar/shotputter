@@ -7,23 +7,18 @@ module.exports = {
     mode: 'development',
     output: {
         filename: 'shotputter.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: "/",
     },
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        compress: true,
-        port: 9000
+        port: 9000,
+        contentBase: "./dist",
+        hot: true
     },
 
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js', '.svg' ],
+        extensions: [ '.tsx', '.ts', '.js', '.svg' ]
     },
-
-    plugins: [
-        new HtmlWebpackPlugin({
-            template:  "./src/main/templates/index.html"
-        })
-    ],
 
     module: {
         rules: [

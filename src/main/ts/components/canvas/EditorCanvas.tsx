@@ -55,9 +55,8 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
         if (canvasElement.children.length === 0 && !canvas) {
             screenshot.screenshotCanvas.id = "shotput-canvas";
             canvasElement.appendChild(screenshot.screenshotCanvas);
-            const _canvas = new fabric.Canvas('shotput-canvas', {
-                backgroundImage: screenshot.screenshotCanvas.toDataURL()
-            });
+            const _canvas = new fabric.Canvas('shotput-canvas');
+            _canvas.setBackgroundImage(screenshot.screenshotCanvas.toDataURL(), () => ({}));
             _canvas.setHeight(global.windowSize.height);
             _canvas.setWidth(global.windowSize.width);
             _canvas.on({
@@ -68,7 +67,11 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
         }
         return () => {
             canvas?.dispose();
+            while (canvasElement.children.length !== 0) {
+                canvasElement.removeChild(canvasElement.children[0]);
+            }
             setCanvas(null);
+            tools.currentTool = null;
         }
     }, []);
 
