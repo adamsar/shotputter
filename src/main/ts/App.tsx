@@ -22,6 +22,14 @@ export interface AppOptions {
         token: string,
         channel?: string;
     },
+    imgur?: {
+        clientId: string;
+    },
+    github?: {
+        owner?: string;
+        repo?: string;
+        token: string;
+    }
     download?: boolean
 };
 
