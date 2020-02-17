@@ -88,7 +88,9 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
     ***REMOVED***
 ***REMOVED*** else if (store.line) {
                 canvas.remove(store.line);
+                canvas.remove(store.lineTip);
                 store.line = null;
+                store.lineTip = null;
 ***REMOVED***
         }
     };

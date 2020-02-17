@@ -20,6 +20,7 @@ export const TextInputEditor = observer(({canvas}: TextInputEditorProps) => {
                 left: pointer.x,
                 top: pointer.y,
                 stroke: tools.color,
+                fill: tools.color,
                 fontSize: tools.fontSize,
                 fontWeight: tools.isBold ? "bold" : undefined
 ***REMOVED***);
