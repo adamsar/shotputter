@@ -33,7 +33,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
             try {
                 const formData = new FormData();
                 formData.append("channels", channels);
-                formData.append("message", message);
+                formData.append("initial_comment", message);
                 formData.append("filename", fileName);
                 formData.append("token", slackToken);
                 formData.append("file", await base64ToBlob(base64File));
