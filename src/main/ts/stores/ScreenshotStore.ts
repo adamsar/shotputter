@@ -68,7 +68,6 @@ export class ScreenshotStore {
     }
 
     async takeScreenshot() {
-        console.log(window.scrollY);
         const canvas = await html2canvas(document.body, {
                         height: window.innerHeight,
                         width: window.innerWidth,
