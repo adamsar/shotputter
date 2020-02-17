@@ -9,6 +9,38 @@ import {SlackPoster} from "../services/poster/slack/SlackPoster";
 import {GithubPoster} from "../services/poster/github/GithubPoster";
 import {ImgurUploader} from "../services/images/imgur";
 
+// @ts-ignore
+function screenshot(element, options = {}) {
+    // our cropping context
+    let cropper = document.createElement('canvas').getContext('2d');
+    // save the passed width and height
+    // @ts-ignore
+    let finalWidth = options.width || window.innerWidth;
+    // @ts-ignore
+    let finalHeight = options.height || window.innerHeight;
+    // update the options value so we can pass it to h2c
+    // @ts-ignore
+    if (options.x) {
+        // @ts-ignore
+        options.width = finalWidth + options.x;
+    }
+    // @ts-ignore
+    if (options.y) {
+        // @ts-ignore
+        options.height = finalHeight + options.y;
+    }
+    // chain h2c Promise
+    return html2canvas(element, options).then(c => {
+        // do our cropping
+        cropper.canvas.width = finalWidth;
+        cropper.canvas.height = finalHeight;
+        // @ts-ignore
+        cropper.drawImage(c, -(+options.x || 0), -(+options.y || 0));
+        // return our canvas
+        return cropper.canvas;
+    });
+}
+
 export class ScreenshotStore {
 
     @observable screenshotCanvas: HTMLCanvasElement | null = null;
@@ -36,11 +68,15 @@ export class ScreenshotStore {
     }
 
     async takeScreenshot() {
-        const canvas = await html2canvas(document.body, {
-           ignoreElements: element => element.id === MAIN_ID
-        });
-        this.screenshotCanvas = canvas;
-        this.screenshot = this.screenshotCanvas.toDataURL("image/jpeg");
+        const canvas = await screenshot(document.body, {
+                        y: window.scrollY,
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                        // @ts-ignore
+                        ignoreElements: element => element.id === MAIN_ID,
+                    });
+        this.screenshotCanvas = document.createElement("canvas");
+        this.screenshot = canvas.toDataURL("image/jpeg");
     }
 
     setPost(post: Post) {
