@@ -3,7 +3,7 @@ import * as React from "react";
 import {useStores} from "../../stores";
 import {fabric} from "fabric";
 import {IObservableArray, observable} from "mobx";
-import {Rectangle, RectangleEditor} from "./RectangleEditor";
+import {RectangleEditor} from "./RectangleEditor";
 import {TextInputEditor} from "./TextInputEditor";
 import {ArrowEditor} from "./ArrowEditor";
 
@@ -15,8 +15,9 @@ interface EditorCanvasLocalState {
     savedObjects: IObservableArray<fabric.Object>;
 }
 
+
 export const EditorCanvas = observer<EditorCanvasProps>(() => {
-    const { screenshot, tools, global } = useStores();
+    const { screenshot, tools } = useStores();
     const localStore = useLocalStore<EditorCanvasLocalState>(() => ({
         savedObjects: observable.array([]),
         currentColor: "DF151A"
@@ -33,37 +34,27 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
         localStore.savedObjects.remove(e.target);
     };
 
-    const onAddRectangle = (rect: Rectangle) => {
-        const left = Math.min(rect.start.x, rect.end.x);
-        const top = Math.min(rect.start.y, rect.end.y);
-        const right = Math.max(rect.start.x, rect.end.x);
-        const bottom = Math.max(rect.start.y, rect.end.y);
-        const rectangle = new fabric.Rect({
-            left,
-            top,
-            width: right - left,
-            height: -(top - bottom),
-            stroke: tools.color,
-            strokeWidth: tools.strokeWidth,
-            fill: tools.isFill ? tools.color : 'transparent'
-***REMOVED***
-        canvas.add(rectangle);
-    };
+    React.useEffect(() => {
+        window.document.body.style.overflow = "hidden";
+        return () => {
+            window.document.body.style.overflow = "inherit";
+        };
+    }, []);
 
     React.useEffect(() => {
         const canvasElement = document.getElementById("shotput-canvas-container");
         if (canvasElement.children.length === 0 && !canvas) {
             screenshot.screenshotCanvas.id = "shotput-canvas";
+            screenshot.screenshotCanvas.width = window.innerWidth;
+            screenshot.screenshotCanvas.height = window.innerHeight;
             canvasElement.appendChild(screenshot.screenshotCanvas);
             const _canvas = new fabric.Canvas('shotput-canvas');
-            _canvas.setBackgroundImage(screenshot.screenshot, () => ({}));
-            _canvas.setHeight(global.windowSize.height);
-            _canvas.setWidth(global.windowSize.width);
             _canvas.on({
                 "object:added": onAddObject,
                 "object:removed": onRemoveObject
 ***REMOVED***);
             setCanvas(_canvas);
+
         }
         return () => {
             canvas?.dispose();
@@ -121,7 +112,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             case "draw":
                 break;
             case "shape":
-                _Component = <RectangleEditor canvas={canvas} onAddRectangle={onAddRectangle} />;
+                _Component = <RectangleEditor canvas={canvas} />;
                 break;
             case "text":
                 _Component = <TextInputEditor canvas={canvas}/>;

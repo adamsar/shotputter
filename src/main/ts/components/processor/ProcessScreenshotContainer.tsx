@@ -15,7 +15,7 @@ export const ProcessScreenshotContainer = observer(() => {
                 await screenshot.takeScreenshot()
 ***REMOVED***
         })();
-    }, [screenshot.screenshotCanvas]);
+    }, []);
 
     useEffect(() => {
        if (screenshot.screenshotCanvas !== null) {

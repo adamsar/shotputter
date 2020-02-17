@@ -1,4 +1,5 @@
 #shotputter-id {
+  z-index: 100;
   position: absolute;
   top: 0;
   left: 0;
@@ -13,6 +14,7 @@
     cursor: pointer;
     padding: 5px 2px;
     border: 1px dotted black;
+    background-color: white;
   }
 
   &.shotput-tab-top {
@@ -82,7 +84,7 @@
 }
 
 .shotput-loading-modal {
-  z-index: 3;
+  z-index: 113;
   position: fixed;
   display: flex;
   width: 100%;
@@ -106,7 +108,7 @@
 
 .shotput-editor-toolbar {
   text-align: center;
-  z-index: 3;
+  z-index: 113;
   background-color: white;
   position: absolute;
   bottom: 0;
@@ -259,7 +261,7 @@
 
 #shotput-canvas-container {
   position:absolute;
-  z-index: 2;
+  z-index: 112;
   width: 100%;
   height: 100%;
 }
@@ -269,7 +271,7 @@
   padding: 1em;
   margin: 1em;
   border-radius: 10px;
-  z-index: 3;
+  z-index: 113;
   position: fixed;
   text-align: center;
 

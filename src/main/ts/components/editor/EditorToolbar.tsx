@@ -5,6 +5,8 @@ import {action} from "mobx";
 import {colors} from "../../stores/ToolStore";
 import {SubToolSection} from "./subtools/SubToolSection";
 import {Post} from "../../services/poster/Post";
+// @ts-ignore
+import mergeImages from 'merge-images';
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
@@ -17,10 +19,9 @@ export const EditorToolbar = observer(() => {
         screenshot.resetCanvas();
     };
 
-    const onSubmit = () => {
-        screenshot.screenshotCanvas.style.backgroundImage = `url(${screenshot.screenshot})`;
+    const onSubmit = async () => {
         const post: Post = {
-            image: screenshot.screenshotCanvas.toDataURL("image/jpeg"),
+            image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/png")]),
             message: commentRef.current.value || undefined
         };
         screenshot.setPost(post);
