@@ -68,11 +68,11 @@ export class ScreenshotStore {
     }
 
     async takeScreenshot() {
-        const canvas = await screenshot(document.body, {
-                        y: window.scrollY,
-                        width: window.innerWidth,
+        console.log(window.scrollY);
+        const canvas = await html2canvas(document.body, {
                         height: window.innerHeight,
-                        // @ts-ignore
+                        width: window.innerWidth,
+                        y: window.scrollY,
                         ignoreElements: element => element.id === MAIN_ID,
                     });
         this.screenshotCanvas = document.createElement("canvas");
