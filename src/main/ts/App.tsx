@@ -29,6 +29,7 @@ export interface AppOptions {
         owner?: string;
         repo?: string;
         token: string;
+        labels?: string[];
     }
     download?: boolean
 };
