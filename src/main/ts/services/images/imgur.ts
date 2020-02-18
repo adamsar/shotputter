@@ -8,7 +8,7 @@ export const ImgurUploader = (clientId: string): ImgurUploader => {
             const result = await (await fetch("https://api.imgur.com/3/image", {
                 method: "POST",
                 body: JSON.stringify({
-                    image: file.replace("data:image/jpeg;base64,", "")
+                    image: file.replace("data:image/png;base64,", "")
     ***REMOVED***),
                 headers: {
                     Authorization: `Client-ID ${clientId}`,
