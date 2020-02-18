@@ -1,0 +1,51 @@
+{
+  "name": "@shotputter/browser",
+  "version": "0.0.1",
+  "description": "Project to screen shot a webpage, enable comments, and publishing",
+  "main": "dist/shotputter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "webpack-dev-server"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
+    "@types/fabric": "^3.5.1",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.4.1",
+    "file-loader": "^5.0.2",
+    "html-webpack-plugin": "^4.0.0-beta.11",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.2",
+    "scss-loader": "0.0.1",
+    "style-loader": "^1.1.2",
+    "svg-inline-loader": "^0.8.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "@shotputter/common": "^1.0.0",
+    "@babel/polyfill": "^7.7.0",
+    "fabric": "^3.6.0",
+    "html-to-image": "^0.1.1",
+    "html2canvas": "^1.0.0-rc.5",
+    "merge-images": "^1.1.0",
+    "mobx": "^5.15.2",
+    "mobx-react-lite": "^1.5.2",
+    "react": "^16.12.0",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2",
+    "react-dom": "^16.12.0",
+    "react-inlinesvg": "^1.2.0",
+    "react-tag-autocomplete": "^6.0.0-beta.3"
+  }
+}

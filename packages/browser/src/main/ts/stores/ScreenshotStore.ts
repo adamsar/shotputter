@@ -1,13 +1,13 @@
 import {observable} from "mobx";
 import html2canvas from "html2canvas";
 import {MAIN_ID} from "../constants";
-import {Post} from "../services/poster/Post";
-import {Poster} from "../services/poster/Poster";
-import {DownloadPoster} from "../services/poster/DownloadPoster";
+import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
+import {Poster} from "@shotputter/common/src/main/ts/services/poster/Poster";
+import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
 import {AppOptions} from "../App";
-import {SlackPoster} from "../services/poster/slack/SlackPoster";
-import {GithubPoster} from "../services/poster/github/GithubPoster";
-import {ImgurUploader} from "../services/images/imgur";
+import {SlackPoster} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {GithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
+import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 
 export class ScreenshotStore {
 

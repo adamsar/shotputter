@@ -1,7 +1,7 @@
 import {computed, observable} from "mobx";
 import {AppOptions} from "../App";
-import {SlackService, SlackServiceClient} from "../services/poster/slack/SlackPoster";
-import {ImgurUploader} from "../services/images/imgur";
+import {SlackService, SlackServiceClient} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 
 interface WindowSize {
     width: number;

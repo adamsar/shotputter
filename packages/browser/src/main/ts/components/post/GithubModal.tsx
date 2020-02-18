@@ -1,6 +1,6 @@
 import * as React from "react";
 import {observer} from "mobx-react-lite";
-import {RepoInfo} from "../../services/poster/github/GithubPoster";
+import {RepoInfo} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {Loader} from "../processor/Loader";
 import {useStores} from "../../stores";
 import {Modal} from "../common/Modal";
