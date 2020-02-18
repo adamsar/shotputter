@@ -1,3 +1,6 @@
+packages/api/src/**/*.js
+packages/common/src/**/*.js
+packages/browser/src/**/*.js
 dist
 .idea
 # Created by https://www.gitignore.io/api/node,emacs,intellij

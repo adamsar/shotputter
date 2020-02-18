@@ -1,0 +1,18 @@
+{
+  "name": "@shotputter/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@slack/web-api": "^5.7.0",
+    "base64-blob": "^1.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.4"
+  },
+  "author": "",
+  "license": "ISC"
+}
