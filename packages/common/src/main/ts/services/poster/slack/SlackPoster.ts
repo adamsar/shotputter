@@ -40,7 +40,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                 const result = await fetch("https://slack.com/api/files.upload", {
                     method: "POST",
                     body: formData
-    ***REMOVED***).then(x => x.json());
+    ***REMOVED***).then((x: any) => x.json());
 
                 if (result.error) {
                     return { error: result.error };

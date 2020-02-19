@@ -5,6 +5,7 @@ import {action} from "mobx";
 import {colors} from "../../stores/ToolStore";
 import {SubToolSection} from "./subtools/SubToolSection";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
+
 // @ts-ignore
 import mergeImages from 'merge-images';
 
