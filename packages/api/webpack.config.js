@@ -31,7 +31,10 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([{
-            from: "src/main/serverless/serverless-example.yml"
-        }])
-    ]
+                from: "src/main/serverless/serverless-example.yml"
+***REMOVED***
+            {
+                from: "src/main/docker/Dockerfile"
+***REMOVED***]
+        )]
 };
