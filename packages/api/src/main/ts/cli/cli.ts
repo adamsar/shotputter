@@ -1,7 +1,6 @@
 import * as yargs from "yargs";
-import * as boxen from "boxen";
-import * as chalk from "chalk";
 import {getApp} from "../webserver/server";
+import {applyEnvironmentVars, parseFile} from "../config/server-config";
 
 const options = yargs.usage("Usage: cli.js")
     .options({
@@ -23,23 +22,17 @@ const options = yargs.usage("Usage: cli.js")
         },
         "imgurClientId": {
             type: "string"
+        },
+        "configFile": {
+            type: "string"
         }
     }).argv;
 
-const app = getApp({
-    github: {
-        token: options.githubToken,
-        defaultOwner: options.githubOwner,
-        defaultRepo: options.githubRepo
-    },
-    slack: {
-        clientId: options.slackClientId
-    },
-    imgur: {
-        clientId: options.slackClientId
-    }
-});
+// @ts-ignore
+let _options = options.configFile ? parseFile(options.configFile) : applyEnvironmentVars(options);
+
+const app = getApp(_options);
 
 app.listen(options.port, () => {
-    boxen(chalk.green(`Serving shotput API on port ${options.port}`));
+    console.log("Serving api on port " + options.port);
 });

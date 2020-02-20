@@ -1,0 +1,45 @@
+service:
+  name: shotput-api
+
+plugins:
+  # If you want to use custom domains, install this plugin and uncomment this section
+  #- serverless-domain-manager
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 30
+
+  environment:
+    SHOTPUT_SLACK_CLIENT_ID:
+    SHOTPUT_SLACK_DEFAULT_CHANNEL:
+    SHOTPUT_GITHUB_TOKEN:
+    SHOTPUT_GITHUB_DEFAULT_OWNER:
+    SHOTPUT_GITHUB_DEFAULT_REPO:
+    SHOTPUT_IMGUR_CLIENT_ID:
+
+# If you want to use a custom VPC to run these lambda functions in.
+#  vpc:
+#    securityGroupIds:
+#      -
+#    subnetIds:
+#      -
+
+
+functions:
+
+  app:
+    handler: "./index.handler"
+    events:
+      - http:
+          method: ANY
+          path: "/"
+          cors: true
+
+      - http:
+          method: ANY
+          path: "{proxy+}"
+          cors: true
+
+          # Uncomment this section if you want to keep the function warm.
+#      - schedule: rate(5 minutes)

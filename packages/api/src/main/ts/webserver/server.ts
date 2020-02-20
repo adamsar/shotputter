@@ -2,6 +2,10 @@ import * as express from "express";
 import {Express} from "express";
 import {slackRouter} from "./slack/slack-router";
 import {githubRouter} from "./github/github-router";
+import * as es6Promise from "es6-promise";
+es6Promise.polyfill();
+import "isomorphic-fetch";
+
 
 export interface SlackServerConfig {
     clientId: string;

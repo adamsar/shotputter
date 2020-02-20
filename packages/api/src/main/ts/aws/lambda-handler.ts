@@ -1,4 +1,5 @@
 import {ServerConfig, getApp} from "../webserver/server";
+import {applyEnvironmentVars} from "../config/server-config";
 const awsServerlessExpress = require('aws-serverless-express');
 
 export const lambdaHandler = (config: ServerConfig) => {
@@ -15,3 +16,5 @@ export const lambdaHandler = (config: ServerConfig) => {
         proxy.proxy(event, context);
     }
 };
+
+export const handler = lambdaHandler(applyEnvironmentVars({}));
