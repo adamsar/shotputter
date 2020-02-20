@@ -1,4 +1,6 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
     target: 'node',
     entry: {
@@ -26,5 +28,10 @@ module.exports = {
                     'ts-loader'
                 ]
 ***REMOVED***]
-    }
+    },
+    plugins: [
+        new CopyWebpackPlugin([{
+            from: "src/main/serverless/serverless-example.yml"
+        }])
+    ]
 };

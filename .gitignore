@@ -1,6 +1,7 @@
 packages/api/src/**/*.js
 packages/common/src/**/*.js
 packages/browser/src/**/*.js
+packages/api/test-config.json
 dist
 .idea
 # Created by https://www.gitignore.io/api/node,emacs,intellij
