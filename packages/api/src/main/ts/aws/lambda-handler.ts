@@ -1,20 +1,9 @@
 import {ServerConfig, getApp} from "../webserver/server";
-import {applyEnvironmentVars} from "../config/server-config";
-const awsServerlessExpress = require('aws-serverless-express');
+import * as awsServerlessExpress from "aws-serverless-express";
+const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 
 export const lambdaHandler = (config: ServerConfig) => {
-    const proxy = awsServerlessExpress.createServer(getApp(config));
-
-    // @ts-ignore
-    return (event, context, callback) => {
-        context['callbackWaitsForEmptyEventLoop'] = false;
-        // For pinging service;
-        if (event['source'] === 'aws.events' && event["detail-type"] === 'Scheduled Event') {
-            callback(null, {message: "test", body: "test"});
-            return "";
-        }
-        proxy.proxy(event, context);
-    }
+    const server = getApp(config);
+    server.use(awsServerlessExpressMiddleware.eventContext());
+    return awsServerlessExpress.createServer(server);
 };
-
-export const handler = lambdaHandler(applyEnvironmentVars({}));

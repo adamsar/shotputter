@@ -1,6 +1,10 @@
 import {computed, observable} from "mobx";
 import {AppOptions} from "../App";
-import {SlackService, SlackServiceClient} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {
+    HostedSlackService,
+    SlackService,
+    SlackServiceClient
+} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 
 interface WindowSize {
@@ -30,6 +34,9 @@ export class GlobalStateStore {
         this.appOptions = appOptions;
         if (appOptions.slack?.token) {
             this.slackService = SlackService(appOptions.slack?.token);
+        }
+        if (appOptions.service?.url && (appOptions.service?.enabledProviders || []).find((x) => x === "slack")) {
+            this.slackService = HostedSlackService(appOptions.service.url);
         }
         if (appOptions.imgur?.clientId) {
             this.imgurService = ImgurUploader(appOptions.imgur?.clientId);

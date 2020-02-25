@@ -10,14 +10,9 @@
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
         window.Shotput({
-            slack: {
-                token: "xoxp-498960439319-500461958631-949771852628-dc25379885750af4e01ac331ad702330"
-            },
-            imgur: {
-                clientId: "792503bfe2dcf18"
-            },
-            github: {
-                token: "cc14eeaf4d9788306e438963e79ae18d5e01b2ec"
+            service: {
+                url: "http://localhost:3000",
+                enabledProviders: ['slack', 'github']
             }
         });
     </script>

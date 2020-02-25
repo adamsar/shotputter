@@ -19,7 +19,7 @@ export type ErrorResponse = {
 
 export const expressValidateToErrorResponse = <A>(req: Request): EitherAsync<HttpResponse, A> => EitherAsync(({liftEither }) => {
     const errors = validationResult(req);
-    if (errors) {
+    if (!errors.isEmpty()) {
         const errorResponse: ErrorResponse = {
             error: "form",
             fields: errors.array().map(({param, msg}) => ({name: param, reason: msg}))

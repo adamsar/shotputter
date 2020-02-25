@@ -5,6 +5,18 @@ import {githubRouter} from "./github/github-router";
 import * as es6Promise from "es6-promise";
 es6Promise.polyfill();
 import "isomorphic-fetch";
+// @ts-ignore
+
+import {atob} from "atob";
+// @ts-ignore
+global.atob = atob;
+// @ts-ignore
+import { Blob } from "vblob";
+// @ts-ignore
+global.Blob = Blob;
+import "formdata-polyfill";
+// @ts-ignore
+console.log(global.FormData);
 
 
 export interface SlackServerConfig {
