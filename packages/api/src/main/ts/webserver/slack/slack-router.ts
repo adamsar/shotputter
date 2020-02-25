@@ -38,7 +38,6 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
                     initial_comment: postRequest.message
                 });
 
-               console.log(result);
                return liftEither(Right(Posted));
             }));
     }));

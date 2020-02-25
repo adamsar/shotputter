@@ -16,7 +16,6 @@ import { Blob } from "vblob";
 global.Blob = Blob;
 import "formdata-polyfill";
 // @ts-ignore
-console.log(global.FormData);
 
 
 export interface SlackServerConfig {

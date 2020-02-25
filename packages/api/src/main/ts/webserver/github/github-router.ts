@@ -3,7 +3,7 @@ import * as express from "express";
 import {imageValidator, messageValidator} from "../validators/post-validators";
 import {labelsValidator, ownerValidator, repoValidator, titleValidator} from "../validators/github-validators";
 import {route} from "../routing/route";
-import {EitherAsync, Right} from "purify-ts";
+import {EitherAsync, Left, Right} from "purify-ts";
 import {expressValidateToErrorResponse} from "../routing/response-errors";
 import {
     GithubPoster,
@@ -11,7 +11,7 @@ import {
 } from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 import {Posted} from "../routing/StandardResponses";
-import {Ok} from "../routing/responses";
+import {Ok, ServerError} from "../routing/responses";
 
 export interface GithubPostRequest {
     image: string;
@@ -30,11 +30,10 @@ export const githubRouter = (githubConfig: GithubServerConfig, imgurConfig: Imgu
     router.post("/post", [
         imageValidator,
         messageValidator,
-        imageValidator,
         titleValidator,
         labelsValidator,
-        ownerValidator,
-        repoValidator
+        ownerValidator(githubConfig.defaultOwner !== undefined),
+        repoValidator(githubConfig.defaultRepo !== undefined)
     ], route(({req}) => {
         return expressValidateToErrorResponse<GithubPostRequest>(req)
             .chain(postRequest => EitherAsync(async ({liftEither}) => {
@@ -48,11 +47,11 @@ export const githubRouter = (githubConfig: GithubServerConfig, imgurConfig: Imgu
                 };
                 const githubPoster = GithubPoster(config, imgurService);
                 const image = await imgurService.uploadImage(postRequest.image);
-                await githubPoster.send({
+                const succeeded = await githubPoster.send({
                     image,
                     message: postRequest.message
                 });
-                return liftEither(Right(Posted));
+                return liftEither(succeeded ? Right(Posted) : Left(ServerError({})));
             }));
     }));
 

@@ -65,20 +65,22 @@ export const HostedGithubPoster = (url: string, _config: GithubPosterConfig): Gi
         typeName: "github",
         config,
         listRepos: async () => {
-            return await (await fetch(`${url}/github/repos`, {method: 'get'})).json();
+            return (await (await fetch(`${url}/github/repos`, {method: 'get'})).json())['repos'];
         },
         setConfig: (p1: GithubPosterConfigSetter) => {
             config = {...config, ...p1};
         },
         send: async (post: Post): Promise<PostResult> => {
             try {
-                await fetch(`${url}/github/post`, { method: "post", body: JSON.stringify({
+                await fetch(`${url}/github/post`, {
+                    method: "post",
+                    body: JSON.stringify({
                         repo: config.repo,
                         owner: config.owner,
                         // @ts-ignore
                         title: config.title,
                         // @ts-ignore
-                        leabels: config.labels,
+                        labels: config.labels,
                         image: post.image,
                         message: post.message
                     }),
