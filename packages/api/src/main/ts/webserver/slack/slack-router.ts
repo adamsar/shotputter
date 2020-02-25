@@ -8,16 +8,20 @@ import {expressValidateToErrorResponse} from "../routing/response-errors";
 import {EitherAsync, Right} from "purify-ts";
 import {Posted} from "../routing/StandardResponses";
 import {Ok} from "../routing/responses";
+//import axios from "axios";
+import { WebClient } from '@shotputter/common/node_modules/@slack/web-api';
+
 
 export interface SlackPostRequest {
     image: string;
-    channel?: string;
+    channels?: string;
     message?: string;
 }
 
 export const slackRouter = (slackServerConfig: SlackServerConfig): express.Router => {
     const router = express.Router({});
     const slackService = SlackService(slackServerConfig.clientId);
+    const web: WebClient = new WebClient(slackServerConfig.clientId);
 
     router.post("/post", [
         messageValidator,
@@ -26,7 +30,15 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
     ], route(({req}) => {
         return expressValidateToErrorResponse<SlackPostRequest>(req)
             .chain((postRequest) => EitherAsync(async ({liftEither}) => {
-               await slackService.uploadFile(postRequest.channel || slackServerConfig.defaultChannel, postRequest.message || "", `Screenshot-${new Date().toISOString()}.jpg`, postRequest.image);
+                const result = await web.files.upload({
+                    channels: postRequest.channels || slackServerConfig.defaultChannel,
+                    filename: `Screenshot-${new Date().toISOString()}.jpg`,
+                    // @ts-ignore
+                    file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
+                    initial_comment: postRequest.message
+    ***REMOVED***);
+
+               console.log(result);
                return liftEither(Right(Posted));
 ***REMOVED***));
     }));

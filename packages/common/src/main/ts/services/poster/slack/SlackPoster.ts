@@ -21,14 +21,40 @@ export interface SlackChannel {
 export interface SlackServiceClient {
     uploadFile: (channels: string, message: string, fileName: string, base64File: string) => Promise<PostResult>;
     listChannels: () => Promise<SlackChannel[]>;
-    client: WebClient;
 }
+
+export const HostedSlackService = (serviceUrl: string): SlackServiceClient => {
+    return {
+        listChannels: async () => {
+                const repos: any = await (await fetch(`${serviceUrl}/slack/channels`, {method: "GET"})).json();
+                return repos['channels'];
+        },
+        uploadFile: async (channels: string, message: string, fileName: string, base64File: string) => {
+            try {
+                await fetch(`${serviceUrl}/slack/post`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        channels,
+                        message,
+                        image: base64File,
+                        filename: fileName
+        ***REMOVED***),
+                    headers: {
+                        "Content-Type": "application/json"
+        ***REMOVED***
+    ***REMOVED***);
+***REMOVED***  catch (error) {
+                return { error }
+***REMOVED***
+        }
+
+    }
+};
 
 export const SlackService = (slackToken: string): SlackServiceClient => {
     const client = new WebClient(slackToken);
 
     return {
-        client,
         uploadFile: async (channels: string, message: string, fileName: string, base64File: string): Promise<PostResult> => {
             try {
                 const formData = new FormData();
@@ -39,9 +65,13 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                 formData.append("file", await base64ToBlob(base64File));
                 const result = await fetch("https://slack.com/api/files.upload", {
                     method: "POST",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+        ***REMOVED***
     ***REMOVED***).then((x: any) => x.json());
 
+                console.log(result);
                 if (result.error) {
                     return { error: result.error };
     ***REMOVED*** else {
@@ -64,19 +94,19 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
 
 export type SlackPoster = Poster & {setChannel: (channel: string) => void;};
 
-export const SlackPoster = (slackConfiguration: SlackConfiguration): SlackPoster  => {
-    const service = SlackService(slackConfiguration.token);
-
+export const SlackPoster = (slackConfiguration: SlackConfiguration | { url: string }): SlackPoster  => {
+    const service = "url" in slackConfiguration ? HostedSlackService(slackConfiguration.url) : SlackService(slackConfiguration.token);
+    let channel = "channel" in slackConfiguration ? slackConfiguration.channel : undefined;
     return {
 
         typeName: "slack",
 
-        setChannel: (channel: string) => {
-          slackConfiguration.channel = channel;
+        setChannel: (_channel: string) => {
+          channel = _channel;
         },
 
         send: (post: Post): Promise<PostResult> => {
-            return service.uploadFile(slackConfiguration.channel, post.message || "Screenshot upload", `ScreenShot${new Date().toISOString()}.jpg`, post.image);
+            return service.uploadFile(channel, post.message || "Screenshot upload", `ScreenShot${new Date().toISOString()}.jpg`, post.image);
         }
     };
 };

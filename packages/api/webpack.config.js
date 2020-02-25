@@ -5,12 +5,14 @@ module.exports = {
     target: 'node',
     entry: {
         index: './src/main/ts/index.ts',
-        cli: './src/main/ts/cli/cli.ts'
+        cli: './src/main/ts/cli/cli.ts',
+        lambda: './src/main/ts/aws/exposed-handler.ts'
     },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
         publicPath: "/",
+        libraryTarget: "umd"
     },
     resolve: {
         extensions: [ '.ts', '.js' ]

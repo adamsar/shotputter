@@ -18,21 +18,25 @@ export const App = ({options}: { options: AppOptions }) => {
 };
 
 export interface AppOptions {
+    service: {
+        url: string;
+        enabledProviders: ("slack" | "github")[];
+    };
     slack?: {
-        token: string,
+        token: string;
         channel?: string;
-    },
+    };
     imgur?: {
         clientId: string;
-    },
+    };
     github?: {
         owner?: string;
         repo?: string;
         token: string;
         labels?: string[];
-    }
-    download?: boolean
-};
+    };
+    download?: boolean;
+}
 
 export const ShotputStart = (options: AppOptions) => {
     const load = () => {

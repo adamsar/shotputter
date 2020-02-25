@@ -19,7 +19,14 @@ export type GithubPosterConfig  = {
     labels: string[];
     canPost: true
 
-}
+} | {
+    url: string;
+    owner?: string;
+    repo?: string;
+    labels: string[];
+    title: string;
+
+};
 
 interface GithubPosterConfigSetter {
     repo: string;
@@ -45,6 +52,46 @@ export type GithubPoster = Poster & {
 
 const GithubBase: string = "https://api.github.com";
 
+export const HostedGithubPoster = (url: string, _config: GithubPosterConfig): GithubPoster => {
+    let config: GithubPosterConfig = {
+        url,
+        owner: _config.owner,
+        repo: _config.repo,
+        labels: [],
+        title: ""
+    };
+
+    return {
+        typeName: "github",
+        config,
+        listRepos: async () => {
+            return await (await fetch(`${url}/github/repos`, {method: 'get'})).json();
+        },
+        setConfig: (p1: GithubPosterConfigSetter) => {
+            config = {...config, ...p1};
+        },
+        send: async (post: Post): Promise<PostResult> => {
+            try {
+                await fetch(`${url}/github/post`, { method: "post", body: JSON.stringify({
+                        repo: config.repo,
+                        owner: config.owner,
+                        // @ts-ignore
+                        title: config.title,
+                        // @ts-ignore
+                        leabels: config.labels,
+                        image: post.image,
+                        message: post.message
+        ***REMOVED***),
+                    headers: {
+                        "Content-Type": "application/json"
+        ***REMOVED***});
+***REMOVED*** catch (error) {
+                return { error };
+***REMOVED***
+        }
+    }
+};
+
 export const GithubPoster = (_config: GithubPosterConfig, imgurUploader: ImgurUploader): GithubPoster => {
     let config = { ..._config };
 
@@ -54,7 +101,7 @@ export const GithubPoster = (_config: GithubPosterConfig, imgurUploader: ImgurUp
         config,
 
         send: async (post: Post): Promise<PostResult> => {
-            if (config.canPost) {
+            if ("title" in config && "canPost" in config && config.canPost) {
                 try {
                     const imgUrl = await imgurUploader.uploadImage(post.image);
                     const result: any = await (await fetch(`${GithubBase}/repos/${config.owner}/${config.repo}/issues`, {
@@ -80,21 +127,23 @@ export const GithubPoster = (_config: GithubPosterConfig, imgurUploader: ImgurUp
         },
 
         listRepos: async () => {
-            const repos: any[] = await (await fetch(`${GithubBase}/user/repos?per_page=100`, {
-                method: "GET",
-                headers: {
-                    Authorization: `token ${config.token}`
-    ***REMOVED***
-***REMOVED***)).json();
-
-
-            return repos.map(repo => ({
-                owner: repo['owner']['login'],
-                repo: repo['name']
-***REMOVED***));
+            if ("token" in config) {
+                const repos: any[] = await (await fetch(`${GithubBase}/user/repos?per_page=100`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `token ${config.token}`
+        ***REMOVED***
+    ***REMOVED***)).json();
+                return repos.map(repo => ({
+                    owner: repo['owner']['login'],
+                    repo: repo['name']
+    ***REMOVED***));
+***REMOVED***
+            return []
         },
 
         setConfig: (options: GithubPosterConfigSetter) => {
+            // @ts-ignore
             config = { ...config, ...options, canPost: true, labels: options.labels || [] };
         }
     };
