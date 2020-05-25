@@ -7,11 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@slack/web-api": "^5.7.0",
+    "@slack/web-api": "^5.9.0",
     "base64-blob": "^1.4.1"
   },
   "devDependencies": {
-    "typescript": "^3.7.4"
+    "typescript": "^3.9.3"
   },
   "author": "",
   "license": "ISC"

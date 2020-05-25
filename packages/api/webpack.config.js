@@ -32,11 +32,14 @@ module.exports = {
             }]
     },
     plugins: [
-        new CopyWebpackPlugin([{
-                from: "src/main/serverless/serverless-example.yml"
+        new CopyWebpackPlugin({
+            patterns: [{
+                from: "src/main/serverless/serverless-example.yml",
+                to: "serverless/serverless-example.yml"
             },
-            {
-                from: "src/main/docker/Dockerfile"
-            }]
-        )]
+                {
+                    from: "src/main/docker/Dockerfile",
+                    to: "docker/Dockerfile"
+                }]
+        })]
 };
