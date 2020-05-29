@@ -5,13 +5,11 @@ import {labelsValidator, ownerValidator, repoValidator, titleValidator} from "..
 import {route} from "../routing/route";
 import {EitherAsync, Left, Right} from "purify-ts";
 import {expressValidateToErrorResponse} from "../routing/response-errors";
-import {
-    GithubPoster,
-    GithubPosterConfig
-} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
+import {GithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 import {Posted} from "../routing/StandardResponses";
-import {Ok, ServerError} from "../routing/responses";
+import {BadResponse, Ok} from "../routing/responses";
+import {isLeft} from "fp-ts/lib/Either";
 
 export interface GithubPostRequest {
     image: string;
@@ -26,42 +24,51 @@ export interface GithubPostRequest {
 export const githubRouter = (githubConfig: GithubServerConfig, imgurConfig: ImgurServerConfig): express.Router => {
     const router = express.Router();
     const imgurService = ImgurUploader(imgurConfig.clientId);
+    const githubService = GithubPoster(githubConfig.token, imgurService);
 
     router.post("/post", [
         imageValidator,
         messageValidator,
         titleValidator,
         labelsValidator,
-        ownerValidator(githubConfig.defaultOwner !== undefined),
-        repoValidator(githubConfig.defaultRepo !== undefined)
+        ownerValidator(true),
+        repoValidator(true)
     ], route(({req}) => {
         return expressValidateToErrorResponse<GithubPostRequest>(req)
             .chain(postRequest => EitherAsync(async ({liftEither}) => {
-                const config: GithubPosterConfig = {
-                    token: githubConfig.token,
-                    repo: postRequest.repo || githubConfig.defaultRepo,
-                    owner: postRequest.owner || githubConfig.defaultOwner,
+                const githubConfig = {
+                    repo: postRequest.repo,
+                    owner: postRequest.owner,
                     title: postRequest.title,
                     labels: postRequest.labels || [],
-                    canPost: true
     ***REMOVED***;
-                const githubPoster = GithubPoster(config, imgurService);
-                const image = await imgurService.uploadImage(postRequest.image);
-                const succeeded = await githubPoster.send({
-                    image,
-                    message: postRequest.message
-    ***REMOVED***);
-                return liftEither(succeeded ? Right(Posted) : Left(ServerError({})));
+                const image = await imgurService.uploadImage(postRequest.image)();
+                if (isLeft(image)) {
+                    return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(image.left)})))
+    ***REMOVED***
+                const succeeded = await githubService.postIssue({
+                    post: {
+                        image: image.right,
+                        message: postRequest.message
+    ***REMOVED***
+                    ...githubConfig
+    ***REMOVED***)();
+                if (isLeft(succeeded)) {
+                    return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(succeeded.left)})))
+    ***REMOVED*** else {
+                    return liftEither(Right(Posted));
+    ***REMOVED***
+
 ***REMOVED***));
     }));
 
     router.get("/repos", route(() => EitherAsync(async ({ liftEither }) => {
-        const githubPoster = GithubPoster({
-            canPost: false,
-            token: githubConfig.token
-        }, imgurService);
-        const repos = await githubPoster.listRepos();
-        return liftEither(Right(Ok({ repos })));
+        const repos = await githubService.listRepos()();
+        if (isLeft(repos)) {
+            return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(repos.left)})))
+        } else {
+            return liftEither(Right(Ok({repos: repos.right})))
+        }
     })));
 
     return router;

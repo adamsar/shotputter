@@ -10,7 +10,7 @@ import * as ReactDOM from "react-dom";
 export const App = ({options}: { options: AppOptions }) => {
     return <storeContext.Provider value={{
         global: new GlobalStateStore(options),
-        screenshot: new ScreenshotStore(options),
+        screenshot: new ScreenshotStore(),
         tools: new ToolStore()
     }}>
         <Routes/>
@@ -18,22 +18,22 @@ export const App = ({options}: { options: AppOptions }) => {
 };
 
 export interface AppOptions {
-    service: {
-        url: string;
-        enabledProviders: ("slack" | "github")[];
+    service?: {
+        url?: string;
+        enabledProviders?: ("slack" | "github")[];
     };
     slack?: {
         token: string;
-        channel?: string;
+        defaultChannel?: string;
     };
     imgur?: {
         clientId: string;
     };
     github?: {
-        owner?: string;
-        repo?: string;
+        defaultOwner?: string;
+        defaultRepo?: string;
         token: string;
-        labels?: string[];
+        defaultLabels?: string[];
     };
     download?: boolean;
 }

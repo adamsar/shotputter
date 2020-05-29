@@ -5,11 +5,12 @@ import {SlackServerConfig} from "../server";
 import {channelValidator} from "../validators/slack-validators";
 import {route} from "../routing/route";
 import {expressValidateToErrorResponse} from "../routing/response-errors";
-import {EitherAsync, Right} from "purify-ts";
+import {EitherAsync, Left, Right} from "purify-ts";
 import {Posted} from "../routing/StandardResponses";
-import {Ok} from "../routing/responses";
+import {BadResponse, Ok} from "../routing/responses";
 //import axios from "axios";
 import { WebClient } from '@shotputter/common/node_modules/@slack/web-api';
+import {isLeft} from "fp-ts/lib/Either";
 
 
 export interface SlackPostRequest {
@@ -26,7 +27,7 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
     router.post("/post", [
         messageValidator,
         imageValidator,
-        channelValidator(slackServerConfig.defaultChannel !== undefined)
+        channelValidator(true)
     ], route(({req}) => {
         return expressValidateToErrorResponse<SlackPostRequest>(req)
             .chain((postRequest) => EitherAsync(async ({liftEither}) => {
@@ -37,14 +38,18 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
                     file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
                     initial_comment: postRequest.message
     ***REMOVED***);
+                console.log(result);
 
                return liftEither(Right(Posted));
 ***REMOVED***));
     }));
 
     router.get("/channels", route(({}) => EitherAsync(async ({liftEither}) => {
-        const channels = await slackService.listChannels();
-        return liftEither(Right(Ok({channels})));
+        const channels = await slackService.listChannels()();
+        if (isLeft(channels)) {
+            return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(channels.left)})))
+        }
+        return liftEither(Right(Ok({channels: channels.right})));
     })));
 
     return router;

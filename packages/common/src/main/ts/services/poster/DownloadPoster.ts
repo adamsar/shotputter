@@ -1,17 +1,20 @@
-import {Poster} from "./Poster";
 import {Post} from "./Post";
 import {PostResult} from "./PostResult";
+import {TaskEither} from "fp-ts/lib/TaskEither";
+import {taskEither} from "fp-ts";
 
-export const DownloadPoster = (document: Document): Poster => {
+type DownloadError = {type: "downloadError", error: string;}
+export interface DownloadPoster {
+    send(post: Post): TaskEither<DownloadError, PostResult>
+}
 
+export const DownloadPoster = (document: Document): DownloadPoster => {
     return {
-        typeName: "download",
-        async send(post: Post): Promise<PostResult> {
-            try {
+        send(post: Post): TaskEither<DownloadError, PostResult> {
+            return taskEither.tryCatch(() => new Promise((resolve) => {
                 const pom = document.createElement('a');
-                pom.setAttribute('href', post.image.replace("image/jpeg", "image/octet-stream"));
-                pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}`);
-
+                pom.setAttribute('href', post.image);
+                pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}.jpg`);
                 if (document.createEvent) {
                     const event = document.createEvent('MouseEvents');
                     event.initEvent('click', true, true);
@@ -20,10 +23,8 @@ export const DownloadPoster = (document: Document): Poster => {
                 else {
                     pom.click();
     ***REMOVED***
-***REMOVED*** catch (error) {
-                return {error};
-***REMOVED***
-            return true;
+                return resolve(true);
+***REMOVED***), (error: string) => ({error, type: "downloadError"}));
         }
     };
 
