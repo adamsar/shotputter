@@ -6,6 +6,9 @@ import {
     SlackServiceClient
 } from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
+import {HostedRequester} from "../../../../../common/src/main/ts/services/HostedRequester";
+import {GithubPoster, HostedGithubPoster} from "../../../../../common/src/main/ts/services/poster/github/GithubPoster";
+import {DownloadPoster} from "../../../../../common/src/main/ts/services/poster/DownloadPoster";
 
 interface WindowSize {
     width: number;
@@ -32,14 +35,29 @@ export class GlobalStateStore {
             this.windowSize = computeWindowSize();
         });
         this.appOptions = appOptions;
+        const requester: HostedRequester | null = appOptions?.service?.url ? new HostedRequester(appOptions?.service?.url) : null;
+        if (appOptions.download !== false) {
+            this.downloadService = DownloadPoster(document);
+            this.availablePosters.push("download");
+        }
         if (appOptions.slack?.token) {
             this.slackService = SlackService(appOptions.slack?.token);
+            this.availablePosters.push("slack")
         }
-        if (appOptions.service?.url && (appOptions.service?.enabledProviders || []).find((x) => x === "slack")) {
-            this.slackService = HostedSlackService(appOptions.service.url);
+        if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "slack")) {
+            this.slackService = HostedSlackService(requester);
+            this.availablePosters.push("slack");
         }
         if (appOptions.imgur?.clientId) {
             this.imgurService = ImgurUploader(appOptions.imgur?.clientId);
+        }
+        if (appOptions.github?.token && this.imgurService) {
+            this.githubService = GithubPoster(appOptions.github?.token, this.imgurService);
+            this.availablePosters.push("github")
+        }
+        if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "github")) {
+            this.githubService = HostedGithubPoster(requester);
+            this.availablePosters.push("github")
         }
     }
 
@@ -51,9 +69,15 @@ export class GlobalStateStore {
 
     @observable appOptions: AppOptions | null = null;
 
+    @observable availablePosters: ("slack" | "download" | "github")[] = [];
+
     slackService: SlackServiceClient | null = null;
 
     imgurService: ImgurUploader | null = null;
+
+    githubService: GithubPoster | null = null;
+
+    downloadService: DownloadPoster | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

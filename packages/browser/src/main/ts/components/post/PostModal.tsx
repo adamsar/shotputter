@@ -4,6 +4,7 @@ import {useStores} from "../../stores";
 import {Modal} from "../common/Modal";
 import {SlackModal} from "./SlackModal";
 import {GithubModal} from "./GithubModal";
+import {isLeft} from "fp-ts/lib/Either";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
@@ -14,12 +15,19 @@ export const PostModal = observer(() => {
         global.displayMode = "unclicked";
     };
 
-    const posterButtons = screenshot.availablePosters.map(poster => {
-        switch (poster.typeName) {
+    const posterButtons = global.availablePosters.map(poster => {
+        switch (poster) {
             case "github":
                 return <li key={"github"} onClick={() => setRoute("github")}>Github</li>;
             case "download":
-                return <li key={"download"} onClick={() => poster.send(screenshot.post)}>Download</li>;
+                return <li key={"download"} onClick={async () => {
+                    const result = await global.downloadService.send(screenshot.post)();
+                    if (isLeft(result)) {
+                        console.log(result.left)
+                    } else {
+                        console.log("SAVED")
+                    }
+                }}>Download</li>;
             case "slack":
                 return <li key={"slack"} onClick={() => setRoute("slack")}>Slack</li>;
 

@@ -1,3 +1,7 @@
+$main-color: #103E66;
+$secondary-color: #795E3A;
+
+
 #shotputter-id {
   z-index: 100;
   position: absolute;
@@ -333,3 +337,66 @@
   text-align: left;
 }
 
+.shotput-error-modal {
+  text-align: left;
+  background-color: antiquewhite;
+  box-shadow: -.5em -.5em 5px black;
+
+  h2 {
+    letter-spacing: .1em;
+  }
+
+  .shotput-error-contents {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  .shotput-error-button-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+
+.shotput-button {
+  padding: .5em 1em;
+  border: 1px solid;
+  border-radius: 3px;
+  &.main-color {
+    background-color: $main-color;
+    border-color: darken($main-color, 10%);
+    color: ghostwhite;
+    &:hover {
+      cursor: pointer;
+      background-color: lighten($main-color, 5%);
+      border-color: $main-color;
+    }
+  }
+  &.secondary-color {
+    background-color: $secondary-color;
+    border-color: darken($secondary-color, 10%);
+    color: ghostwhite;
+    &:hover {
+      cursor: pointer;
+      background-color: lighten($secondary-color, 5%);
+      border-color: $secondary-color;
+    }
+  }
+}
+
+.shotput-success-modal {
+  background-color: #A1DED6;
+  h2 {
+    letter-spacing: .2em;
+  }
+  p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  .shotput-success-button-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}

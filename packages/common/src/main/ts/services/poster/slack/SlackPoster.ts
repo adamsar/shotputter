@@ -1,13 +1,19 @@
-import {Poster} from "../Poster";
-import {Post} from "../Post";
 import {PostResult} from "../PostResult";
-import { WebClient } from '@slack/web-api';
+import {WebClient} from '@slack/web-api';
 import {base64ToBlob} from "base64-blob";
+import {chain, fromIOEither, left, map, mapLeft, right, taskEither, TaskEither} from "fp-ts/lib/TaskEither";
+import {pipe} from "fp-ts/lib/pipeable";
+import {promiseToTaskEither, taskEitherExtensions} from "../../../util/fp-util";
+import {HostedRequester, HttpError, postRequest} from "../../HostedRequester";
+import {tryCatch} from "fp-ts/lib/IOEither";
+import {sequenceT} from "fp-ts/lib/Apply";
+
+export type SlackError = { error: string; type: "unknown" } | HttpError;
+const mapError = mapLeft<string, SlackError>((error: string) => ({error, type: "unknown"}))
 
 export interface SlackConfiguration {
 
     token: string;
-    channel: string;
 
 }
 
@@ -19,33 +25,29 @@ export interface SlackChannel {
 }
 
 export interface SlackServiceClient {
-    uploadFile: (channels: string, message: string, fileName: string, base64File: string) => Promise<PostResult>;
-    listChannels: () => Promise<SlackChannel[]>;
+
+    uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }) => TaskEither<SlackError, PostResult>;
+    listChannels: () => TaskEither<SlackError, SlackChannel[]>;
+
 }
 
-export const HostedSlackService = (serviceUrl: string): SlackServiceClient => {
+export const HostedSlackService = (requester: HostedRequester): SlackServiceClient => {
+
     return {
-        listChannels: async () => {
-                const repos: any = await (await fetch(`${serviceUrl}/slack/channels`, {method: "GET"})).json();
-                return repos['channels'];
+        listChannels: () => {
+            return pipe(
+                requester.get<any>("/slack/channels"),
+                map(repos => repos['channels'] as SlackChannel[])
+            )
         },
-        uploadFile: async (channels: string, message: string, fileName: string, base64File: string) => {
-            try {
-                await fetch(`${serviceUrl}/slack/post`, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        channels,
-                        message,
-                        image: base64File,
-                        filename: fileName
-                    }),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-            }  catch (error) {
-                return { error }
-            }
+
+        uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }): TaskEither<SlackError, PostResult> => {
+            return requester.post<PostResult>("/slack/post", {
+                    channels,
+                    message,
+                    image: base64File,
+                    filename: fileName
+            });
         }
 
     }
@@ -55,59 +57,38 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
     const client = new WebClient(slackToken);
 
     return {
-        uploadFile: async (channels: string, message: string, fileName: string, base64File: string): Promise<PostResult> => {
-            try {
-                const formData = new FormData();
-                formData.append("channels", channels);
-                formData.append("initial_comment", message);
-                formData.append("filename", fileName);
-                formData.append("token", slackToken);
-                formData.append("file", await base64ToBlob(base64File));
-                const result = await fetch("https://slack.com/api/files.upload", {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                }).then((x: any) => x.json());
-
-                console.log(result);
-                if (result.error) {
-                    return { error: result.error };
-                } else {
-                    return true;
-                }
-
-            } catch (error) {
-                return { error };
-            }
+        uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }): TaskEither<SlackError, PostResult> => {
+            return pipe(
+                sequenceT(taskEither)(
+                    fromIOEither(
+                        tryCatch<string, FormData>(() => {
+                            const formData = new FormData();
+                            formData.append("channels", channels.join(","));
+                            formData.append("initial_comment", message);
+                            formData.append("filename", fileName);
+                            formData.append("token", slackToken);
+                            return formData;
+                        }, String)
+                    ),
+                    promiseToTaskEither(base64ToBlob(base64File))
+                ),
+                map(([formData, blob]) => {
+                    formData.append("file", blob);
+                    return formData
+                }),
+                mapError,
+                chain(formData => postRequest<any>("https://slack.com/api/files.upload", formData)),
+                chain(result => result['error'] ? left({type: "unknown", error: result['error'] as string}) : right(true))
+            )
         },
 
-        listChannels: async (): Promise<SlackChannel[]> => {
-            const result = await client.channels.list();
-            // @ts-ignore
-            return result["channels"];
+        listChannels(): TaskEither<SlackError, SlackChannel[]> {
+            return pipe(
+                taskEitherExtensions.fromPromise(client.channels.list()),
+                map(result => result["channels"] as SlackChannel[]),
+                mapError
+            )
         }
 
     };
 };
-
-export type SlackPoster = Poster & {setChannel: (channel: string) => void;};
-
-export const SlackPoster = (slackConfiguration: SlackConfiguration | { url: string }): SlackPoster  => {
-    const service = "url" in slackConfiguration ? HostedSlackService(slackConfiguration.url) : SlackService(slackConfiguration.token);
-    let channel = "channel" in slackConfiguration ? slackConfiguration.channel : undefined;
-    return {
-
-        typeName: "slack",
-
-        setChannel: (_channel: string) => {
-          channel = _channel;
-        },
-
-        send: (post: Post): Promise<PostResult> => {
-            return service.uploadFile(channel, post.message || "Screenshot upload", `ScreenShot${new Date().toISOString()}.jpg`, post.image);
-        }
-    };
-};
-

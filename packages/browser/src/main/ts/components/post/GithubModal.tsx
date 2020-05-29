@@ -1,142 +1,188 @@
 import * as React from "react";
+import {useMemo} from "react";
 import {observer} from "mobx-react-lite";
-import {RepoInfo} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
+import {GithubError} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {Loader} from "../processor/Loader";
 import {useStores} from "../../stores";
 import {Modal} from "../common/Modal";
 import {RequiredStar} from "../common/forms/RequiredStar";
 import ReactTags from 'react-tag-autocomplete';
+import {IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "react-async";
+import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
+import merge from "lodash/merge";
+import {ErrorModal} from "../common/ErrorModal";
+import * as t from "@shotputter/common/node_modules/io-ts";
+import {withMessage} from "@shotputter/common/node_modules/io-ts-types/lib/withMessage"
+import {NonEmptyString} from "@shotputter/common/node_modules/io-ts-types/lib/NonEmptyString";
+import {decodeForm, ShotputFormError} from "@shotputter/common/src/main/ts/util/form-validation";
+import {pipe} from "fp-ts/lib/pipeable";
+import {fold} from "fp-ts/lib/Either";
+import {SuccessModal} from "../common/SuccessModal";
+import {DelayedAction} from "../common/DelayedAction";
 
 interface GithubModal {
    onClose: () => void;
    onFinish: () => void;
 }
 
-interface GithubModalFormErrors {
+type GithubModalForm = {
+   title: string;
+   labels: string[];
+   owner: string;
+   repo: string;
+};
 
-   title?: string;
+const validator: t.Type<GithubModalForm, GithubModalForm> = t.type({
+   title: t.intersection([
+       withMessage(t.string, (x: unknown) => {
+      if (x === null || x === undefined) {
+         return "required"
+      } else {
+         return "string_required"
+      }
+      }),
+      NonEmptyString
+       ]),
+   labels: t.array(t.string),
+   owner: t.string,
+   repo: t.string
+});
 
-}
+export const GithubModal = observer(({onClose}: GithubModal) => {
+   const {  global } = useStores();
+   const githubService = global.githubService;
 
-export const GithubModal = observer(({onClose, onFinish}: GithubModal) => {
-   const { screenshot, global } = useStores();
-   const githubPoster = screenshot.githubPoster;
-   const [repos, setRepos] = React.useState<RepoInfo[]>([]);
-   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-   const [isError, setIsError] = React.useState<boolean>(false);
-   const [labels, setLabels] = React.useState<string[]>(global.appOptions?.github?.labels || []);
-   const [errors, setErrors] = React.useState<GithubModalFormErrors>({});
-   const [currentRepo, setCurrentRepo] = React.useState<RepoInfo>(
-       (githubPoster.config?.owner && githubPoster.config?.repo) ? {
-          owner: githubPoster.config?.owner,
-          repo: githubPoster.config?.repo
-       } : null
-   );
-   const [title, setTitle] = React.useState<string>(null);
+   const loadRepoState = useAsync(useMemo(() => taskEitherExtensions.toDeferFn(githubService.listRepos()), []));
+   const { data: repos, isFulfilled: reposLoaded } = loadRepoState;
+   const [form, setForm] = React.useState<Partial<GithubModalForm>>({
+      labels: global.appOptions?.github?.defaultLabels ?? []
+   });
+
+   const [errors, setErrors] = React.useState<ShotputFormError>();
+
+   const postState = useAsync({deferFn: ([_]: [GithubModalForm]) => (async () => true)()})
+
+   function updateForm(obj: Partial<GithubModalForm>) {
+      setForm(merge({}, form, obj))
+   }
 
    const onAddTag = (tag: string) => {
-      setLabels(labels.concat(tag));
+      updateForm({labels: form.labels.concat(tag)});
    };
 
    const onDeleteTag = (index: number) => {
-      setLabels(labels.filter((_, _index) => _index !== index));
+      updateForm({labels: form.labels.filter((_, _index) => _index !== index)});
    };
 
    React.useEffect(() => {
-      if (!githubPoster.config.owner || !githubPoster.config.owner) {
-         setIsLoading(true);
-         githubPoster.listRepos().then(repos => {
-            setIsLoading(false);
-            setRepos(repos);
-            setCurrentRepo(repos[0]);
-         }).catch((error) => {
-            console.error(error);
-            setIsError(true)
-         });
+      if (reposLoaded) {
+         setForm(merge({}, form, {
+            owner: repos.find(({owner}) => owner === global.appOptions.github?.defaultOwner) ?? repos[0].owner,
+            repo: repos.find(({repo}) => repo === global.appOptions.github?.defaultRepo) ?? repos[0].repo
+         }))
       }
-   }, []);
+   }, [repos]);
 
-   const validate = (): boolean => {
-      if (!title || title.length === 0) {
-         setErrors({
-            title: "Required"
-         });
-         return false;
-      } else {
-         return true;
-      }
-   };
+   const onPost = () => pipe(
+       decodeForm(validator, form),
+       fold(
+           errors => setErrors(errors),
+           (form) => {
+              postState.run(form);
+              setErrors(undefined);
+           }
+       )
+   );
 
-   const onPost = () => {
-      if (validate()) {
-         githubPoster.setConfig({
-            ...currentRepo,
-            title,
-            labels
-         });
-         setIsLoading(true);
-         githubPoster.send(screenshot.post).then(() => {
-            setIsLoading(false);
-            onFinish();
-         }).catch((error) => {
-            console.warn(error);
-            setIsError(true);
-         });
-      }
-   };
+   const defaultRepo = global.appOptions?.github?.defaultRepo;
+   return (
+       <>
+          <IfPending state={loadRepoState}>
+             <Loader/>
+          </IfPending>
+          <IfRejected state={loadRepoState}>{(error: GithubError, _) => (
+              <ErrorModal onClose={onClose}>
+                 An error has occurred while fetching repository data from Github<br/>
+                 <code>
+                    {
+                       JSON.stringify(error)
+                    }
+                 </code>
+              </ErrorModal>
+          )
+          }</IfRejected>
+          <IfFulfilled state={loadRepoState}>{ _ => (<>
+                 <IfInitial state={postState}>
+                    <Modal onClose={onClose}>
+                       <h3>Post issue on Github</h3>
+                       <div className={"shotput-left-align"}>
+                          <div className={"shotput-label"}>
+                             Repo
+                          </div>
+                          <div className={"shotput-field-container"}>
+                             <select onChange={({target: {value: repo}}) => updateForm({repo})} defaultValue={defaultRepo ?? repos[0]?.repo}>
+                                {
+                                   repos.map(repo => (
+                                       <option key={repo.repo} value={repo.repo}>{repo.owner}/{repo.repo}</option>
+                                   ))
+                                }
+                             </select>
+                          </div>
+                          <div className={"shotput-label"}>
+                             Title <RequiredStar/>
+                          </div>
+                          <div className={"shotput-field-container"}>
+                             <input type={"text"} onChange={({target: {value: title}}) => updateForm({title})} className={errors?.title ? "shotput-field-error" : ""}/>
+                             {
+                                errors?.title ? (<div className={"shotput-field-error-box"}>{errors.title}</div>) : null
+                             }
+                          </div>
+                          <div className={"shotput-label"}>
+                             Labels
+                          </div>
+                          <div className={"shotput-field-container"}>
+                             <ReactTags
+                                 tags={form.labels.map((label: string) => ({
+                                    id: label,
+                                    name: label
+                                 }))}
+                                 onAddition={(tag) => {
+                                    onAddTag(tag.name);
+                                 }}
+                                 onDelete={(index) => {
+                                    onDeleteTag(index);
+                                 }}
+                                 allowNew={true}
+                             />
+                             {JSON.stringify(form)}
+                          </div>
+                          <div className={"shotput-bottom-buttons"}>
+                             <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>
+                             <span className={"shotput-bottom-button"} onClick={onPost}>Post</span>
+                          </div>
+                       </div>
+                 </Modal>
+                 </IfInitial>
+                 <IfPending state={postState}>
+                    <Loader/>
+                 </IfPending>
+                 <IfRejected state={postState}> { (error: GithubError) => (
+                     <Modal onClose={onClose}>{JSON.stringify(error)}</Modal>
+                 )}
+                 </IfRejected>
+                 <IfFulfilled state={postState}>{ (_) => (<>
+                        <SuccessModal onClose={onClose}>
+                            Issue successfully submitted to Github!
+                        </SuccessModal>
+                        <DelayedAction delay={5000} func={onClose}/>
+                    </>)
+                 }
+                 </IfFulfilled>
+              </>
+          )
+          }
+          </IfFulfilled>
+       </>
 
-   if (isError) {
-      return <Modal onClose={onClose}>Error</Modal>
-   }else if (isLoading) {
-      return <Loader />;
-   } else {
-      return (
-          <Modal onClose={onClose}>
-             <h3>Post issue on Github</h3>
-             <div className={"shotput-left-align"}>
-                <div className={"shotput-label"}>
-                   Repo
-                </div>
-                <div className={"shotput-field-container"}>
-                   <select onChange={(value) => setCurrentRepo(repos.find(repo => repo.repo === value.target.value))}>
-                      {
-                         repos.map(repo => (
-                             <option key={repo.repo} value={repo.repo}>{repo.owner}/{repo.repo}</option>
-                         ))
-                      }
-                   </select>
-                </div>
-                <div className={"shotput-label"}>
-                   Title <RequiredStar/>
-                </div>
-                <div className={"shotput-field-container"}>
-                   <input type={"text"} onChange={event => setTitle(event.target.value)} className={errors.title ? "shotput-field-error" : ""}/>
-                   { errors.title ? (<div className={"shotput-field-error-box"}>{errors.title}</div>) : null }
-                </div>
-                <div className={"shotput-label"}>
-                   Labels
-                </div>
-                <div className={"shotput-field-container"}>
-                   <ReactTags
-                       tags={labels.map((label: string) => ({
-                          id: label,
-                          name: label
-                       }))}
-                       onAddition={(tag) => {
-                          onAddTag(tag.name);
-                       }}
-                       onDelete={(index) => {
-                          onDeleteTag(index);
-                       }}
-                       allowNew={true}
-                   />
-                </div>
-                <div className={"shotput-bottom-buttons"}>
-                   <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>
-                   <span className={"shotput-bottom-button"} onClick={onPost}>Post</span>
-                </div>
-             </div>
-          </Modal>
-      );
-   }
+   )
 });

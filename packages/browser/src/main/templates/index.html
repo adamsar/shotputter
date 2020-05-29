@@ -11,8 +11,14 @@
     <script type="application/javascript">
         window.Shotput({
             service: {
-                url: "http://localhost:3000",
+                url: "http://localhost:3000/local",
                 enabledProviders: ['slack', 'github']
+            },
+            slack: {
+                defaultChannel: "test-posts"
+            },
+            github: {
+                defaultRepo: "shotputter"
             }
         });
     </script>

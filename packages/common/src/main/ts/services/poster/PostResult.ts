@@ -1,1 +1,1 @@
-export type PostResult = true | { error: string } | "unknown";;
+export type PostResult = true | { error: string } | "unknown";

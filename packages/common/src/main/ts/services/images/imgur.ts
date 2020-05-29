@@ -1,24 +1,29 @@
+import {HttpError, postRequest} from "../HostedRequester";
+import {chain, left, right, TaskEither} from "fp-ts/lib/TaskEither";
+import {pipe} from "fp-ts/lib/pipeable";
+
+export type ImgurError = {type: "imgurError"; error: string;} | HttpError;
+
 export interface ImgurUploader {
-    uploadImage: (file: string) => Promise<string>;
+
+    uploadImage: (file: string) => TaskEither<ImgurError, string>;
 }
 
 export const ImgurUploader = (clientId: string): ImgurUploader => {
+
+    const authorization = {Authorization: `Client-ID ${clientId}`};
+
     return {
-        uploadImage: async (file: string) => {
-            const result = await (await fetch("https://api.imgur.com/3/image", {
-                method: "POST",
-                body: JSON.stringify({
-                    image: file.replace("data:image/png;base64,", "")
-                }),
-                headers: {
-                    Authorization: `Client-ID ${clientId}`,
-                    "Content-Type": "application/json"
-                }
-            })).json();
-            if (!result['success']) {
-                throw result
-            }
-            return result['data']['link'];
+        uploadImage(file: string): TaskEither<ImgurError, string> {
+            return pipe(
+                postRequest<any>("https://api.imgur.com/3/image", {image: file.replace("data:image/png;base64,", "")}, authorization),
+                chain(result => {
+                    if (!result['success']) {
+                        return left({type: "imgurError", error: JSON.stringify(result)})
+                    }
+                    return right(result['data']['link']);
+                })
+            )
         }
-    }
+    };
 };

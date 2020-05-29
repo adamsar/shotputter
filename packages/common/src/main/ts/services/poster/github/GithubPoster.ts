@@ -1,152 +1,91 @@
-import {Poster} from "../Poster";
 import {Post} from "../Post";
-import {PostResult} from "../PostResult";
 import {ImgurUploader} from "../../images/imgur";
+import {getRequest, HostedRequester, HttpError, postRequest} from "../../HostedRequester";
+import {chain, fromEither, left, map, right, TaskEither} from "fp-ts/lib/TaskEither";
+import {pipe} from "fp-ts/lib/pipeable";
+import {eitherExtensions} from "../../../util/fp-util";
+import {mapLeft} from "fp-ts/lib/TaskThese";
 
-export type GithubPosterConfig  = {
+export type GithubError = {type: "githubError"; error: string;} | HttpError;
 
+export type GithubPosterConfig = {
     token: string;
-    repo?: string;
-    owner?: string;
-    canPost: false
-    
-} | {
-
-    token: string;
-    repo: string;
-    owner: string;
-    title:string;
-    labels: string[];
-    canPost: true
-
-} | {
-    url: string;
-    owner?: string;
-    repo?: string;
-    labels: string[];
-    title: string;
-
+    user?: string;
 };
-
-interface GithubPosterConfigSetter {
-    repo: string;
-    owner: string;
-    title: string;
-    labels?: string[];
-}
 
 export interface RepoInfo {
     owner: string;
     repo: string;
 }
 
-export type GithubPoster = Poster & {
+export type GithubPoster = {
 
-    setConfig: (options: GithubPosterConfigSetter) => void;
+    listRepos: () => TaskEither<GithubError, RepoInfo[]>;
 
-    config: GithubPosterConfig;
-
-    listRepos: () => Promise<RepoInfo[]>;
+    postIssue: ({post, repo, owner, title, labels}: { post: Post, repo: string, owner: string, title: string, labels: string[] }) => TaskEither<GithubError, true>;
 
 }
 
 const GithubBase: string = "https://api.github.com";
 
-export const HostedGithubPoster = (url: string, _config: GithubPosterConfig): GithubPoster => {
-    let config: GithubPosterConfig = {
-        url,
-        owner: _config.owner,
-        repo: _config.repo,
-        labels: [],
-        title: ""
-    };
+export const HostedGithubPoster = (hostedRequester: HostedRequester): GithubPoster => {
 
     return {
-        typeName: "github",
-        config,
-        listRepos: async () => {
-            return (await (await fetch(`${url}/github/repos`, {method: 'get'})).json())['repos'];
+        listRepos() {
+            return pipe(
+                hostedRequester.get<any>("/github/repos"),
+                chain(response => fromEither("repos" in response ? eitherExtensions.right(response["repos"]) : eitherExtensions.left({type: "githubError", error: JSON.stringify(response)})))
+            );
         },
-        setConfig: (p1: GithubPosterConfigSetter) => {
-            config = {...config, ...p1};
-        },
-        send: async (post: Post): Promise<PostResult> => {
-            try {
-                await fetch(`${url}/github/post`, {
-                    method: "post",
-                    body: JSON.stringify({
-                        repo: config.repo,
-                        owner: config.owner,
-                        // @ts-ignore
-                        title: config.title,
-                        // @ts-ignore
-                        labels: config.labels,
-                        image: post.image,
-                        message: post.message
-                    }),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }});
-            } catch (error) {
-                return { error };
-            }
+        postIssue({post, repo, owner, title, labels}: { post: Post, repo: string, owner: string, title: string, labels: string[] }): TaskEither<GithubError, true> {
+            return pipe(
+                hostedRequester.post("/github/post", {
+                    repo,
+                    owner,
+                    title,
+                    labels,
+                    ...post
+                }),
+                map(_ => true)
+            )
         }
     }
 };
 
-export const GithubPoster = (_config: GithubPosterConfig, imgurUploader: ImgurUploader): GithubPoster => {
-    let config = { ..._config };
-
+export const GithubPoster = (token: string, imgurUploader: ImgurUploader): GithubPoster => {
+    const authHeader = {
+        Authorization: `token ${token}`
+    };
     return {
-        typeName: "github",
-
-        config,
-
-        send: async (post: Post): Promise<PostResult> => {
-            if ("title" in config && "canPost" in config && config.canPost) {
-                try {
-                    const imgUrl = await imgurUploader.uploadImage(post.image);
-                    const result: any = await (await fetch(`${GithubBase}/repos/${config.owner}/${config.repo}/issues`, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            title: config.title,
-                            body: `![Screenshot](${imgUrl})
+        postIssue({post, repo, owner, title, labels}: { post: Post, repo: string, owner: string, title: string, labels: string[] }): TaskEither<GithubError, true> {
+            return pipe(
+                imgurUploader.uploadImage(post.image),
+                mapLeft(x => "imgurError" === x.type ? {type: "githubError", error: JSON.stringify(x)} : x),
+                chain(imgUrl => postRequest<any>(
+                        `${GithubBase}/repos/${owner}/${repo}/issues`,
+                    {
+                            title,
+                            body:  `![Screenshot](${imgUrl})
                             ${post.message || ""}`,
-                            labels: config.labels
-                        }),
-                        headers: {
-                            Authorization: `token ${config.token}`
-                        }
-                    })).json();
+                        labels
+                        },
+                        authHeader)),
+                chain(result => {
                     if (result['state']) {
-                        return true;
+                        return right(true);
+                    } else {
+                        return left({type: "githubError", error: JSON.stringify(result)});
                     }
-                } catch (error) {
-                    return { error };
-                }
-            }
-            return { error: "Insufficient data" }
+                })
+            );
         },
 
-        listRepos: async () => {
-            if ("token" in config) {
-                const repos: any[] = await (await fetch(`${GithubBase}/user/repos?per_page=100`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `token ${config.token}`
-                    }
-                })).json();
-                return repos.map(repo => ({
-                    owner: repo['owner']['login'],
-                    repo: repo['name']
-                }));
-            }
-            return []
-        },
-
-        setConfig: (options: GithubPosterConfigSetter) => {
-            // @ts-ignore
-            config = { ...config, ...options, canPost: true, labels: options.labels || [] };
+        listRepos(): TaskEither<GithubError, RepoInfo[]> {
+            return pipe(
+                getRequest<any>(`${GithubBase}/user/repos?per_page=100`, authHeader),
+                map(response => response.map((repo: any) => ({owner: repo['owner']['login'], repo: repo['name']})))
+            )
         }
+
     };
 };
