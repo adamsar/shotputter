@@ -15,7 +15,7 @@ import {isLeft} from "fp-ts/lib/Either";
 
 export interface SlackPostRequest {
     image: string;
-    channels?: string;
+    channels?: string[];
     message?: string;
 }
 
@@ -31,8 +31,15 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
     ], route(({req}) => {
         return expressValidateToErrorResponse<SlackPostRequest>(req)
             .chain((postRequest) => EitherAsync(async ({liftEither}) => {
+                console.log(JSON.stringify({
+                    channels: postRequest.channels,
+                    filename: `Screenshot-${new Date().toISOString()}.jpg`,
+                    // @ts-ignore
+                    file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
+                    initial_comment: postRequest.message
+    ***REMOVED***));
                 const result = await web.files.upload({
-                    channels: postRequest.channels || slackServerConfig.defaultChannel,
+                    channels: postRequest.channels.join(","),
                     filename: `Screenshot-${new Date().toISOString()}.jpg`,
                     // @ts-ignore
                     file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),

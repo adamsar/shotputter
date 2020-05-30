@@ -4,25 +4,26 @@ import {useStores} from "../../stores";
 import {SlackChannel, SlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {Loader} from "../processor/Loader";
 import {Modal} from "../common/Modal";
-import {Async, useAsync} from "react-async";
+import {Async, IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "react-async";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {SuccessModal} from "../common/SuccessModal";
+import {ErrorModal} from "../common/ErrorModal";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {
     const {global, screenshot} = useStores();
     const [channel, setChannel] = React.useState<string>();
     const slackService = global.slackService;
-    const {run: sendMessage, ...postChannelState} =  useAsync({
+    const postChannelState =  useAsync({
         deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(slackService.uploadFile({
             channels,
-            message: screenshot.post.message + `\n${JSON.stringify(screenshot.post.systemInfo)}`,
+            message: (screenshot.post.message || "") + `\n${JSON.stringify(screenshot.post.systemInfo || "")}`,
             fileName: `[Screenshot]-${new Date().toISOString()}.jpg`,
             base64File: screenshot.post.image
         }))()
     });
     const defaultChannel = global.appOptions.slack?.defaultChannel;
     const doPost = () => {
-        sendMessage([channel]);
+        postChannelState.run([channel || defaultChannel]);
     }
 
     return (
@@ -31,18 +32,28 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                 <Loader/>
             </Async.Pending>
             <Async.Rejected>{(error:SlackError) =>
-                JSON.stringify(error)
+                <ErrorModal onClose={onClose}>
+                    There was an error loading channels from slack<br/>
+                    <code>
+                        {JSON.stringify(error)}
+                    </code>
+                </ErrorModal>
 ***REMOVED***</Async.Rejected>
-            <Async.Fulfilled>{ (channels: SlackChannel[]) =>
-                <Async state={postChannelState}>
-                    <Async.Pending>
+            <Async.Fulfilled>{ (channels: SlackChannel[]) => (
+                <>
+                    <IfPending state={postChannelState}>
                         <Loader/>
-                    </Async.Pending>
-                    <Async.Rejected> { (error: SlackError) =>
-                        JSON.stringify(error)
-        ***REMOVED***
-                    </Async.Rejected>
-                    <Async.Initial>
+                    </IfPending>
+                    <IfRejected state={postChannelState}> { (error: SlackError) => (
+                        <ErrorModal onClose={onClose}>
+                            There was an error posting to Slack<br/>
+                            <code>
+                                {JSON.stringify(error)}
+                            </code>
+                        </ErrorModal>
+                    )}
+                    </IfRejected>
+                    <IfInitial state={postChannelState}>
                 <Modal onClose={onClose}>
                     <h3>Post to Slack</h3>
             ***REMOVED***
@@ -64,55 +75,18 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                 ***REMOVED***
             ***REMOVED***
                 </Modal>
-                    </Async.Initial>
-                    <Async.Fulfilled>{ _ => (
+                    </IfInitial>
+                    <IfFulfilled state={postChannelState}>{ _ => (
                         <>
                             <SuccessModal onClose={onClose}>
                                 Successfully posted message to #{channel} in Slack!
                             </SuccessModal>
                         </>
-                    )}</Async.Fulfilled>
-                </Async>
+                    )}
+                    </IfFulfilled>
+                    </>
+            )
 ***REMOVED***</Async.Fulfilled>
         </Async>
     )
 });
-
-    /*
-
-    React.useEffect(() => {
-        setLoadingChannels(true);
-        global.slackService.listChannels().then((channels) => {
-            setLoadingChannels(false);
-            setChannels(channels);
-            setChannel(channels[0].id);
-        }).catch((error) => {
-            console.log(error);
-            setErrored(true);
-        })
-    }, []);
-
-    const onPost = () => {
-        setLoadingChannels(true);
-        poster.send(screenshot.post).then(() => {
-            onFinish();
-        }).catch(error => {
-            console.log(error);
-            setErrored(true)
-        })
-    };
-
-    if (loadingChannels) {
-        return <Loader/>;
-    } else if (errored) {
-        return <Modal>
-            ERROR!
-        </Modal>
-    } else {
-        return (
-
-        );
-    }
-});
-
-     */
