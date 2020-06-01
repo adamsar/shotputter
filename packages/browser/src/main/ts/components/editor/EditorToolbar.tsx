@@ -8,6 +8,7 @@ import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 
 // @ts-ignore
 import mergeImages from 'merge-images';
+import {getSystemInfo} from "../../util/system-utils";
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
@@ -23,7 +24,8 @@ export const EditorToolbar = observer(() => {
     const onSubmit = async () => {
         const post: Post = {
             image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/png")]),
-            message: commentRef.current.value || undefined
+            message: commentRef.current.value || undefined,
+            systemInfo: getSystemInfo(window)
         };
         screenshot.setPost(post);
         global.displayMode = "display_poster";

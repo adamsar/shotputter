@@ -3,7 +3,7 @@ import {PostResult} from "./PostResult";
 import {TaskEither} from "fp-ts/lib/TaskEither";
 import {taskEither} from "fp-ts";
 
-type DownloadError = {type: "downloadError", error: string;}
+export type DownloadError = {type: "downloadError", error: string;}
 export interface DownloadPoster {
     send(post: Post): TaskEither<DownloadError, PostResult>
 }
