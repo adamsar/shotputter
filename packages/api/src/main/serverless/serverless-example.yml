@@ -29,7 +29,7 @@ provider:
 functions:
 
   app:
-    handler: "./index.handler"
+    handler: "./lambda.handler"
     events:
       - http:
           method: ANY
