@@ -20,3 +20,5 @@ export const getSystemInfo = (window: Window): SystemInfo => {
         sessionStorage: window.sessionStorage
     };
 };
+
+export const codeBlockString = (text: string) => `\`\`\`${text}\`\`\``

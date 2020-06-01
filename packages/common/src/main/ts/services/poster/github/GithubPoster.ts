@@ -71,7 +71,8 @@ export const GithubPoster = (token: string, imgurUploader: ImgurUploader): Githu
                             System info
                             \`\`\`
                             ${JSON.stringify(JSON.stringify(post.systemInfo, null, 2))}
-                            \`\`\``,
+                            \`\`\`
+                            ${post.metadata ? `Metadata\n\`\`\`${JSON.stringify(post.metadata, null, 2)}\`\`\``:""}`,
                         labels
         ***REMOVED***
                         authHeader)),
