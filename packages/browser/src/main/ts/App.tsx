@@ -6,6 +6,7 @@ import {ScreenshotStore} from "./stores/ScreenshotStore";
 import {ToolStore} from "./stores/ToolStore";
 import {MAIN_ID} from "./constants";
 import * as ReactDOM from "react-dom";
+import {WindowErrorComponent} from "./components/logging/WindowErrorComponent";
 
 export const App = ({options}: { options: AppOptions }) => {
     return <storeContext.Provider value={{
@@ -14,6 +15,7 @@ export const App = ({options}: { options: AppOptions }) => {
         tools: new ToolStore()
     }}>
         <Routes/>
+        <WindowErrorComponent appOptions={options} />
     </storeContext.Provider>;
 };
 
@@ -34,6 +36,15 @@ export interface AppOptions {
         defaultRepo?: string;
         token: string;
         defaultLabels?: string[];
+    };
+    errorReporting?: {
+        enabled?: boolean;
+        slack?: {
+            enabled: false;
+        } | { enabled: true; channel: string; };
+        consoleLog?: {
+            enabled: boolean;
+        }
     };
     download?: boolean;
 }

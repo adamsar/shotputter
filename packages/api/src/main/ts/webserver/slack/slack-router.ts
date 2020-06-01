@@ -1,5 +1,5 @@
 import * as express from "express";
-import {SlackService} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {SlackPostMessageParams, SlackService} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {imageValidator, messageValidator} from "../validators/post-validators";
 import {SlackServerConfig} from "../server";
 import {channelValidator} from "../validators/slack-validators";
@@ -7,11 +7,9 @@ import {route} from "../routing/route";
 import {expressValidateToErrorResponse} from "../routing/response-errors";
 import {EitherAsync, Left, Right} from "purify-ts";
 import {Posted} from "../routing/StandardResponses";
-import {BadResponse, Ok} from "../routing/responses";
-//import axios from "axios";
+import {BadResponse, Ok, ServerError} from "../routing/responses";
 import { WebClient } from '@shotputter/common/node_modules/@slack/web-api';
 import {isLeft} from "fp-ts/lib/Either";
-
 
 export interface SlackPostRequest {
     image: string;
@@ -31,21 +29,14 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
     ], route(({req}) => {
         return expressValidateToErrorResponse<SlackPostRequest>(req)
             .chain((postRequest) => EitherAsync(async ({liftEither}) => {
-                console.log(JSON.stringify({
-                    channels: postRequest.channels,
-                    filename: `Screenshot-${new Date().toISOString()}.jpg`,
-                    // @ts-ignore
-                    file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
-                    initial_comment: postRequest.message
-                }));
-                const result = await web.files.upload({
+
+                await web.files.upload({
                     channels: postRequest.channels.join(","),
                     filename: `Screenshot-${new Date().toISOString()}.jpg`,
                     // @ts-ignore
                     file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
                     initial_comment: postRequest.message
                 });
-                console.log(result);
 
                return liftEither(Right(Posted));
             }));
@@ -58,6 +49,21 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
         }
         return liftEither(Right(Ok({channels: channels.right})));
     })));
+
+    router.post("/postMessage", [
+        messageValidator,
+        channelValidator
+    ], route(({req}) => {
+        return expressValidateToErrorResponse<SlackPostMessageParams>(req)
+            .chain((post) => EitherAsync(async ({liftEither}) => {
+                const response = await slackService.postMessage(post)()
+                if (isLeft(response)) {
+                    return liftEither(Left(ServerError({error: "server", message: JSON.stringify(response.left)})));
+                } else {
+                    return liftEither(Right(Posted))
+                }
+            }));
+    }))
 
     return router;
 };

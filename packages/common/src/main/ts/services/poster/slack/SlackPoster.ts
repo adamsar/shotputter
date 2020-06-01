@@ -1,5 +1,5 @@
 import {PostResult} from "../PostResult";
-import {WebClient} from '@slack/web-api';
+import {WebAPICallResult, WebClient} from '@slack/web-api';
 import {base64ToBlob} from "base64-blob";
 import {chain, fromIOEither, left, map, mapLeft, right, taskEither, TaskEither} from "fp-ts/lib/TaskEither";
 import {pipe} from "fp-ts/lib/pipeable";
@@ -24,8 +24,14 @@ export interface SlackChannel {
 
 }
 
+export type SlackPostMessageParams = {
+    message: string;
+    channel: string;
+};
+
 export interface SlackServiceClient {
 
+    postMessage: ({message, channel}: SlackPostMessageParams) => TaskEither<SlackError, true>
     uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }) => TaskEither<SlackError, PostResult>;
     listChannels: () => TaskEither<SlackError, SlackChannel[]>;
 
@@ -34,6 +40,17 @@ export interface SlackServiceClient {
 export const HostedSlackService = (requester: HostedRequester): SlackServiceClient => {
 
     return {
+
+        postMessage: ({message, channel}) => {
+            return pipe(
+                requester.post<any>("/slack/postMessage", {
+                    message,
+                    channel
+                }),
+                map(_ => true)
+            )
+        },
+
         listChannels: () => {
             return pipe(
                 requester.get<any>("/slack/channels"),
@@ -57,6 +74,23 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
     const client = new WebClient(slackToken);
 
     return {
+        postMessage: ({message: text, channel}) => {
+            return pipe(
+                taskEitherExtensions.fromPromise(client.chat.postMessage({
+                    text,
+                    channel
+                })),
+                mapError,
+                chain((result: WebAPICallResult) => {
+                    if (result.ok) {
+                        return right(true)
+                    } else {
+                        return left({type: "unknown", error: result.error})
+                    }
+                })
+            )
+        },
+
         uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }): TaskEither<SlackError, PostResult> => {
             return pipe(
                 sequenceT(taskEither)(

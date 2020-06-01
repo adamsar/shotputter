@@ -6,9 +6,9 @@ import {
     SlackServiceClient
 } from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
-import {HostedRequester} from "../../../../../common/src/main/ts/services/HostedRequester";
-import {GithubPoster, HostedGithubPoster} from "../../../../../common/src/main/ts/services/poster/github/GithubPoster";
-import {DownloadPoster} from "../../../../../common/src/main/ts/services/poster/DownloadPoster";
+import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
+import {GithubPoster, HostedGithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
+import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
 
 interface WindowSize {
     width: number;
