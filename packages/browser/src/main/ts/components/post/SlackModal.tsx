@@ -8,6 +8,7 @@ import {Async, IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "re
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {SuccessModal} from "../common/SuccessModal";
 import {ErrorModal} from "../common/ErrorModal";
+import {codeBlockString} from "../../util/system-utils";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {
     const {global, screenshot} = useStores();
@@ -16,7 +17,9 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
     const postChannelState =  useAsync({
         deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(slackService.uploadFile({
             channels,
-            message: (screenshot.post.message || "") + `\n\nSystem info: \n\`\`\`${JSON.stringify(screenshot.post.systemInfo || "")}\`\`\``,
+            message: (screenshot.post.message || "") + `\n\nSystem info: \n\`\`\`${JSON.stringify(screenshot.post.systemInfo || "")}\`\`\`` + (
+                screenshot.post.metadata ? `\nMetadata\n${codeBlockString(JSON.stringify(screenshot.post.metadata, null, 2))}` : ""
+            ),
             fileName: `[Screenshot]-${new Date().toISOString()}.jpg`,
             base64File: screenshot.post.image
         }))()

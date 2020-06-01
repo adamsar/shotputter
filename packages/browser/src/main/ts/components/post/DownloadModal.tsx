@@ -37,7 +37,15 @@ export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void
                     </h4>
                     <code>
                         {JSON.stringify(screenshot.post.systemInfo)}
-                    </code>
+                    </code><br/>
+                    {screenshot.post.metadata ? (
+                        <>
+                        <h4>Metadata</h4>
+                        <code>
+                            {JSON.stringify(screenshot.post.metadata, null, 2)}
+                        </code>
+                        </>
+                    ) : null}
                 </SuccessModal>
             )}</Async.Fulfilled>
             <Async.Pending>

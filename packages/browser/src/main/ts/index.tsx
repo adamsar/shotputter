@@ -4,4 +4,6 @@ import "../templates/index.html";
 import {ShotputStart} from "./App";
 
 // @ts-ignore
-window.Shotput = ShotputStart;
+window.Shotput = ShotputStart
+
+export {ShotputStart};

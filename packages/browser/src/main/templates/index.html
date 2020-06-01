@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/mobile.css">
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
-        window.Shotput({
+        const instance = window.Shotput({
             service: {
                 url: "http://localhost:3000/local",
                 enabledProviders: ['slack', 'github']
@@ -27,6 +27,9 @@
                 }
             }
         });
+
+        instance.setMetadata({userId: 19120832109, page: "testPage"});
+        console.log(instance.setMetadata);
     </script>
 </head>
 <body>

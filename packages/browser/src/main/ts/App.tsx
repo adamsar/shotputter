@@ -7,11 +7,12 @@ import {ToolStore} from "./stores/ToolStore";
 import {MAIN_ID} from "./constants";
 import * as ReactDOM from "react-dom";
 import {WindowErrorComponent} from "./components/logging/WindowErrorComponent";
+import {Metadata} from "@shotputter/common/src/main/ts/models/Metadata";
 
-export const App = ({options}: { options: AppOptions }) => {
+export const App = ({options, screenshotStore}: { options: AppOptions, screenshotStore: ScreenshotStore }) => {
     return <storeContext.Provider value={{
         global: new GlobalStateStore(options),
-        screenshot: new ScreenshotStore(),
+        screenshot: screenshotStore,
         tools: new ToolStore()
     }}>
         <Routes/>
@@ -47,20 +48,40 @@ export interface AppOptions {
         }
     };
     download?: boolean;
+    metadata?: Metadata;
 }
 
 export const ShotputStart = (options: AppOptions) => {
+    const screenshotStore = new ScreenshotStore();
+    if (options.metadata) {
+        screenshotStore.setMetadata(options.metadata);
+    }
     const load = () => {
         const tabHolder = document.createElement("div");
         tabHolder.id = MAIN_ID;
         document.body.appendChild(tabHolder);
-        ReactDOM.render(<App options={options}/>, tabHolder);
+        ReactDOM.render(<App options={options} screenshotStore={screenshotStore}/>, tabHolder);
     };
+
     if (document.readyState === "complete"
         || document.readyState === "interactive") {
         load();
+    } else {
+        window.addEventListener("DOMContentLoaded", () => {
+            load();
+        });
     }
-    window.addEventListener("DOMContentLoaded", () => {
-        load();
-    });
+    return {
+        setMetadata: (metadata: Metadata) => {
+            screenshotStore.setMetadata(metadata);
+        },
+
+        updateMetadata: (metadata: Metadata) => {
+            screenshotStore.setMetadata({...(screenshotStore.metadata || {}), ...metadata})
+
+        },
+        purgeMetadata: () => {
+            screenshotStore.setMetadata({});
+        }
+    }
 };
