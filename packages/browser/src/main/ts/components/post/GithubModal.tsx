@@ -49,7 +49,7 @@ const validator: t.Type<GithubModalForm, GithubModalForm> = t.type({
 });
 
 export const GithubModal = observer(({onClose}: GithubModal) => {
-   const {  global } = useStores();
+   const {  screenshot, global } = useStores();
    const githubService = global.githubService;
 
    const loadRepoState = useAsync(useMemo(() => taskEitherExtensions.toDeferFn(githubService.listRepos()), []));
@@ -60,7 +60,12 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
 
    const [errors, setErrors] = React.useState<ShotputFormError>();
 
-   const postState = useAsync({deferFn: ([_]: [GithubModalForm]) => (async () => true)()})
+   const postState = useAsync({deferFn: ([form]: [GithubModalForm]) => {
+      return taskEitherExtensions.toDeferFn(githubService.postIssue({
+            post: screenshot.post,
+            ...form
+         }))();
+      }})
 
    function updateForm(obj: Partial<GithubModalForm>) {
       setForm(merge({}, form, obj))
@@ -166,7 +171,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                     <Loader/>
                  </IfPending>
                  <IfRejected state={postState}> { (error: GithubError) => (
-                     <Modal onClose={onClose}>{JSON.stringify(error)}</Modal>
+                     <Modal onClose={onClose}><pre>{JSON.stringify(error, null, 2)}</pre></Modal>
                  )}
                  </IfRejected>
                  <IfFulfilled state={postState}>{ (_) => (<>

@@ -66,7 +66,12 @@ export const GithubPoster = (token: string, imgurUploader: ImgurUploader): Githu
                     {
                             title,
                             body:  `![Screenshot](${imgUrl})
-                            ${post.message || ""}`,
+                            ${post.message || ""}
+                            
+                            System info
+                            \`\`\`
+                            ${JSON.stringify(JSON.stringify(post.systemInfo, null, 2))}
+                            \`\`\``,
                         labels
                         },
                         authHeader)),
