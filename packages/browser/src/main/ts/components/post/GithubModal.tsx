@@ -154,7 +154,6 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                      ***REMOVED***}
                                  allowNew={true}
                              />
-                             {JSON.stringify(form)}
                   ***REMOVED***
                           <div className={"shotput-bottom-buttons"}>
                              <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>

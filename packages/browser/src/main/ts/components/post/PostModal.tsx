@@ -4,11 +4,11 @@ import {useStores} from "../../stores";
 import {Modal} from "../common/Modal";
 import {SlackModal} from "./SlackModal";
 import {GithubModal} from "./GithubModal";
-import {isLeft} from "fp-ts/lib/Either";
+import {DownloadModal} from "./DownloadModal";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
-    const [route, setRoute] = React.useState<"base" | "slack" | "github">("base");
+    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download">("base");
 
     const onClose = () => {
         screenshot.setPost(null);
@@ -20,14 +20,7 @@ export const PostModal = observer(() => {
             case "github":
                 return <li key={"github"} onClick={() => setRoute("github")}>Github</li>;
             case "download":
-                return <li key={"download"} onClick={async () => {
-                    const result = await global.downloadService.send(screenshot.post)();
-                    if (isLeft(result)) {
-                        console.log(result.left)
-        ***REMOVED*** else {
-                        console.log("SAVED")
-        ***REMOVED***
-    ***REMOVED***}>Download</li>;
+                return <li key={"download"} onClick={() => setRoute("download")}>Download</li>;
             case "slack":
                 return <li key={"slack"} onClick={() => setRoute("slack")}>Slack</li>;
 
@@ -59,6 +52,9 @@ export const PostModal = observer(() => {
 
         case "slack":
             return <SlackModal onClose={() => setRoute("base")} onFinish={() => setRoute("base")}/>;
+
+        case "download":
+            return <DownloadModal onClose={() => setRoute("base")} onFinish={() => setRoute("base")}/>;
 
     }
 });

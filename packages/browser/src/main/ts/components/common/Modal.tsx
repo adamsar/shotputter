@@ -15,7 +15,7 @@ export const Modal = ({children, onClose, className, ...rest}: PropsWithChildren
     return (
         <>
             <ModalBackground onClick = {onClose}/>
-            <div className={"shotput-modal-box " + (className ?? "")} {...rest} style={{top: `calc(50% - ${height - 16}px)`, left: `calc(50% - ${width - 16}px)`}}>
+            <div className={"shotput-modal-box " + (className ?? "")} {...rest} style={{top: `calc(50% - ${((height + 32) / 2)}px)`, left: `calc(50% - ${((width + 32) / 2) }px)`}}>
                 <div ref={divRef}> {children} ***REMOVED***
     ***REMOVED***
         </>
