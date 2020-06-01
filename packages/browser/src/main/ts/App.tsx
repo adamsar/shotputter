@@ -49,10 +49,11 @@ export interface AppOptions {
     };
     download?: boolean;
     metadata?: Metadata;
+    captureLogs?: boolean;
 }
 
 export const ShotputStart = (options: AppOptions) => {
-    const screenshotStore = new ScreenshotStore();
+    const screenshotStore = new ScreenshotStore(options.captureLogs);
     if (options.metadata) {
         screenshotStore.setMetadata(options.metadata);
     }

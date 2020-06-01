@@ -46,6 +46,14 @@ export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void
                         </code>
                         </>
                     ) : null}
+                    {screenshot.post.logs?.length ?? 0 > 0 ? (
+                        <>
+                            <h4>Logs</h4>
+                            <code>
+                                {screenshot.post.logs.join("\n")}
+                            </code>
+                        </>
+                    ) : null}
                 </SuccessModal>
             )}</Async.Fulfilled>
             <Async.Pending>

@@ -55,6 +55,7 @@
     "react-icons": "^3.10.0",
     "react-inlinesvg": "^1.2.0",
     "react-tag-autocomplete": "^6.0.0-beta.3",
+    "ringbufferjs": "^2.0.0",
     "stacktrace-js": "^2.0.2"
   }
 }

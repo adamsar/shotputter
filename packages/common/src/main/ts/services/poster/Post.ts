@@ -7,5 +7,6 @@ export interface Post {
     message: string | null;
     systemInfo?: SystemInfo;
     metadata?: Metadata;
+    logs?: string[];
 
 }
