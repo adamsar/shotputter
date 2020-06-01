@@ -3,6 +3,7 @@ import html2canvas from "html2canvas";
 import {MAIN_ID} from "../constants";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 import {Metadata} from "@shotputter/common/src/main/ts/models/Metadata";
+import RingBuffer from "ringbufferjs";
 
 export class ScreenshotStore {
 
@@ -10,8 +11,23 @@ export class ScreenshotStore {
     @observable screenshot: string;
     @observable post: Post | null = null;
     @observable metadata: object | null = null;
+    @observable logBuffer: RingBuffer<string>;
 
-    constructor() {
+    constructor(captureLogs?: boolean) {
+        if (captureLogs) {
+            console.log("capturing");
+            this.logBuffer = new RingBuffer<string>(20);
+            const wrapLog = (level: string, fn: (msg: any, ...args: any[]) => void) => {
+                return (msg: any, ...args2: any[]) => {
+                    fn(msg, ...args2);
+                    this.logBuffer.enq(level + ": " + msg);
+                }
+            }
+            console.log = wrapLog("log", console.log);
+            console.warn = wrapLog("warn", console.warn);
+            console.error = wrapLog("error", console.error);
+            console.debug = wrapLog("debug", console.debug);
+        }
     }
 
     async takeScreenshot() {
@@ -26,7 +42,7 @@ export class ScreenshotStore {
     }
 
     setPost(post: Post) {
-        this.post = {...post, metadata: this.metadata};
+        this.post = {...post, metadata: this.metadata, ...(this.logBuffer?.size() ?? 0 > 0 ? {logs: this.logBuffer.peekN(this.logBuffer.size())} : {})};
     }
 
     setMetadata(metadata: Metadata) {

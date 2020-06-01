@@ -5,6 +5,7 @@ import {chain, fromEither, left, map, right, TaskEither} from "fp-ts/lib/TaskEit
 import {pipe} from "fp-ts/lib/pipeable";
 import {eitherExtensions} from "../../../util/fp-util";
 import {mapLeft} from "fp-ts/lib/TaskThese";
+import {codeBlockString} from "../../../../../../../browser/src/main/ts/util/system-utils";
 
 export type GithubError = {type: "githubError"; error: string;} | HttpError;
 
@@ -66,13 +67,11 @@ export const GithubPoster = (token: string, imgurUploader: ImgurUploader): Githu
                     {
                             title,
                             body:  `![Screenshot](${imgUrl})
-                            ${post.message || ""}
-                            
-                            System info
-                            \`\`\`
-                            ${JSON.stringify(JSON.stringify(post.systemInfo, null, 2))}
-                            \`\`\`
-                            ${post.metadata ? `Metadata\n\`\`\`${JSON.stringify(post.metadata, null, 2)}\`\`\``:""}`,
+                            ${post.message || ""}                            
+                            System info                          
+                            ${codeBlockString(JSON.stringify(JSON.stringify(post.systemInfo, null, 2)))}                            
+                            ${post.metadata ? `Metadata\n${codeBlockString(JSON.stringify(post.metadata, null, 2))}`:""}
+                            ${post.logs?.length ?? 0 > 0 ? `Logs\n${codeBlockString(post.logs?.join("\n"))}`: ""}`,
                         labels
                         },
                         authHeader)),

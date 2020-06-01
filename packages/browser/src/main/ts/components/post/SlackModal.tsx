@@ -17,9 +17,14 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
     const postChannelState =  useAsync({
         deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(slackService.uploadFile({
             channels,
-            message: (screenshot.post.message || "") + `\n\nSystem info: \n\`\`\`${JSON.stringify(screenshot.post.systemInfo || "")}\`\`\`` + (
+            message: (screenshot.post.message || "") + (
+                `\nSystem info: \n${codeBlockString(JSON.stringify(screenshot.post.systemInfo || "", null, 2))}`
+            ) + (
                 screenshot.post.metadata ? `\nMetadata\n${codeBlockString(JSON.stringify(screenshot.post.metadata, null, 2))}` : ""
-            ),
+            ) + (
+                (screenshot.post.logs?.length ?? 0 > 0) ? `\nLogs\n${codeBlockString(screenshot.post.logs.join("\n"))}` : ""
+                )
+            ,
             fileName: `[Screenshot]-${new Date().toISOString()}.jpg`,
             base64File: screenshot.post.image
         }))()
