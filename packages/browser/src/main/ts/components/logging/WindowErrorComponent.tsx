@@ -6,16 +6,16 @@ import {useStores} from "../../stores";
 import {isLeft} from "fp-ts/lib/Either";
 import {ErrorModal} from "../common/ErrorModal";
 import {SystemInfo} from "@shotputter/common/src/main/ts/models/SystemInfo";
-import {getSystemInfo} from "../../util/system-utils";
+import {codeBlockString, getSystemInfo} from "../../util/system-utils";
 
 interface WindowErrorComponentProps {
     appOptions: AppOptions
 }
 
-type ErrorHandler = (opts: {message: string; systemInfo: SystemInfo;}) => void;
+type ErrorHandler = (opts: {message: string; systemInfo: SystemInfo; logs?: string[];}) => void;
 
 export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponentProps) => {
-    const { global } = useStores();
+    const { global, screenshot } = useStores();
     const [failure, setFailure] = React.useState<string>();
 
     if (appOptions.errorReporting?.enabled) {
@@ -29,9 +29,17 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
     ***REMOVED***);
 ***REMOVED***
             if (appOptions?.errorReporting?.slack?.enabled && global.slackService) {
-                handlers.push(async ({message, systemInfo}) => {
+                handlers.push(async ({message, systemInfo, logs}) => {
                     const result = await global.slackService.postMessage({
-                        message: `${message}\nSystem info:\n\`\`\`${JSON.stringify(systemInfo, null, 2)}\`\`\``,
+                        message: `${message}
+                        System info
+                        ${codeBlockString(JSON.stringify(systemInfo, null, 2))}
+                        ${logs && logs.length > 0 ? `
+                        
+                        Logs
+                        ${codeBlockString(logs.join("\n"))}
+                        ` : ""}
+                        `,
                         // @ts-ignore
                         channel: appOptions.errorReporting.slack.channel
         ***REMOVED***)();
@@ -40,12 +48,24 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
         ***REMOVED***
     ***REMOVED***);
 ***REMOVED***
+            if (appOptions?.errorReporting?.customEndpointEnabled && global.customRequestService) {
+                handlers.push(async ({message, systemInfo, logs}) => {
+                    const result = await global.customRequestService.sendError(
+                        message,
+                        systemInfo,
+                        logs)();
+                    if (isLeft(result)) {
+                        setFailure(JSON.stringify(result.left, null, 2))
+        ***REMOVED***
+    ***REMOVED***)
+***REMOVED***
 
             const handleError: OnErrorEventHandler = (msg: string, _2: any, _3: any, _4: any, error: Error ) => {
                 Stacktrace.fromError(error).then(async stackframes => {
                     const message = msg + "\n" + stackframes.map((sf) => sf.toString()).join('\n');
                     const systemInfo = getSystemInfo(window);
-                    return Promise.all(handlers.map(async (x) => await x({message, systemInfo})));
+                    const logs = (screenshot.logBuffer.size() ?? 0) > 0 ? screenshot.logBuffer.peekN(screenshot.logBuffer.size()) : undefined
+                    return Promise.all(handlers.map(async (x) => await x({message, systemInfo, logs})));
     ***REMOVED***).catch(setFailure);
 ***REMOVED***;
 
