@@ -9,6 +9,7 @@ import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgu
 import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
 import {GithubPoster, HostedGithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
+import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 
 interface WindowSize {
     width: number;
@@ -53,11 +54,15 @@ export class GlobalStateStore {
         }
         if (appOptions.github?.token && this.imgurService) {
             this.githubService = GithubPoster(appOptions.github?.token, this.imgurService);
-            this.availablePosters.push("github")
+            this.availablePosters.push("github");
         }
         if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "github")) {
             this.githubService = HostedGithubPoster(requester);
-            this.availablePosters.push("github")
+            this.availablePosters.push("github");
+        }
+        if (appOptions.customEndpoint) {
+            this.customRequestService = HttpPoster(appOptions.customEndpoint);
+            this.availablePosters.push("custom");
         }
     }
 
@@ -69,7 +74,7 @@ export class GlobalStateStore {
 
     @observable appOptions: AppOptions | null = null;
 
-    @observable availablePosters: ("slack" | "download" | "github")[] = [];
+    @observable availablePosters: ("slack" | "download" | "github" | "custom")[] = [];
 
     slackService: SlackServiceClient | null = null;
 
@@ -78,6 +83,8 @@ export class GlobalStateStore {
     githubService: GithubPoster | null = null;
 
     downloadService: DownloadPoster | null = null;
+
+    customRequestService: HttpPoster | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

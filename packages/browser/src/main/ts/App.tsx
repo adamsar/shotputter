@@ -32,6 +32,7 @@ export interface AppOptions {
     imgur?: {
         clientId: string;
     };
+    customEndpoint: string;
     github?: {
         defaultOwner?: string;
         defaultRepo?: string;
@@ -43,6 +44,7 @@ export interface AppOptions {
         slack?: {
             enabled: false;
         } | { enabled: true; channel: string; };
+        customEndpointEnabled?: boolean;
         consoleLog?: {
             enabled: boolean;
         }

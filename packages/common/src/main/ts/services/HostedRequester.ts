@@ -31,6 +31,13 @@ export function getRequest<A>(path: string, headers?: object): TaskEither<HttpEr
 
 export function postRequest<A>(path: string, body?: object | FormData, headers?: object): TaskEither<HttpError, A> {
     return pipe(
+        doPostRequest(path, body, headers),
+        chain(body => tryCatch(() => body.json(), error => ({type: "httpError", error: String(error)})))
+    );
+}
+
+export function doPostRequest(path: string, body?: object | FormData, headers?: object): TaskEither<HttpError, Response> {
+    return pipe(
         promiseToTaskEither(
             fetch(path, {
                 method: 'POST',
@@ -41,8 +48,20 @@ export function postRequest<A>(path: string, body?: object | FormData, headers?:
                     "Content-Type": body instanceof FormData ? "multipart/form-data" : "application/json"
                 }
             })),
-        chain(body => tryCatch(() => body.json(), String)),
-        mapError
+        mapError,
+        chain((response: Response) => {
+            if (response.status >= 400) {
+                return pipe(
+                    taskEitherExtensions.fromPromise(response.text()),
+                    map((details: string): HttpError => ({type: "httpError", details, errorStatus: response.status})),
+                    mapError,
+                    fold(task.of, x => task.of(x)),
+                    taskMap(x => eitherExtensions.left(x))
+                );
+            } else {
+                return right(response)
+            }
+        })
     );
 }
 
