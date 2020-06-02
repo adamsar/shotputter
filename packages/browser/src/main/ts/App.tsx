@@ -34,6 +34,7 @@ export interface AppOptions {
     };
     customEndpoint: string;
     github?: {
+        images: "imgur" | "s3";
         defaultOwner?: string;
         defaultRepo?: string;
         token: string;
@@ -48,6 +49,13 @@ export interface AppOptions {
         consoleLog?: {
             enabled: boolean;
         }
+    };
+    s3?: {
+      enabled: boolean;
+      identityPoolId: string;
+      region: string;
+      prefix?: string;
+      bucket: string;
     };
     download?: boolean;
     metadata?: Metadata;

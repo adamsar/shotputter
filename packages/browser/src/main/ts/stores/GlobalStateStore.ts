@@ -10,6 +10,7 @@ import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedReq
 import {GithubPoster, HostedGithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
+import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
 
 interface WindowSize {
     width: number;
@@ -49,11 +50,17 @@ export class GlobalStateStore {
             this.slackService = HostedSlackService(requester);
             this.availablePosters.push("slack");
         }
+        if (appOptions.s3?.enabled &&
+            appOptions.s3?.identityPoolId &&
+            appOptions.s3?.bucket &&
+            appOptions.s3?.region) {
+            this.s3Service = S3Images(appOptions.s3.region, appOptions.s3.identityPoolId, appOptions.s3.bucket, appOptions.s3.prefix)
+        }
         if (appOptions.imgur?.clientId) {
             this.imgurService = ImgurUploader(appOptions.imgur?.clientId);
         }
-        if (appOptions.github?.token && this.imgurService) {
-            this.githubService = GithubPoster(appOptions.github?.token, this.imgurService);
+        if (appOptions.github?.token && (this.imgurService || this.s3Service)) {
+            this.githubService = GithubPoster(appOptions.github?.token, this.imgurService || this.s3Service);
             this.availablePosters.push("github");
         }
         if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "github")) {
@@ -85,6 +92,8 @@ export class GlobalStateStore {
     downloadService: DownloadPoster | null = null;
 
     customRequestService: HttpPoster | null = null;
+
+    s3Service: S3Images | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 
