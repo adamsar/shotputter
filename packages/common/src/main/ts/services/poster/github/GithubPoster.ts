@@ -53,7 +53,7 @@ export const HostedGithubPoster = (hostedRequester: HostedRequester): GithubPost
     }
 };
 
-export const GithubPoster = (token: string, imgurUploader: ImgurUploader): GithubPoster => {
+export const GithubPoster = (token: string, imgurUploader: ImageUploader): GithubPoster => {
     const authHeader = {
         Authorization: `token ${token}`
     };
