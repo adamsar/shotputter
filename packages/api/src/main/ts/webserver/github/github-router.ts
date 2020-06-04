@@ -1,4 +1,4 @@
-import {GithubServerConfig, ImgurServerConfig} from "../server";
+import {GithubServerConfig} from "../server";
 import * as express from "express";
 import {imageValidator, messageValidator} from "../validators/post-validators";
 import {labelsValidator, ownerValidator, repoValidator, titleValidator} from "../validators/github-validators";
@@ -6,10 +6,10 @@ import {route} from "../routing/route";
 import {EitherAsync, Left, Right} from "purify-ts";
 import {expressValidateToErrorResponse} from "../routing/response-errors";
 import {GithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
-import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 import {Posted} from "../routing/StandardResponses";
 import {BadResponse, Ok} from "../routing/responses";
 import {isLeft} from "fp-ts/lib/Either";
+import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
 
 export interface GithubPostRequest {
     image: string;
@@ -21,10 +21,9 @@ export interface GithubPostRequest {
     labels?: string[];
 }
 
-export const githubRouter = (githubConfig: GithubServerConfig, imgurConfig: ImgurServerConfig): express.Router => {
+export const githubRouter = (githubConfig: GithubServerConfig, imageUploader: ImageUploader): express.Router => {
     const router = express.Router();
-    const imgurService = ImgurUploader(imgurConfig.clientId);
-    const githubService = GithubPoster(githubConfig.token, imgurService);
+    const githubService = GithubPoster(githubConfig.token, imageUploader);
 
     router.post("/post", [
         imageValidator,
@@ -42,7 +41,7 @@ export const githubRouter = (githubConfig: GithubServerConfig, imgurConfig: Imgu
                     title: postRequest.title,
                     labels: postRequest.labels || [],
                 };
-                const image = await imgurService.uploadImage(postRequest.image)();
+                const image = await imageUploader.uploadImage(postRequest.image)();
                 if (isLeft(image)) {
                     return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(image.left)})))
                 }

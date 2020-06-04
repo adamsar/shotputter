@@ -1,20 +1,25 @@
-import * as express from "express";
 import {Express} from "express";
+import express from "express";
 import {slackRouter} from "./slack/slack-router";
 import {githubRouter} from "./github/github-router";
 import * as es6Promise from "es6-promise";
-es6Promise.polyfill();
 import "isomorphic-fetch";
 // @ts-ignore
-
 import {atob} from "atob";
+// @ts-ignore
+import {Blob} from "vblob";
+import "formdata-polyfill";
+import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
+import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
+import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
+
+es6Promise.polyfill();
+// @ts-ignore
 // @ts-ignore
 global.atob = atob;
 // @ts-ignore
-import { Blob } from "vblob";
-// @ts-ignore
 global.Blob = Blob;
-import "formdata-polyfill";
+
 // @ts-ignore
 
 
@@ -33,15 +38,27 @@ export interface ImgurServerConfig {
     clientId: string;
 }
 
+export interface S3Config {
+
+    enabled: boolean;
+    bucket: string;
+    prefix?: string;
+
+}
+
 export interface ServerConfig {
     slack?: SlackServerConfig;
     github?: GithubServerConfig;
     imgur?: ImgurServerConfig;
+    s3?: S3Config;
 }
 
 export const getApp = (serverConfig: ServerConfig = {}): Express => {
     const app = express();
     const enabledPosters = [];
+    let imgurUploader: ImageUploader;
+    let s3Uploader: ImageUploader;
+
     app.use(express.json({
         limit: "10mb"
     }));
@@ -51,12 +68,22 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
     } else {
         console.warn("Slack client id is not configured. Not using Slack integration.")
     }
+    if (serverConfig.s3?.enabled) {
+        s3Uploader = S3Images(
+            process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,
+            serverConfig.s3.bucket,
+            undefined,
+            serverConfig.s3.prefix)
+    }
+    if (serverConfig.imgur?.clientId) {
+        imgurUploader = ImgurUploader(serverConfig.imgur.clientId)
+    }
 
-    if (serverConfig.github?.token && serverConfig.imgur?.clientId) {
-        app.use("/github", githubRouter(serverConfig.github, serverConfig.imgur));
+    if (serverConfig.github?.token && (imgurUploader || s3Uploader)) {
+        app.use("/github", githubRouter(serverConfig.github, (imgurUploader || s3Uploader)));
     } else {
-        if (!serverConfig.imgur?.clientId) {
-            console.warn("Imgur clientId not configured, can't add github without an image poster");
+        if ((imgurUploader || s3Uploader)) {
+            console.warn("No image uploader configured");
         } else {
             console.warn("Github id not configured. Not using Github integration.")
         }
