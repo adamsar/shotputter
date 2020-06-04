@@ -1,5 +1,5 @@
 import {ServerConfig} from "../webserver/server";
-import * as convict from "convict";
+import convict from "convict";
 
 export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const slackClientId = process.env['SHOTPUT_SLACK_CLIENT_ID'];
@@ -8,6 +8,9 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const githubDefaultOwner = process.env['SHOTPUT_GITHUB_DEFAULT_OWNER'];
     const githubDefaultRepo = process.env['SHOTPUT_GITHUB_DEFAULT_REPO'];
     const imgurClientId = process.env['SHOTPUT_IMGUR_CLIENT_ID'];
+    const s3Bucket = process.env['S3_BUCKET'];
+    const s3Prefix = process.env['S3_PREFIX'];
+    const s3Enabled = process.env['S3_ENABLED'] === "true";
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
         ...((githubToken || githubDefaultOwner || githubDefaultRepo) ? {
@@ -21,7 +24,14 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
             imgur: {
                 clientId: imgurClientId || conf.imgur?.clientId
 ***REMOVED***
-        } : conf.imgur ? {imgur: conf.imgur} : {})
+        } : conf.imgur ? {imgur: conf.imgur} : {}),
+        ...((s3Enabled && s3Bucket) ? {
+            s3: {
+                enabled: s3Enabled,
+                bucket: s3Bucket,
+                prefix: s3Prefix
+***REMOVED***
+        } : {})
     };
 };
 
@@ -34,7 +44,7 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
             env: "SHOTPUT_SLACK_CLIENT_ID"
         },
         defaultChannel: {
-            doc: "Default chanell to post to when posting to Slack",
+            doc: "Default channel to post to when posting to Slack",
             default: null,
             format: "*",
             env: "SHOTPUT_SLACK_DEFAULT_CHANNEL"
@@ -66,6 +76,27 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
             default: null,
             format: "*",
             env: "SHOTPUT_IMGUR_CLIENT_ID"
+        }
+    },
+    s3: {
+
+        enabled: {
+            doc: "S3 uploading enabled or not",
+            default: false,
+            format: Boolean,
+            env: "S3_ENABLED"
+        },
+        bucket: {
+            doc: "S3 bucket to upload to",
+            default: null,
+            format: "*",
+            env: "S3_BUCKET"
+        },
+        prefix: {
+            doc: "Prefix to prepend to keys being upload to S3",
+            default: null,
+            format: "*",
+            env: "S3_PREFIX"
         }
     }
 });

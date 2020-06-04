@@ -10,7 +10,8 @@ import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedReq
 import {GithubPoster, HostedGithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
-import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
+import {getIncognitoCredentials, S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
+import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
 
 interface WindowSize {
     width: number;
@@ -54,7 +55,7 @@ export class GlobalStateStore {
             appOptions.s3?.identityPoolId &&
             appOptions.s3?.bucket &&
             appOptions.s3?.region) {
-            this.s3Service = S3Images(appOptions.s3.region, appOptions.s3.identityPoolId, appOptions.s3.bucket, appOptions.s3.prefix)
+            this.s3Service = S3Images(appOptions.s3.region , appOptions.s3.bucket, getIncognitoCredentials(appOptions.s3.identityPoolId), appOptions.s3.prefix)
         }
         if (appOptions.imgur?.clientId) {
             this.imgurService = ImgurUploader(appOptions.imgur?.clientId);
@@ -85,7 +86,7 @@ export class GlobalStateStore {
 
     slackService: SlackServiceClient | null = null;
 
-    imgurService: ImgurUploader | null = null;
+    imgurService: ImageUploader | null = null;
 
     githubService: GithubPoster | null = null;
 
@@ -93,7 +94,7 @@ export class GlobalStateStore {
 
     customRequestService: HttpPoster | null = null;
 
-    s3Service: S3Images | null = null;
+    s3Service: ImageUploader | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

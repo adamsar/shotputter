@@ -55,7 +55,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    const loadRepoState = useAsync(useMemo(() => taskEitherExtensions.toDeferFn(githubService.listRepos()), []));
    const { data: repos, isFulfilled: reposLoaded } = loadRepoState;
    const [form, setForm] = React.useState<Partial<GithubModalForm>>({
-      labels: global.appOptions?.github?.defaultLabels ?? []
+      labels: global.appOptions?.github?.defaultLabels ?? [],
    });
 
    const [errors, setErrors] = React.useState<ShotputFormError>();
@@ -83,15 +83,17 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
       if (reposLoaded) {
          setForm(merge({}, form, {
             owner: repos.find(({owner}) => owner === global.appOptions.github?.defaultOwner) ?? repos[0].owner,
-            repo: repos.find(({repo}) => repo === global.appOptions.github?.defaultRepo) ?? repos[0].repo
+            repo: repos.find(({repo}) => repo === global.appOptions.github?.defaultRepo)?.repo ?? repos[0].repo
          }))
       }
    }, [repos]);
 
    const onPost = () => pipe(
-       decodeForm(validator, form),
+       decodeForm(validator, {...form, repo: (form.repo || global.appOptions.github?.defaultRepo)}),
        fold(
-           errors => setErrors(errors),
+           errors => {
+               setErrors(errors)
+           },
            (form) => {
               postState.run(form);
               setErrors(undefined);
@@ -170,7 +172,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                  <IfPending state={postState}>
                     <Loader/>
                  </IfPending>
-                 <IfRejected state={postState}> { (error: GithubError) => (
+                 <IfRejected state={postState}>{ (error: GithubError, _) => (
                      <Modal onClose={onClose}><pre>{JSON.stringify(error, null, 2)}</pre></Modal>
                  )}
                  </IfRejected>
