@@ -3,6 +3,8 @@ import {pipe} from "fp-ts/lib/pipeable";
 import {eitherExtensions, promiseToTaskEither, taskEitherExtensions} from "../util/fp-util";
 import {task, map as taskMap} from "fp-ts/lib/Task";
 
+const FormData = window?.FormData ?? require("form-data");
+
 export type HttpError = {type: "httpError"} & ({errorStatus: number; details: string} | {error: string;});
 const mapError = mapLeft<string, HttpError>(error => ({error, type: "httpError"}));
 
@@ -14,6 +16,7 @@ export function getRequest<A>(path: string, headers?: object): TaskEither<HttpEr
         mapError,
         chain((response: Response) => {
             if (response.status >= 400) {
+                console.log(response);
                 return pipe(
                     taskEitherExtensions.fromPromise(response.text()),
                     map((details: string): HttpError => ({type: "httpError", details, errorStatus: response.status})),
@@ -41,16 +44,19 @@ export function doPostRequest(path: string, body?: object | FormData, headers?: 
         promiseToTaskEither(
             fetch(path, {
                 method: 'POST',
+                // @ts-ignore
                 body: body ?
                     body instanceof FormData ? body : JSON.stringify(body) : undefined,
                 headers: {
                     ...(headers ?? {}),
+                    // @ts-ignore
                     "Content-Type": body instanceof FormData ? "multipart/form-data" : "application/json"
                 }
             })),
         mapError,
         chain((response: Response) => {
             if (response.status >= 400) {
+                console.log(response);
                 return pipe(
                     taskEitherExtensions.fromPromise(response.text()),
                     map((details: string): HttpError => ({type: "httpError", details, errorStatus: response.status})),

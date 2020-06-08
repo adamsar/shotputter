@@ -10,7 +10,7 @@
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
         const instance = window.Shotput({
-            service: {
+            /*service: {
                 url: "http://localhost:3000/local",
                 enabledProviders: ['slack', 'github']
             },
@@ -28,7 +28,11 @@
                 },
                 customEndpointEnabled: true
             },
-            captureLogs: true
+            captureLogs: true*/
+            slack: {
+                token: "xoxp-498960439319-500461958631-949771852628-dc25379885750af4e01ac331ad702330",
+                defaultChannel: "test-posts"
+            }
         });
 
         instance.setMetadata({userId: 19120832109, page: "testPage"});

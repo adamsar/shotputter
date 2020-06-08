@@ -66,13 +66,13 @@ export const GithubPoster = (token: string, imageUploader: ImageUploader): Githu
                         `${GithubBase}/repos/${owner}/${repo}/issues`,
                     {
                             title,
+                            labels,
                             body:  `![Screenshot](${imgUrl})
                             ${post.message || ""}                            
                             System info                          
                             ${codeBlockString(JSON.stringify(JSON.stringify(post.systemInfo, null, 2)))}                            
                             ${post.metadata ? `Metadata\n${codeBlockString(JSON.stringify(post.metadata, null, 2))}`:""}
                             ${post.logs?.length ?? 0 > 0 ? `Logs\n${codeBlockString(post.logs?.join("\n"))}`: ""}`,
-                        labels
                         },
                         authHeader)),
                 chain(result => {

@@ -2,7 +2,10 @@ import {TaskEither} from "fp-ts/lib/TaskEither";
 import {isLeft, left, right} from "fp-ts/lib/Either";
 
 export const promiseToTaskEither = <A>(promise: Promise<A>): TaskEither<string, A> => {
-    return () => promise.then(right).catch(left);
+    return () => promise.then(right).catch(x => {
+        console.log(x);
+        return left(String(x));
+    });
 }
 
 const toDeferFn = <A, B>(taskEither: TaskEither<A, B>): () => Promise<B> => {

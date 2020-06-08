@@ -10,7 +10,7 @@ function blobToBuffer(blob: Blob): Promise<Buffer> {
         const reader = new FileReader();
         function onLoadEnd (e: any) {
             reader.removeEventListener('loadend', onLoadEnd, false);
-            if (e.error) reject(e.error);
+             if (e.error) reject(e.error);
             // @ts-ignore
             else resolve(Buffer.from(reader.result));
         }
@@ -23,3 +23,11 @@ function blobToBuffer(blob: Blob): Promise<Buffer> {
 export const base64ToBuffer = async (base64String: string): Promise<Buffer> => {
     return blobToBuffer(await base64ToBlob(base64String));
 };
+
+export const Base64Extensions = {
+    toBuffer: (data: string): Buffer => {
+        return new Buffer(data.replace(/^data:image\/\w+;base64,/, ""),'base64');
+    }
+}
+
+
