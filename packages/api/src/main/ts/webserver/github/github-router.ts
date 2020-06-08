@@ -41,13 +41,9 @@ export const githubRouter = (githubConfig: GithubServerConfig, imageUploader: Im
                     title: postRequest.title,
                     labels: postRequest.labels || [],
     ***REMOVED***;
-                const image = await imageUploader.uploadImage(postRequest.image)();
-                if (isLeft(image)) {
-                    return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(image.left)})))
-    ***REMOVED***
                 const succeeded = await githubService.postIssue({
                     post: {
-                        image: image.right,
+                        image: postRequest.image,
                         message: postRequest.message
     ***REMOVED***
                     ...githubConfig
