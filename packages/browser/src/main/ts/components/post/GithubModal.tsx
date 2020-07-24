@@ -89,9 +89,10 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    }, [repos]);
 
    const onPost = () => pipe(
-       decodeForm(validator, {...form, repo: (form.repo || global.appOptions.github?.defaultRepo)}),
+       decodeForm(validator, {...form, repo: (form.repo || global.appOptions.github?.defaultRepo), owner: form.owner ?? global.appOptions?.github?.defaultOwner}),
        fold(
            errors => {
+               console.error(errors);
                setErrors(errors)
            },
            (form) => {
@@ -102,6 +103,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    );
 
    const defaultRepo = global.appOptions?.github?.defaultRepo;
+   const defaultOwner = global.appOptions?.github?.defaultOwner;
    return (
        <>
           <IfPending state={loadRepoState}>
@@ -127,10 +129,13 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                              Repo
                   ***REMOVED***
                           <div className={"shotput-field-container"}>
-                             <select onChange={({target: {value: repo}}) => updateForm({repo})} defaultValue={defaultRepo ?? repos[0]?.repo}>
+                             <select onChange={({target: {value: repoOwner}}) => {
+                                 const [owner, repo] = repoOwner.split("/")
+                                 updateForm({owner, repo});
+                 ***REMOVED***} defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
                                 {
                                    repos.map(repo => (
-                                       <option key={repo.repo} value={repo.repo}>{repo.owner}/{repo.repo}</option>
+                                       <option key={repo.repo} value={repo.owner + "/" + repo.repo}>{repo.owner}/{repo.repo}</option>
                                    ))
                     ***REMOVED***
                              </select>
