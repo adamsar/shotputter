@@ -9,7 +9,6 @@ interface SuccessModalProps extends HTMLProps<HTMLDivElement> {
 }
 
 export const SuccessModal = ({children, onClose, className, ...props}: PropsWithChildren<SuccessModalProps>) => {
-    console.log("HERE")
     return <Modal onClose={onClose} className={"shotput-success-modal "} {...props}>
         <div className={"shotput-success-modal-container"}>
             <h2>
