@@ -10,11 +10,7 @@ export const ProcessScreenshotContainer = observer(() => {
     const { screenshot, global } = useStores();
 
     useEffect(() => {
-        (async () => {
-            if (screenshot.screenshotCanvas === null) {
-                await screenshot.takeScreenshot()
-            }
-        })();
+        screenshot.takeScreenshot();
     }, []);
 
     useEffect(() => {
