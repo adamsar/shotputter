@@ -55,7 +55,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    const loadRepoState = useAsync(useMemo(() => taskEitherExtensions.toDeferFn(githubService.listRepos()), []));
    const { data: repos, isFulfilled: reposLoaded } = loadRepoState;
    const [form, setForm] = React.useState<Partial<GithubModalForm>>({
-      labels: global.appOptions?.github?.defaultLabels ?? [],
+      labels: global.appOptions?.github?.defaultLabels ?? []
    });
 
    const [errors, setErrors] = React.useState<ShotputFormError>();
@@ -82,28 +82,34 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    React.useEffect(() => {
       if (reposLoaded) {
          setForm(merge({}, form, {
-            owner: repos.find(({owner}) => owner === global.appOptions.github?.defaultOwner) ?? repos[0].owner,
+            owner: repos.find(({owner}) => owner === global.appOptions.github?.defaultOwner).owner ?? repos[0].owner,
             repo: repos.find(({repo}) => repo === global.appOptions.github?.defaultRepo)?.repo ?? repos[0].repo
          }))
       }
    }, [repos]);
 
-   const onPost = () => pipe(
-       decodeForm(validator, {...form, repo: (form.repo || global.appOptions.github?.defaultRepo), owner: form.owner ?? global.appOptions?.github?.defaultOwner}),
-       fold(
-           errors => {
-               console.error(errors);
-               setErrors(errors)
-           },
-           (form) => {
-              postState.run(form);
-              setErrors(undefined);
-           }
-       )
-   );
+   const onPost = () => {
+       return pipe(
+           decodeForm(validator, {...form,
+               repo: form.repo || global.appOptions.github?.defaultRepo,
+               owner: form.owner || global.appOptions.github?.defaultOwner
+           }),
+           fold(
+               errors => {
+                   console.error(errors);
+                   setErrors(errors)
+   ***REMOVED***
+               (form) => {
+                   postState.run(form);
+                   setErrors(undefined);
+   ***REMOVED***
+           )
+       );
+   }
 
    const defaultRepo = global.appOptions?.github?.defaultRepo;
    const defaultOwner = global.appOptions?.github?.defaultOwner;
+
    return (
        <>
           <IfPending state={loadRepoState}>
@@ -132,7 +138,8 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                              <select onChange={({target: {value: repoOwner}}) => {
                                  const [owner, repo] = repoOwner.split("/")
                                  updateForm({owner, repo});
-                 ***REMOVED***} defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
+                 ***REMOVED***}
+                                     defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
                                 {
                                    repos.map(repo => (
                                        <option key={repo.repo} value={repo.owner + "/" + repo.repo}>{repo.owner}/{repo.repo}</option>
