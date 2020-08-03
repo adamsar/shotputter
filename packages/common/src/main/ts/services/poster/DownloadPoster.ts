@@ -16,9 +16,13 @@ export const DownloadPoster = (document: Document): DownloadPoster => {
                 pom.setAttribute('href', post.image);
                 pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}.jpg`);
                 if (document.createEvent) {
-                    const event = document.createEvent('MouseEvents');
-                    event.initEvent('click', true, true);
-                    pom.dispatchEvent(event);
+                    try {
+                        const event = document.createEvent('MouseEvents');
+                        event.initEvent('click', true, true);
+                        pom.dispatchEvent(event);
+        ***REMOVED*** catch (error) {
+                        pom.click();
+        ***REMOVED***
     ***REMOVED***
                 else {
                     pom.click();

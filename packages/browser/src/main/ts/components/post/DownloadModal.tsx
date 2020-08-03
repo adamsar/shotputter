@@ -12,16 +12,12 @@ export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void
     const {global, screenshot} = useStores();
     return (
         <Async promiseFn={taskEitherExtensions.toDeferFn(global.downloadService.send(screenshot.post))}>
-            <Async.Initial>
-
-            </Async.Initial>
             <Async.Rejected>{ (error: DownloadError) => (
                     <ErrorModal onClose={onClose}>
                         Error downloading screenshot!<br/>
                         <code>
                             {JSON.stringify(error)}
                             <br/>
-
                         </code>
                         System info<br/>
                         <code>

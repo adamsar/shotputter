@@ -1,7 +1,16 @@
 import {PostResult} from "../PostResult";
 import {WebAPICallResult, WebClient} from '@slack/web-api';
-import {base64ToBlob} from "base64-blob";
-import {chain, fromIOEither, left, map, mapLeft, right, taskEither, TaskEither} from "fp-ts/lib/TaskEither";
+import {
+    chain,
+    fromIOEither,
+    fromPredicate,
+    left,
+    map,
+    mapLeft,
+    right,
+    taskEither,
+    TaskEither
+} from "fp-ts/lib/TaskEither";
 import {pipe} from "fp-ts/lib/pipeable";
 import {promiseToTaskEither, taskEitherExtensions} from "../../../util/fp-util";
 import {HostedRequester, HttpError, postRequest} from "../../HostedRequester";
@@ -92,6 +101,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
         },
 
         uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }): TaskEither<SlackError, PostResult> => {
+            console.log(base64File)
             return pipe(
                 sequenceT(taskEither)(
                     fromIOEither(
@@ -104,10 +114,10 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                             return formData;
         ***REMOVED*** String)
                     ),
-                    promiseToTaskEither(base64ToBlob(base64File))
+                    promiseToTaskEither(fetch(base64File).then(x => x.blob()))
                 ),
                 map(([formData, blob]) => {
-                    formData.append("file", blob);
+                    formData.append("file", new File([blob], fileName));
                     return formData
     ***REMOVED***),
                 mapError,
@@ -119,9 +129,10 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
         listChannels(): TaskEither<SlackError, SlackChannel[]> {
             return pipe(
                 taskEitherExtensions.fromPromise(client.channels.list()),
-                map(result => result["channels"] as SlackChannel[]),
-                mapError
-            )
+                mapError,
+                chain(fromPredicate((result) => result.ok, (result: WebAPICallResult): SlackError => ({type: "unknown", error: result.error}))),
+                map(result => result["channels"] as SlackChannel[])
+            );
         }
 
     };
