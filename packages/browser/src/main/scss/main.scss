@@ -318,6 +318,10 @@ $secondary-color: #795E3A;
       border: 1px solid black;
       border-radius: 10px;
       cursor: pointer;
+      margin-left: 5px;
+      &:first-child {
+        margin-left: 0px;
+      }
     }
   }
 }
@@ -399,5 +403,14 @@ $secondary-color: #795E3A;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+  }
+}
+
+.shotput-slack-modal {
+  h3 {
+    text-align: left;
+  }
+  .shotput-label {
+    text-align: left;
   }
 }

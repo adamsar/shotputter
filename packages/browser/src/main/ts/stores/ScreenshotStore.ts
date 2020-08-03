@@ -8,8 +8,8 @@ import RingBuffer from "ringbufferjs";
 export class ScreenshotStore {
 
     @observable screenshotCanvas: HTMLCanvasElement | null = null;
-    @observable screenshot: string;
-    @observable post: Post | null = null;
+    screenshot: string;
+    post: Post | null = null;
     @observable metadata: object | null = null;
     @observable logBuffer: RingBuffer<string>;
 
