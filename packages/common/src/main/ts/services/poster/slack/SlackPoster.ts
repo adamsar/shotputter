@@ -101,12 +101,11 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
         },
 
         uploadFile: ({channels, message, fileName, base64File}: { channels: string[], message: string, fileName: string, base64File: string }): TaskEither<SlackError, PostResult> => {
-            console.log(base64File)
             return pipe(
                 sequenceT(taskEither)(
                     fromIOEither(
                         tryCatch<string, FormData>(() => {
-                            const formData = new FormData();
+                            const formData = new window.FormData();
                             formData.append("channels", channels.join(","));
                             formData.append("initial_comment", message);
                             formData.append("filename", fileName);
@@ -117,7 +116,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                     promiseToTaskEither(fetch(base64File).then(x => x.blob()))
                 ),
                 map(([formData, blob]) => {
-                    formData.append("file", new File([blob], fileName));
+                    formData.append("file", blob);
                     return formData
                 }),
                 mapError,
@@ -137,3 +136,4 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
 
     };
 };
+

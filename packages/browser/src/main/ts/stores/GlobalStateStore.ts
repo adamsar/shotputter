@@ -1,17 +1,11 @@
 import {computed, observable} from "mobx";
-import {AppOptions} from "../App";
-import {
-    HostedSlackService,
-    SlackService,
-    SlackServiceClient
-} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
-import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
+import {HostedSlackService, SlackServiceClient} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
 import {GithubPoster, HostedGithubPoster} from "@shotputter/common/src/main/ts/services/poster/github/GithubPoster";
 import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/DownloadPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
-import {getIncognitoCredentials, S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
+import {ShotputBrowserConfig} from "../config/ShotputBrowserConfig";
 
 interface WindowSize {
     width: number;
@@ -33,44 +27,36 @@ export type DisplayMode = "unclicked" | "processing_screenshot" | "display_scree
 
 export class GlobalStateStore {
 
-    constructor(appOptions: AppOptions) {
+    constructor(appOptions: ShotputBrowserConfig) {
         window.addEventListener("resize", () => {
             this.windowSize = computeWindowSize();
         });
         this.appOptions = appOptions;
-        const requester: HostedRequester | null = appOptions?.service?.url ? new HostedRequester(appOptions?.service?.url) : null;
-        if (appOptions.download !== false) {
+        const requester: HostedRequester | null = typeof appOptions.service === "object" ? new HostedRequester(appOptions.service.url) : null;
+        if (appOptions.download?.enabled !== false) {
             this.downloadService = DownloadPoster(document);
             this.availablePosters.push("download");
         }
-        if (appOptions.slack?.token) {
-            this.slackService = SlackService(appOptions.slack?.token);
-            this.availablePosters.push("slack")
-        }
-        if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "slack")) {
+        if (requester && appOptions.slack?.enabled) {
             this.slackService = HostedSlackService(requester);
-            this.availablePosters.push("slack");
         }
-        if (appOptions.s3?.enabled &&
-            appOptions.s3?.identityPoolId &&
-            appOptions.s3?.bucket &&
-            appOptions.s3?.region) {
-            this.s3Service = S3Images(appOptions.s3.region , appOptions.s3.bucket, getIncognitoCredentials(appOptions.s3.identityPoolId), appOptions.s3.prefix)
-        }
-        if (appOptions.imgur?.clientId) {
-            this.imgurService = ImgurUploader(appOptions.imgur?.clientId);
-        }
-        if (appOptions.github?.token && (this.imgurService || this.s3Service)) {
-            this.githubService = GithubPoster(appOptions.github?.token, this.imgurService || this.s3Service);
-            this.availablePosters.push("github");
-        }
-        if (requester && (appOptions?.service?.enabledProviders ?? []).find(x => x === "github")) {
+        if (requester && appOptions.github?.enabled) {
             this.githubService = HostedGithubPoster(requester);
-            this.availablePosters.push("github");
         }
-        if (appOptions.customEndpoint) {
-            this.customRequestService = HttpPoster(appOptions.customEndpoint);
-            this.availablePosters.push("custom");
+        if (appOptions.custom?.enabled) {
+            this.customRequestService = HttpPoster(appOptions.custom.endpoint);
+        }
+        if (typeof appOptions.service === "object" && appOptions.service.autoPost) {
+            this.availablePosters.push("auto");
+            if (appOptions.slack?.enabled && appOptions.slack?.autoPost) {
+                this.autoPosters.push("slack");
+            }
+            if (appOptions.github?.enabled && appOptions.github?.autoPost) {
+                this.autoPosters.push("github");
+            }
+            if (appOptions.custom?.enabled && appOptions.custom?.autoPost) {
+                this.autoPosters.push("custom");
+            }
         }
     }
 
@@ -80,9 +66,11 @@ export class GlobalStateStore {
 
     @observable canvas: HTMLCanvasElement | null = null;
 
-    @observable appOptions: AppOptions | null = null;
+    @observable appOptions: ShotputBrowserConfig | null = null;
 
-    @observable availablePosters: ("slack" | "download" | "github" | "custom")[] = [];
+    @observable availablePosters: ("slack" | "download" | "github" | "custom" | "auto")[] = [];
+
+    @observable autoPosters: ("slack" | "custom" | "github")[] = [];
 
     slackService: SlackServiceClient | null = null;
 

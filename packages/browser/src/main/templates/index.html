@@ -10,29 +10,10 @@
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
         const instance = window.Shotput({
-            /*service: {
+            service: {
                 url: "http://localhost:3000/local",
                 enabledProviders: ['slack', 'github']
             },
-            slack: {
-                defaultChannel: "test-posts"
-            },
-            github: {
-                defaultRepo: "shotputter"
-            },
-            customEndpoint: "https://enwg2cmy1hnse.x.pipedream.net",
-            errorReporting: {
-                enabled: true,
-                consoleLog: {
-                    enabled: true
-                },
-                customEndpointEnabled: true
-            },
-            captureLogs: true*/
-            slack: {
-                token: "xoxp-498960439319-500461958631-949771852628-dc25379885750af4e01ac331ad702330",
-                defaultChannel: "test-posts"
-            }
         });
 
         instance.setMetadata({userId: 19120832109, page: "testPage"});

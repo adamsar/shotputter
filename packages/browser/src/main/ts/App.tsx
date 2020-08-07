@@ -8,8 +8,9 @@ import {MAIN_ID} from "./constants";
 import * as ReactDOM from "react-dom";
 import {WindowErrorComponent} from "./components/logging/WindowErrorComponent";
 import {Metadata} from "@shotputter/common/src/main/ts/models/Metadata";
+import {ShotputBrowserConfig} from "./config/ShotputBrowserConfig";
 
-export const App = ({options, screenshotStore}: { options: AppOptions, screenshotStore: ScreenshotStore }) => {
+export const App = ({options, screenshotStore}: { options: ShotputBrowserConfig, screenshotStore: ScreenshotStore }) => {
     return <storeContext.Provider value={{
         global: new GlobalStateStore(options),
         screenshot: screenshotStore,
@@ -20,53 +21,8 @@ export const App = ({options, screenshotStore}: { options: AppOptions, screensho
     </storeContext.Provider>;
 };
 
-export interface AppOptions {
-    service?: {
-        url?: string;
-        enabledProviders?: ("slack" | "github")[];
-    };
-    slack?: {
-        token: string;
-        defaultChannel?: string;
-    };
-    imgur?: {
-        clientId: string;
-    };
-    customEndpoint: string;
-    github?: {
-        images: "imgur" | "s3";
-        defaultOwner?: string;
-        defaultRepo?: string;
-        token: string;
-        defaultLabels?: string[];
-    };
-    errorReporting?: {
-        enabled?: boolean;
-        slack?: {
-            enabled: false;
-        } | { enabled: true; channel: string; };
-        customEndpointEnabled?: boolean;
-        consoleLog?: {
-            enabled: boolean;
-        }
-    };
-    s3?: {
-      enabled: boolean;
-      identityPoolId: string;
-      region: string;
-      prefix?: string;
-      bucket: string;
-    };
-    download?: boolean;
-    metadata?: Metadata;
-    captureLogs?: boolean;
-}
-
-export const ShotputStart = (options: AppOptions) => {
-    const screenshotStore = new ScreenshotStore(options.captureLogs);
-    if (options.metadata) {
-        screenshotStore.setMetadata(options.metadata);
-    }
+export const ShotputStart = (options: ShotputBrowserConfig) => {
+    const screenshotStore = new ScreenshotStore(options);
     const load = () => {
         const tabHolder = document.createElement("div");
         tabHolder.id = MAIN_ID;
