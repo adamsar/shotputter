@@ -103,7 +103,7 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
 ***REMOVED***
         canvas.selection = false;
         return () => {
-            canvas.off(["mouse:down", "mouse:up"]);
+            canvas.off(["mouse:down", "mouse:up", "mouse:move"]);
             canvas.selection = true;
         }
     }, []);

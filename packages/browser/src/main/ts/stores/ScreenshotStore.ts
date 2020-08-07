@@ -13,9 +13,8 @@ export class ScreenshotStore {
     @observable metadata: object | null = null;
     @observable logBuffer: RingBuffer<string>;
 
-    constructor(captureLogs?: boolean) {
+    constructor({captureLogs, metadata}: { captureLogs?: boolean, metadata?: object }) {
         if (captureLogs) {
-            console.log("capturing");
             this.logBuffer = new RingBuffer<string>(20);
             const wrapLog = (level: string, fn: (msg: any, ...args: any[]) => void) => {
                 return (msg: any, ...args2: any[]) => {
@@ -27,6 +26,9 @@ export class ScreenshotStore {
             console.warn = wrapLog("warn", console.warn);
             console.error = wrapLog("error", console.error);
             console.debug = wrapLog("debug", console.debug);
+        }
+        if (metadata) {
+            this.metadata = metadata;
         }
     }
 
