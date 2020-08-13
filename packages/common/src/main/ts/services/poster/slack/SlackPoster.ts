@@ -18,7 +18,7 @@ import {tryCatch} from "fp-ts/lib/IOEither";
 import {sequenceT} from "fp-ts/lib/Apply";
 
 export type SlackError = { error: string; type: "unknown" } | HttpError;
-const mapError = mapLeft<string, SlackError>((error: string) => ({error, type: "unknown"}))
+export const mapSlackError = mapLeft<string, SlackError>((error: string) => ({error, type: "unknown"}))
 
 export interface SlackConfiguration {
 
@@ -89,7 +89,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                     text,
                     channel
     ***REMOVED***)),
-                mapError,
+                mapSlackError,
                 chain((result: WebAPICallResult) => {
                     if (result.ok) {
                         return right(true)
@@ -119,7 +119,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                     formData.append("file", blob);
                     return formData
     ***REMOVED***),
-                mapError,
+                mapSlackError,
                 chain(formData => postRequest<any>("https://slack.com/api/files.upload", formData)),
                 chain(result => result['error'] ? left({type: "unknown", error: result['error'] as string}) : right(true))
             )
@@ -128,7 +128,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
         listChannels(): TaskEither<SlackError, SlackChannel[]> {
             return pipe(
                 taskEitherExtensions.fromPromise(client.channels.list()),
-                mapError,
+                mapSlackError,
                 chain(fromPredicate((result) => result.ok, (result: WebAPICallResult): SlackError => ({type: "unknown", error: result.error}))),
                 map(result => result["channels"] as SlackChannel[])
             );
