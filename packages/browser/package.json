@@ -39,6 +39,7 @@
     "base64-blob": "^1.4.1",
     "fabric": "^3.6.3",
     "fp-ts": "^2.7.1",
+    "handlebars": "^4.7.6",
     "html-to-image": "^0.1.1",
     "html2canvas": "^1.0.0-rc.5",
     "io-ts": "^2.2.9",

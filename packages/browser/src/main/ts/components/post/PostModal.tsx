@@ -6,10 +6,11 @@ import {SlackModal} from "./SlackModal";
 import {GithubModal} from "./GithubModal";
 import {DownloadModal} from "./DownloadModal";
 import {CustomModal} from "./CustomModal";
+import {AutoPostHandler} from "./AutoPostHandler";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
-    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom">("base");
+    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto">("base");
 
     const onClose = () => {
         screenshot.setPost(null);
@@ -24,6 +25,8 @@ export const PostModal = observer(() => {
                 return <li key={"download"} onClick={() => setRoute("download")}>Download</li>;
             case "slack":
                 return <li key={"slack"} onClick={() => setRoute("slack")}>Slack</li>;
+            case "auto":
+                return <li key={"auto"} onClick={() => setRoute("auto")}>Auto</li>
             case "custom":
                 return <li key={"custom"} onClick={() => setRoute("custom")}>Custom</li>
         }
@@ -60,6 +63,9 @@ export const PostModal = observer(() => {
 
         case "custom":
             return <CustomModal onClose={() => setRoute("base") } />
+
+        case "auto":
+            return <AutoPostHandler onBack={() => setRoute("base")} />
 
     }
 });

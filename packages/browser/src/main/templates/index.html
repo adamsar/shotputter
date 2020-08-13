@@ -11,13 +11,18 @@
     <script type="application/javascript">
         const instance = window.Shotput({
             service: {
-                url: "http://localhost:3000/local",
-                enabledProviders: ['slack', 'github']
+                url: "http://localhost:3000/dev",
+                autoPost: true
             },
+            slack: {
+                enabled: true,
+                autoPost: true,
+                defaultChannel: "test-posts"
+            },
+            captureLogs: true
         });
 
         instance.setMetadata({userId: 19120832109, page: "testPage"});
-        console.log(instance.setMetadata);
     </script>
 </head>
 <body>

@@ -1,18 +1,64 @@
 import * as React from "react";
-import {AppOptions} from "../../App";
 import * as Stacktrace from "stacktrace-js";
+import {StackFrame} from "stacktrace-js";
 import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
-import {isLeft} from "fp-ts/lib/Either";
 import {ErrorModal} from "../common/ErrorModal";
 import {SystemInfo} from "@shotputter/common/src/main/ts/models/SystemInfo";
-import {codeBlockString, getSystemInfo} from "../../util/system-utils";
+import {getSystemInfo} from "../../util/system-utils";
+import {applyTemplate, defaultSlackTemplate, ShotputBrowserConfig} from "../../config/ShotputBrowserConfig";
+import {pipe} from "fp-ts/pipeable";
+import {chain, fromIO, getTaskValidation, TaskEither} from "fp-ts/lib/TaskEither";
+import {mapSlackError, SlackServiceClient} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
+import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
+import {getMonoid, sequence} from "fp-ts/lib/Array";
+import {isLeft} from "fp-ts/Either";
 
 interface WindowErrorComponentProps {
-    appOptions: AppOptions
+    appOptions: ShotputBrowserConfig;
 }
 
-type ErrorHandler = (opts: {message: string; systemInfo: SystemInfo; logs?: string[];}) => void;
+type ErrorHandler = (opts: {metadata: object; message: string; systemInfo: SystemInfo; logs?: string[];}) => TaskEither<any, any>
+
+const logHandler: ErrorHandler = ({metadata, message, systemInfo}) => fromIO(() => {
+    console.log(message);
+    console.log("SYSTEM INFO:");
+    console.log(systemInfo);
+    console.log("METADATA:")
+    console.log(metadata);
+});
+
+const slackHandler = (appOptions: ShotputBrowserConfig, slack?: SlackServiceClient): ErrorHandler | undefined => {
+    if (appOptions.errorReporting?.enabled && appOptions.errorReporting?.slack?.enabled && slack) {
+        // @ts-ignore
+        return ({message, metadata, systemInfo, logs}) => pipe(
+            applyTemplate(
+                appOptions?.errorReporting?.template ?? defaultSlackTemplate,
+                {
+                    message,
+                    systemInfo: JSON.stringify(systemInfo),
+                    logs: logs?.join("\n"),
+                    metadata: JSON.stringify(metadata)
+                }
+            ),
+                mapSlackError,
+                chain(message => slack.postMessage({
+                    message,
+                    channel: appOptions?.errorReporting.slack.channel
+                }))
+        )
+    }
+}
+
+const customHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefined => {
+    if (appOptions?.errorReporting?.customEndpoint && appOptions?.errorReporting?.enabled) {
+        const requester = HttpPoster(appOptions.errorReporting.customEndpoint)
+        return ({message, metadata, systemInfo, logs}) => requester.sendError(
+            message, systemInfo, metadata, logs
+        )
+    }
+}
 
 export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponentProps) => {
     const { global, screenshot } = useStores();
@@ -22,51 +68,31 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
         React.useEffect(() => {
             const handlers: ErrorHandler[] = [];
             if (appOptions.errorReporting?.consoleLog?.enabled) {
-                handlers.push(({message, systemInfo}) => {
-                    console.log(message);
-                    console.log("SYSTEM INFO:");
-                    console.log(systemInfo);
-                });
+                handlers.push(logHandler);
             }
-            if (appOptions?.errorReporting?.slack?.enabled && global.slackService) {
-                handlers.push(async ({message, systemInfo, logs}) => {
-                    const result = await global.slackService.postMessage({
-                        message: `${message}
-                        System info
-                        ${codeBlockString(JSON.stringify(systemInfo, null, 2))}
-                        ${logs && logs.length > 0 ? `
-                        
-                        Logs
-                        ${codeBlockString(logs.join("\n"))}
-                        ` : ""}
-                        `,
-                        // @ts-ignore
-                        channel: appOptions.errorReporting.slack.channel
-                    })();
-                    if (isLeft(result)) {
-                        setFailure(JSON.stringify(result.left, null, 2));
-                    }
-                });
-            }
-            if (appOptions?.errorReporting?.customEndpointEnabled && global.customRequestService) {
-                handlers.push(async ({message, systemInfo, logs}) => {
-                    const result = await global.customRequestService.sendError(
-                        message,
-                        systemInfo,
-                        logs)();
-                    if (isLeft(result)) {
-                        setFailure(JSON.stringify(result.left, null, 2))
-                    }
-                })
-            }
+            const _slackHandler = slackHandler(appOptions, global.slackService);
+            if (_slackHandler) handlers.push(_slackHandler);
+            const _customHandler = customHandler(appOptions);
+            if (_customHandler) handlers.push(_customHandler);
 
-            const handleError: OnErrorEventHandler = (msg: string, _2: any, _3: any, _4: any, error: Error ) => {
-                Stacktrace.fromError(error).then(async stackframes => {
-                    const message = msg + "\n" + stackframes.map((sf) => sf.toString()).join('\n');
-                    const systemInfo = getSystemInfo(window);
-                    const logs = (screenshot.logBuffer.size() ?? 0) > 0 ? screenshot.logBuffer.peekN(screenshot.logBuffer.size()) : undefined
-                    return Promise.all(handlers.map(async (x) => await x({message, systemInfo, logs})));
-                }).catch(setFailure);
+            const handleError: OnErrorEventHandler = async (msg: string, _2: any, _3: any, _4: any, error: Error) => {
+                const results = await pipe(
+                    taskEitherExtensions.fromPromise(Stacktrace.fromError(error)) as TaskEither<any, StackFrame[]>,
+                    chain((stackFrames: StackFrame[]) => {
+                        const metadata = screenshot.metadata;
+                        const message = msg + "\n" + stackFrames.map((sf) => sf.toString()).join('\n');
+                        const systemInfo = getSystemInfo(window);
+                        const logs = (screenshot.logBuffer.size() ?? 0) > 0 ? screenshot.logBuffer.peekN(screenshot.logBuffer.size()) : undefined
+                        return sequence(getTaskValidation(getMonoid<any>()))(handlers.map(fn => fn({
+                            message,
+                            systemInfo,
+                            logs,
+                            metadata})))
+                    })
+                )()
+                if (isLeft(results)) {
+                    setFailure(results.left.join("\n"))
+                }
             };
 
             const oldEventHandler = window.onerror;
