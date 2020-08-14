@@ -1,5 +1,5 @@
 import * as express from "express";
-import {SlackPostMessageParams, SlackService} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {SlackPostMessageParams} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {imageValidator, messageValidator} from "../validators/post-validators";
 import {SlackServerConfig} from "../server";
 import {channelValidator} from "../validators/slack-validators";
@@ -8,8 +8,9 @@ import {expressValidateToErrorResponse} from "../routing/response-errors";
 import {EitherAsync, Left, Right} from "purify-ts";
 import {Posted} from "../routing/StandardResponses";
 import {BadResponse, Ok, ServerError} from "../routing/responses";
-import { WebClient } from '@shotputter/common/node_modules/@slack/web-api';
+import {WebClient} from '@shotputter/common/node_modules/@slack/web-api';
 import {isLeft} from "fp-ts/lib/Either";
+import {NativeSlackService} from "./NativeSlackService";
 
 export interface SlackPostRequest {
     image: string;
@@ -19,7 +20,7 @@ export interface SlackPostRequest {
 
 export const slackRouter = (slackServerConfig: SlackServerConfig): express.Router => {
     const router = express.Router({});
-    const slackService = SlackService(slackServerConfig.clientId);
+    const slackService = NativeSlackService(slackServerConfig.clientId);
     const web: WebClient = new WebClient(slackServerConfig.clientId);
 
     router.post("/post", [
@@ -32,7 +33,7 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
 
                 await web.files.upload({
                     channels: postRequest.channels.join(","),
-                    filename: `Screenshot-${new Date().toISOString()}.jpg`,
+                    filename: `Screenshot-${new Date().toISOString()}.png`,
                     // @ts-ignore
                     file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
                     initial_comment: postRequest.message

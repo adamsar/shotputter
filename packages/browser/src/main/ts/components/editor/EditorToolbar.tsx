@@ -23,7 +23,7 @@ export const EditorToolbar = observer(() => {
 
     const onSubmit = async () => {
         const post: Post = {
-            image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/jpeg")]),
+            image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/png")]),
             message: commentRef.current.value || undefined,
             systemInfo: getSystemInfo(window)
         };

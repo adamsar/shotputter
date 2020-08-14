@@ -13,15 +13,15 @@ export const defaultTemplate =  `
 Metadata:
 --------------
 \`\`\`
-{{  metadata }}
+{{{  metadata }}}
 \`\`\`
-{{/metadata}}
+{{/if}}
 {{#if systemInfo}}
 --------------
 \`\`\`
-{{  systemInfo }}
+{{{  systemInfo }}}
 \`\`\`
-{{/systemInfo}}
+{{/if}}
 {{#if logs}}
 --------------
 Logs:
@@ -33,19 +33,20 @@ Logs:
 
 export const defaultSlackTemplate = `
 {{ message }}
+
 {{#if metadata}}
 Metadata:
 --------------
 \`\`\`
-{{  metadata }}
+{{{  metadata }}}
 \`\`\`
-{{/metadata}}
+{{/if}}
 {{#if systemInfo}}
 --------------
 \`\`\`
-{{  systemInfo }}
+{{{  systemInfo }}}
 \`\`\`
-{{/systemInfo}}
+{{/if}}
 {{#if logs}}
 --------------
 Logs:

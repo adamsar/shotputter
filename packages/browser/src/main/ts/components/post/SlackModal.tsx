@@ -26,7 +26,7 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                 (screenshot.post.logs?.length ?? 0 > 0) ? `\nLogs\n${codeBlockString(screenshot.post.logs.join("\n"))}` : ""
                 )
             ,
-            fileName: `[Screenshot]-${new Date().toISOString()}.jpg`,
+            fileName: `[Screenshot]-${new Date().toISOString()}.png`,
             base64File: screenshot.post.image
         }))()
     });

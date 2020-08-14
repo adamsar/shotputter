@@ -3,7 +3,8 @@ import {pipe} from "fp-ts/lib/pipeable";
 import {eitherExtensions, promiseToTaskEither, taskEitherExtensions} from "../util/fp-util";
 import {task, map as taskMap} from "fp-ts/lib/Task";
 
-const FormData = window?.FormData ?? require("form-data");
+// @ts-ignore
+const FormData = global.window?.FormData ?? require("form-data");
 
 export type HttpError = {type: "httpError"} & ({errorStatus: number; details: string} | {error: string;});
 const mapError = mapLeft<string, HttpError>(error => ({error, type: "httpError"}));
