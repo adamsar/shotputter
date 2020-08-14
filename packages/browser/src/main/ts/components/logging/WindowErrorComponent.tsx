@@ -113,7 +113,7 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
     if (failure) {
         return <ErrorModal onClose={() => setFailure(undefined)}>
             Error logging an error! Oh no!<br/>
-            <code>
+            <code className={"shotput-code"}>
                 { JSON.stringify(failure, null, 2) }
             </code>
         </ErrorModal>

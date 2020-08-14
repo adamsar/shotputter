@@ -18,13 +18,13 @@ export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void
             <Async.Rejected>{ (error: DownloadError) => (
                     <ErrorModal onClose={onClose}>
                         Error downloading screenshot!<br/>
-                        <code>
-                            {JSON.stringify(error)}
+                        <code className={"shotput-code"}>
+                            {JSON.stringify(error, null, 2)}
                             <br/>
                         </code>
                         System info<br/>
-                        <code>
-                            {JSON.stringify(screenshot.post.systemInfo)}
+                        <code className={"shotput-code"}>
+                            {JSON.stringify(screenshot.post.systemInfo, null, 2)}
                         </code>
                     </ErrorModal>
             )}</Async.Rejected>
