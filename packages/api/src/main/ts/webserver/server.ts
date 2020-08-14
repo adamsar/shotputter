@@ -63,12 +63,14 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
         limit: "10mb"
     }));
     if (serverConfig.slack?.clientId) {
+        console.log("Slack enabled");
         app.use("/slack", slackRouter(serverConfig.slack));
         enabledPosters.push("slack");
     } else {
         console.warn("Slack client id is not configured. Not using Slack integration.")
     }
     if (serverConfig.s3?.enabled) {
+        console.log("Using S3 uploads");
         s3Uploader = S3Images(
             process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,
             serverConfig.s3.bucket,
@@ -76,11 +78,14 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
             serverConfig.s3.prefix)
     }
     if (serverConfig.imgur?.clientId) {
+        console.log("Using Imgur");
         imgurUploader = ImgurUploader(serverConfig.imgur.clientId)
     }
 
     if (serverConfig.github?.token && (imgurUploader || s3Uploader)) {
+        console.log("Github enabled");
         app.use("/github", githubRouter(serverConfig.github, (imgurUploader || s3Uploader)));
+        enabledPosters.push("github");
     } else {
         if ((imgurUploader || s3Uploader)) {
             console.warn("No image uploader configured");

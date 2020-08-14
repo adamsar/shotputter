@@ -41,6 +41,7 @@ export function postRequest<A>(path: string, body?: object | FormData, headers?:
 }
 
 export function doPostRequest(path: string, body?: object | FormData, headers?: object): TaskEither<HttpError, Response> {
+    console.log(path)
     return pipe(
         promiseToTaskEither(
             fetch(path, {

@@ -91,6 +91,7 @@ export const applyTemplate = (template: BrowserTemplate, params?: TemplateParams
     );
 }
 
+
 /*
 const config: ShotputBrowserConfig = {
     service: {
@@ -98,14 +99,20 @@ const config: ShotputBrowserConfig = {
         autoPost: true,
         autoPostFirst: true
     },
-    slack: {
+    /*slack: {
         enabled: true,
         autoPost: true,
         defaultChannel: "test-posts"
-    },
-    captureLogs: true
-}
-*/
+    },*//*
+    captureLogs: true,
+    github: {
+        enabled: true,
+        autoPost: true,
+        defaultRepo: "shotputter",
+        defaultOwner: "adamsar",
+        defaultLabels: ["test"]
+    }
+}*/
 
 export interface ShotputBrowserConfig {
 

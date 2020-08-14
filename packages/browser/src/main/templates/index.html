@@ -10,17 +10,20 @@
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
         const instance = window.Shotput({
-            service: {
-                url: "http://localhost:3000/dev",
-                autoPost: true//,
-                //autoPostFirst: true
-            },
-            slack: {
+                service: {
+                    url: "http://localhost:3000/dev",
+                    autoPost: true,
+                    //       autoPostFirst: true
+                },
+            captureLogs: true,
+            github: {
                 enabled: true,
                 autoPost: true,
-                defaultChannel: "test-posts"
-            },
-            captureLogs: true
+                defaultRepo: "shotputter",
+                defaultOwner: "adamsar",
+                defaultLabels: ["test"],
+                titleTemplate: "Test post"
+        }
         });
 
         instance.setMetadata({userId: 19120832109, page: "testPage"});
