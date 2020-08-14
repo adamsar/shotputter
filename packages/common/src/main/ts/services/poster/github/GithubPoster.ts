@@ -4,7 +4,6 @@ import {chain, fromEither, left, map, right, TaskEither} from "fp-ts/lib/TaskEit
 import {pipe} from "fp-ts/lib/pipeable";
 import {eitherExtensions} from "../../../util/fp-util";
 import {mapLeft} from "fp-ts/lib/TaskThese";
-import {codeBlockString} from "../../../../../../../browser/src/main/ts/util/system-utils";
 import {ImageUploader} from "../../images/uploader";
 
 export type GithubError = {type: "githubError"; error: string;} | HttpError;
@@ -68,11 +67,7 @@ export const GithubPoster = (token: string, imageUploader: ImageUploader): Githu
                             title,
                             labels,
                             body:  `![Screenshot](${imgUrl})
-                            ${post.message || ""}                            
-                            System info                          
-                            ${codeBlockString(JSON.stringify(JSON.stringify(post.systemInfo, null, 2)))}                            
-                            ${post.metadata ? `Metadata\n${codeBlockString(JSON.stringify(post.metadata, null, 2))}`:""}
-                            ${post.logs?.length ?? 0 > 0 ? `Logs\n${codeBlockString(post.logs?.join("\n"))}`: ""}`,
+                            ${post.message || ""}`,
         ***REMOVED***
                         authHeader)),
                 chain(result => {

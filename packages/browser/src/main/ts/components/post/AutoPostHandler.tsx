@@ -74,27 +74,24 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                            taskEitherExtensions.mapLeftValidation()
                        ),
                        pipe(
-                           applyTemplate(
-                           global.appOptions.github.titleTemplate,
-                           {}),
+                           applyTemplate(global.appOptions.github.titleTemplate, {}),
                            taskEitherExtensions.mapLeftValidation()
                        )
                    ),
                     chain(([message, title]) => pipe(
-                        global.githubService.postIssue({
-                            post: {...screenshot.post, message},
-                            repo: global.appOptions.github.defaultRepo,
-                            owner: global.appOptions.github.defaultOwner,
-                            title,
-                            labels: global.appOptions.github.defaultLabels ?? []
-            ***REMOVED***),
-                        taskEitherExtensions.mapLeftValidation()
+                            global.githubService.postIssue({
+                                post: {...screenshot.post, message},
+                                repo: global.appOptions.github.defaultRepo,
+                                owner: global.appOptions.github.defaultOwner,
+                                title,
+                                labels: global.appOptions.github.defaultLabels ?? []
+                ***REMOVED***),
+                            taskEitherExtensions.mapLeftValidation()
                         )
-               ))
+                    ))
          }
       })
-
-       const result = sequence(taskEitherExtensions.errorValidation)(tasks)()
+       const result = sequence(taskEitherExtensions.errorValidation)(tasks)();
        result.then((eitherResult) => {
            if (isLeft(eitherResult)) {
                setErrors(eitherResult.left);
