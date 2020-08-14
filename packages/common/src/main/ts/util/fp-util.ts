@@ -1,5 +1,5 @@
 import {getTaskValidation, mapLeft, TaskEither} from "fp-ts/lib/TaskEither";
-import {isLeft, left, right} from "fp-ts/lib/Either";
+import {Either, isLeft, left, right} from "fp-ts/lib/Either";
 import {getMonoid} from "fp-ts/lib/Array";
 
 export const promiseToTaskEither = <A>(promise: Promise<A>): TaskEither<string, A> => {
@@ -27,5 +27,12 @@ export const taskEitherExtensions = {
 
 export const eitherExtensions = {
     left,
-    right
+    right,
+    merge: <A>(eitherInstance: Either<A, A>): A => {
+        if (isLeft(eitherInstance)) {
+            return eitherInstance.left;
+        } else {
+            return eitherInstance.right;
+        }
+    }
 }

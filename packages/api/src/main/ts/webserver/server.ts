@@ -46,11 +46,17 @@ export interface S3Config {
 
 }
 
+export interface GoogleConfig {
+    enabled: boolean;
+    token: string;
+}
+
 export interface ServerConfig {
     slack?: SlackServerConfig;
     github?: GithubServerConfig;
     imgur?: ImgurServerConfig;
     s3?: S3Config;
+    google?: GoogleConfig;
 }
 
 export const getApp = (serverConfig: ServerConfig = {}): Express => {
