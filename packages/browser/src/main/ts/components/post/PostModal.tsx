@@ -10,7 +10,8 @@ import {AutoPostHandler} from "./AutoPostHandler";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
-    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto">("base");
+    const initial = (typeof global.appOptions?.service === "object" && global.appOptions.service.autoPostFirst) ? "auto" : "base";
+    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto">(initial);
 
     const onClose = () => {
         screenshot.setPost(null);
@@ -26,7 +27,11 @@ export const PostModal = observer(() => {
             case "slack":
                 return <li key={"slack"} onClick={() => setRoute("slack")}>Slack</li>;
             case "auto":
-                return <li key={"auto"} onClick={() => setRoute("auto")}>Auto</li>
+                if (typeof global.appOptions.service === "object" && global.appOptions.service.autoPostFirst) {
+                    return null
+    ***REMOVED*** else {
+                    return <li key={"auto"} onClick={() => setRoute("auto")}>Post</li>
+    ***REMOVED***
             case "custom":
                 return <li key={"custom"} onClick={() => setRoute("custom")}>Custom</li>
         }
@@ -65,8 +70,13 @@ export const PostModal = observer(() => {
             return <CustomModal onClose={() => setRoute("base") } />
 
         case "auto":
-            console.log("AUTO")
-            return <AutoPostHandler onBack={() => setRoute("base")} />
+            let onBack: () => void;
+            if (global.appOptions.download?.enabled === false) {
+                onBack = onClose
+***REMOVED*** else {
+                onBack = () => setRoute("base")
+***REMOVED***
+            return <AutoPostHandler onBack={onBack} />
 
     }
 });
