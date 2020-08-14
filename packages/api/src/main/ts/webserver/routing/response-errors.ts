@@ -2,6 +2,7 @@ import {Request} from "express";
 import { validationResult } from "express-validator";
 import {EitherAsync, Left, Right} from "purify-ts";
 import {BadResponse, HttpResponse} from "./responses";
+import * as t from "@shotputter/common/node_modules/io-ts";
 
 export type ErrorResponse = {
     error: "server",
@@ -16,6 +17,19 @@ export type ErrorResponse = {
     error: "conflict",
     field: string;
 };
+
+export const decoderErrortoErrorResponse = (errors: t.Errors): ErrorResponse => {
+    return {
+        error: "form",
+        fields: errors.map(error => {
+            const name = error.context.slice(1).map(x => x.key).join("\n");
+            const reason = error.message || "INVALID";
+            return {name, reason}
+        })
+    }
+}
+
+export const BadDecodeResponse = (errors: t.Errors) => BadResponse(decoderErrortoErrorResponse(errors))
 
 export const expressValidateToErrorResponse = <A>(req: Request): EitherAsync<HttpResponse, A> => EitherAsync(({liftEither }) => {
     const errors = validationResult(req);

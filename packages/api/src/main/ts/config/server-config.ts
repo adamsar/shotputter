@@ -11,6 +11,7 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const s3Bucket = process.env['S3_BUCKET'];
     const s3Prefix = process.env['S3_PREFIX'];
     const s3Enabled = process.env['S3_ENABLED'] === "true";
+    const googleToken = process.env['SHOTPUT_GOOGLE_TOKEN'];
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
         ...((githubToken || githubDefaultOwner || githubDefaultRepo) ? {
@@ -31,7 +32,8 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
                 bucket: s3Bucket,
                 prefix: s3Prefix
 ***REMOVED***
-        } : {})
+        } : {}),
+        ...(googleToken ? {google: {enabled: true, token: googleToken}} : {})
     };
 };
 
