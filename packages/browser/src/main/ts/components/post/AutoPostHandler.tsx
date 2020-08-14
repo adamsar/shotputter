@@ -12,24 +12,24 @@ import {sequenceT} from "fp-ts/lib/Apply";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {sequence} from "fp-ts/Array";
 import {isLeft} from "fp-ts/These";
+import {ErrorModal} from "../common/ErrorModal";
 
 interface AutoPostHandlerProps {
    onBack: () => void;
 }
 
 export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
-    console.log("HELLO")
    const {screenshot, global} = useStores();
    const [posting, setPosting] = useState<boolean>(true);
    const [successful, setSuccessful] = useState<boolean>(false);
    const [errors, setErrors] = useState<any[]>([]);
 
    React.useEffect(() => {
-       console.log("EFFECT!");
       const tasks = global.autoPosters.map((autoPoster) => {
          const post = screenshot.post;
          const logs = (global.appOptions.captureLogs ? {logs: screenshot.logBuffer.peekN(10).join("\n")} : {})
          const fileName = `[Screenshot]-${new Date().toISOString()}.png`;
+
          switch (autoPoster) {
             case "slack":
                return pipe(
@@ -39,8 +39,8 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                        ),
                        {
                           message: post.message,
-                          metadata: JSON.stringify(post.metadata ?? {}),
-                          systemInfo: JSON.stringify(post.systemInfo),
+                          metadata: JSON.stringify(post.metadata ?? {}, null, 2),
+                          systemInfo: JSON.stringify(post.systemInfo, null, 2),
                            ...logs
                        } as SlackParams),
                    mapSlackError,
@@ -67,8 +67,8 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                            typeof global.appOptions.service === "object" ? global.appOptions.service.messageTemplate ?? defaultTemplate : defaultTemplate,
                            {
                                message: post.message,
-                               metadata: JSON.stringify(post.metadata ?? {}),
-                               systemInfo: JSON.stringify(post.systemInfo),
+                               metadata: JSON.stringify(post.metadata ?? {}, null, 2),
+                               systemInfo: JSON.stringify(post.systemInfo, null, 2),
                                ...logs
                            }),
                            taskEitherExtensions.mapLeftValidation()
@@ -93,7 +93,6 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                ))
          }
       })
-       console.log(tasks);
 
        const result = sequence(taskEitherExtensions.errorValidation)(tasks)()
        result.then((eitherResult) => {
@@ -106,22 +105,26 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
          .finally(() => setPosting(false));
    }, []);
 
-   console.log("Rendering")
    if (posting) {
-       console.log("LOADING")
       return <Loader/>;
    } else {
       if (successful) {
          return (
-             <SuccessModal onClose={() => onBack()}>
-                Successfully posted
+             <SuccessModal onClose={onBack}>
+                Screenshot successfully posted
              </SuccessModal>
          )
       } else if (errors.length > 0) {
-            console.log("ERRORS");
-            console.log(errors);
+            return (
+                <ErrorModal onClose={onBack}>
+                    Error when posting!<br/>
+                    <code>
+                        {errors.map(x => JSON.stringify(x, null, 2)).join("\n")}
+                    </code>
+                </ErrorModal>
+            )
       } else {
-         return null
+         return null;
       }
    }
 });

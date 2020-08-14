@@ -7,11 +7,14 @@ import {DownloadError} from "@shotputter/common/src/main/ts/services/poster/Down
 import {ErrorModal} from "../common/ErrorModal";
 import {Loader} from "../processor/Loader";
 import {SuccessModal} from "../common/SuccessModal";
+import {TabbedComponent} from "../common/layout/TabbedComponent";
+import {Tab} from "../common/layout/Tab";
 
 export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void; onFinish: () => void;}) => {
     const {global, screenshot} = useStores();
     return (
-        <Async promiseFn={taskEitherExtensions.toDeferFn(global.downloadService.send(screenshot.post))}>
+        <Async
+            promiseFn={taskEitherExtensions.toDeferFn(global.downloadService.send(screenshot.post))}>
             <Async.Rejected>{ (error: DownloadError) => (
                     <ErrorModal onClose={onClose}>
                         Error downloading screenshot!<br/>
@@ -28,28 +31,31 @@ export const DownloadModal = observer(({onClose, onFinish}: {onClose: () => void
             <Async.Fulfilled>{ _ => (
                 <SuccessModal onClose={onFinish}>
                     <h4>
-                        Post successfully downloaded! For the developer, you can send the following system information
+                        Post successfully downloaded! {"\n\n"}
+                        For the developer, you can send the following system information
                         to help with debugging!
                     </h4>
-                    <code>
-                        {JSON.stringify(screenshot.post.systemInfo)}
-                    </code><br/>
+                    <TabbedComponent>
+                        <Tab tabKey={"systemInfo"} title={"System Info"}>
+                            <code className={"shotput-code"}>
+                                {JSON.stringify(screenshot.post.systemInfo, null, 2)}
+                            </code>
+                        </Tab>
                     {screenshot.post.metadata ? (
-                        <>
-                        <h4>Metadata</h4>
-                        <code>
-                            {JSON.stringify(screenshot.post.metadata, null, 2)}
-                        </code>
-                        </>
+                        <Tab tabKey={"metadata"} title={"Metadata"}>
+                            <code className={"shotput-code"}>
+                                {JSON.stringify(screenshot.post.metadata, null, 2)}
+                            </code>
+                        </Tab>
                     ) : null}
                     {screenshot.post.logs?.length ?? 0 > 0 ? (
-                        <>
-                            <h4>Logs</h4>
-                            <code>
+                        <Tab tabKey={"log"} title={"Logs"}>
+                            <code className={"shotput-code"}>
                                 {screenshot.post.logs.join("\n")}
                             </code>
-                        </>
+                        </Tab>
                     ) : null}
+                    </TabbedComponent>
                 </SuccessModal>
             )}</Async.Fulfilled>
             <Async.Pending>

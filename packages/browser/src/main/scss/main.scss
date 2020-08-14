@@ -1,6 +1,9 @@
 $main-color: #103E66;
 $secondary-color: #795E3A;
 
+$black-color: #313C40;
+$white-color: #ADBBBD;
+$orange-color: #FFB239;
 
 #shotputter-id {
   z-index: 100;
@@ -87,7 +90,20 @@ $secondary-color: #795E3A;
   opacity: 50%;
 }
 
+.shotput-code {
+  display: block;
+  font-family: Monospaced;
+  white-space: pre-wrap;
+  text-align: left;
+  padding: 5px;
+  background-color: $black-color;
+  color: $white-color;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 .shotput-loading-modal {
+  word-break: break-word;
   z-index: 113;
   position: fixed;
   display: flex;
@@ -346,6 +362,8 @@ $secondary-color: #795E3A;
   text-align: left;
   background-color: antiquewhite;
   box-shadow: -.5em -.5em 5px black;
+  max-height: 80vh;
+  overflow-y: auto;
 
   h2 {
     letter-spacing: .1em;
@@ -391,7 +409,10 @@ $secondary-color: #795E3A;
 }
 
 .shotput-success-modal {
+  word-break: break-word;
   background-color: #A1DED6;
+  max-height: 80vh;
+  overflow-y: auto;
   h2 {
     letter-spacing: .2em;
   }
@@ -412,5 +433,33 @@ $secondary-color: #795E3A;
   }
   .shotput-label {
     text-align: left;
+  }
+}
+
+.shotput-tabs {
+  .shotput-tab-bar {
+    padding-left: 0;
+    list-style: none;
+    .shotput-tab {
+      display: inline-block;
+      margin-left: 5px;
+      padding-left: 5px;
+      border-left: 1px solid black;
+      cursor: pointer;
+
+      &:first-child {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+      }
+
+      &.shotput-is-active {
+        color: $orange-color;
+        font-weight: bold;
+      }
+    }
+  }
+  .shotput-tab-contents {
+    margin-top: 3px;
   }
 }

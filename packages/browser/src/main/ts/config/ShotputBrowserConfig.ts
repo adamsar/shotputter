@@ -91,10 +91,12 @@ export const applyTemplate = (template: BrowserTemplate, params?: TemplateParams
     );
 }
 
-/*const config: ShotputBrowserConfig = {
+/*
+const config: ShotputBrowserConfig = {
     service: {
         url: "http://localhost:3002",
-        autoPost: true
+        autoPost: true,
+        autoPostFirst: true
     },
     slack: {
         enabled: true,
@@ -102,7 +104,8 @@ export const applyTemplate = (template: BrowserTemplate, params?: TemplateParams
         defaultChannel: "test-posts"
     },
     captureLogs: true
-}*/
+}
+*/
 
 export interface ShotputBrowserConfig {
 
@@ -110,6 +113,7 @@ export interface ShotputBrowserConfig {
         url: string;
         messageTemplate?: BrowserTemplate;
         autoPost?: boolean;
+        autoPostFirst?: boolean;
     } | false;
 
     metadata?: Metadata;
