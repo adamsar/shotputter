@@ -40,7 +40,7 @@ export class ScreenshotStore {
             ignoreElements: element => element.id === MAIN_ID,
 ***REMOVED***
         this.screenshotCanvas = document.createElement("canvas");
-        this.screenshot = canvas.toDataURL("image/jpeg");
+        this.screenshot = canvas.toDataURL("image/png");
     }
 
     setPost(post: Post) {

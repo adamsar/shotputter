@@ -18,12 +18,14 @@ interface AutoPostHandlerProps {
 }
 
 export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
+    console.log("HELLO")
    const {screenshot, global} = useStores();
    const [posting, setPosting] = useState<boolean>(true);
    const [successful, setSuccessful] = useState<boolean>(false);
    const [errors, setErrors] = useState<any[]>([]);
 
    React.useEffect(() => {
+       console.log("EFFECT!");
       const tasks = global.autoPosters.map((autoPoster) => {
          const post = screenshot.post;
          const logs = (global.appOptions.captureLogs ? {logs: screenshot.logBuffer.peekN(10).join("\n")} : {})
@@ -91,6 +93,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                ))
          }
       })
+       console.log(tasks);
 
        const result = sequence(taskEitherExtensions.errorValidation)(tasks)()
        result.then((eitherResult) => {
@@ -103,17 +106,20 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
          .finally(() => setPosting(false));
    }, []);
 
+   console.log("Rendering")
    if (posting) {
+       console.log("LOADING")
       return <Loader/>;
    } else {
       if (successful) {
          return (
-             <SuccessModal onClose={onBack}>
+             <SuccessModal onClose={() => onBack()}>
                 Successfully posted
              </SuccessModal>
          )
-      } else if (errors.length === 0) {
-
+      } else if (errors.length > 0) {
+            console.log("ERRORS");
+            console.log(errors);
       } else {
          return null
       }

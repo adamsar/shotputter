@@ -65,6 +65,7 @@ export const PostModal = observer(() => {
             return <CustomModal onClose={() => setRoute("base") } />
 
         case "auto":
+            console.log("AUTO")
             return <AutoPostHandler onBack={() => setRoute("base")} />
 
     }

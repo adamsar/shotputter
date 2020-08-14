@@ -14,7 +14,7 @@ export const DownloadPoster = (document: Document): DownloadPoster => {
             return taskEither.tryCatch(() => new Promise((resolve) => {
                 const pom = document.createElement('a');
                 pom.setAttribute('href', post.image);
-                pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}.jpg`);
+                pom.setAttribute('download', `screeshot-${(new Date()).toISOString()}.png`);
                 if (document.createEvent) {
                     try {
                         const event = document.createEvent('MouseEvents');

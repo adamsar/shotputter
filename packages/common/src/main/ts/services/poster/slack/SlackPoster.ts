@@ -105,7 +105,7 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                 sequenceT(taskEither)(
                     fromIOEither(
                         tryCatch<string, FormData>(() => {
-                            const formData = new window.FormData();
+                            const formData = new FormData();
                             formData.append("channels", channels.join(","));
                             formData.append("initial_comment", message);
                             formData.append("filename", fileName);
