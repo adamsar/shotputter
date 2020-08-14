@@ -118,9 +118,9 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
           <IfRejected state={loadRepoState}>{(error: GithubError, _) => (
               <ErrorModal onClose={onClose}>
                  An error has occurred while fetching repository data from Github<br/>
-                 <code>
+                 <code className={"shotput-code"}>
                     {
-                       JSON.stringify(error)
+                       JSON.stringify(error, null, 2)
                     }
                  </code>
               </ErrorModal>

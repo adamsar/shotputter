@@ -115,7 +115,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
             return (
                 <ErrorModal onClose={onBack}>
                     Error when posting!<br/>
-                    <code>
+                    <code className={"shotput-code"}>
                         {errors.map(x => JSON.stringify(x, null, 2)).join("\n")}
                     </code>
                 </ErrorModal>

@@ -45,8 +45,8 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
             <Async.Rejected>{(error:SlackError) =>
                 <ErrorModal onClose={onClose}>
                     There was an error loading channels from slack<br/>
-                    <code>
-                        {JSON.stringify(error)}
+                    <code className={"shotput-code"}>
+                        {JSON.stringify(error, null, 2)}
                     </code>
                 </ErrorModal>
             }</Async.Rejected>
@@ -58,8 +58,8 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                     <IfRejected state={postChannelState}>{ (error: SlackError, _) => (
                         <ErrorModal onClose={onClose}>
                             There was an error posting to Slack<br/>
-                            <code>
-                                {JSON.stringify(error ?? {})}
+                            <code className={"shotput-code"}>
+                                {JSON.stringify(error ?? {}, null, 2)}
                             </code>
                         </ErrorModal>
                     )}</IfRejected>

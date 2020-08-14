@@ -24,7 +24,7 @@ export const CustomModal = observer(({onClose}: CustomModalProps) => {
             <Async.Rejected>{ (error: HttpError) => (
                 <ErrorModal onClose={onClose}>
                     <h4>Error posting to custom screenshot handler</h4>
-                    <code>
+                    <code className={"shotput-code"}>
                         {JSON.stringify(error, null, 2)}
                     </code>
                 </ErrorModal>
