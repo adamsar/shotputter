@@ -12,6 +12,7 @@ import "formdata-polyfill";
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
 import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
+import {googleRouter} from "./google/google-router";
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -48,7 +49,7 @@ export interface S3Config {
 
 export interface GoogleConfig {
     enabled: boolean;
-    token: string;
+    securityFile: string;
 }
 
 export interface ServerConfig {
@@ -98,6 +99,10 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
         } else {
             console.warn("Github id not configured. Not using Github integration.")
         }
+    }
+    if (serverConfig.google?.securityFile && serverConfig.google?.enabled) {
+        console.log("Google enabled")
+        app.use("/google", googleRouter(serverConfig.google?.securityFile));
     }
     return app;
 };

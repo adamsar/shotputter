@@ -1,6 +1,6 @@
 import {HostedRequester, HttpError} from "../../HostedRequester";
 import {TaskEither} from "fp-ts/lib/TaskEither";
-import {buildDecoder} from "io-ts-transformer";
+import * as t from "io-ts";
 
 
 export interface GooglePoster$Post$Params {
@@ -12,7 +12,12 @@ export interface GooglePoster$Post$Params {
 
 }
 
-export const googlePostDecoder = buildDecoder<GooglePoster$Post$Params>();
+export const googlePostDecoder: t.Type<GooglePoster$Post$Params> = t.strict({
+    image: t.string,
+    message: t.string,
+    space: t.string,
+    thread: t.union([t.undefined, t.string])
+});
 
 export type GoogleError = { type: "google", error: any } | HttpError;
 

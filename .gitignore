@@ -1,3 +1,4 @@
+*.map
 packages/api/dev/*
 .DS_Store
 packages/api/src/**/*.js
