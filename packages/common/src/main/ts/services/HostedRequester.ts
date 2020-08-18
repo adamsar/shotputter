@@ -17,7 +17,6 @@ export function getRequest<A>(path: string, headers?: object): TaskEither<HttpEr
         mapError,
         chain((response: Response) => {
             if (response.status >= 400) {
-                console.log(response);
                 return pipe(
                     taskEitherExtensions.fromPromise(response.text()),
                     map((details: string): HttpError => ({type: "httpError", details, errorStatus: response.status})),
@@ -41,7 +40,6 @@ export function postRequest<A>(path: string, body?: object | FormData, headers?:
 }
 
 export function doPostRequest(path: string, body?: object | FormData, headers?: object): TaskEither<HttpError, Response> {
-    console.log(path)
     return pipe(
         promiseToTaskEither(
             fetch(path, {
@@ -80,7 +78,6 @@ export class HostedRequester {
     }
 
     get<A>(path: string): TaskEither<HttpError, A> {
-        console.log(this);
         return getRequest(`${this.baseUrl}${path}`);
     }
 

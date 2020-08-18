@@ -11,7 +11,7 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const s3Bucket = process.env['S3_BUCKET'];
     const s3Prefix = process.env['S3_PREFIX'];
     const s3Enabled = process.env['S3_ENABLED'] === "true";
-    const googleSecurityFile = process.env['SHOTPUT_GOOGLE_SECURITY_FILE'];
+    const googleWebhookUrl = process.env['SHOTPUT_GOOGLE_WEBHOOK_URL'];
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
         ...((githubToken || githubDefaultOwner || githubDefaultRepo) ? {
@@ -33,7 +33,7 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
                 prefix: s3Prefix
             }
         } : {}),
-        ...(googleSecurityFile ? {google: {enabled: true, securityFile: googleSecurityFile}} : {})
+        ...(googleWebhookUrl ? {google: {enabled: true, webhookUrl: googleWebhookUrl}} : {})
     };
 };
 
