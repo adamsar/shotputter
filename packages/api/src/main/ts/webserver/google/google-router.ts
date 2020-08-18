@@ -15,7 +15,10 @@ const cardFormat = (imageUrl: string, message: string) => ({
         sections: [{
             widgets: [
                 {image: { imageUrl }},
-                {textParagraph: {text: message}}
+                {textParagraph: {text: message}},
+                {buttons: {textButton: {
+                            text: "View screenshot",
+                            onClick: {"openLink": {"url": imageUrl}}}}}
             ]
         }]
     }]

@@ -6,6 +6,7 @@ import {DownloadPoster} from "@shotputter/common/src/main/ts/services/poster/Dow
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
 import {ShotputBrowserConfig} from "../config/ShotputBrowserConfig";
+import {GooglePoster, HostedGooglePoster} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
 
 interface WindowSize {
     width: number;
@@ -39,12 +40,27 @@ export class GlobalStateStore {
         }
         if (requester && appOptions.slack?.enabled) {
             this.slackService = HostedSlackService(requester);
+            if (!appOptions.slack.autoPost) {
+                this.availablePosters.push("slack");
+            }
         }
         if (requester && appOptions.github?.enabled) {
             this.githubService = HostedGithubPoster(requester);
+            if (!appOptions.github.autoPost) {
+                this.availablePosters.push("github");
+            }
+        }
+        if (requester && appOptions.google?.enabled) {
+            this.googleService = HostedGooglePoster(requester);
+            if (!appOptions.google.autoPost) {
+                this.availablePosters.push("google");
+            }
         }
         if (appOptions.custom?.enabled) {
             this.customRequestService = HttpPoster(appOptions.custom.endpoint);
+            if (!appOptions.custom.autoPost) {
+                this.availablePosters.push("custom");
+            }
         }
         if (typeof appOptions.service === "object" && appOptions.service.autoPost) {
             this.availablePosters.push("auto");
@@ -53,6 +69,9 @@ export class GlobalStateStore {
             }
             if (appOptions.github?.enabled && appOptions.github?.autoPost) {
                 this.autoPosters.push("github");
+            }
+            if (appOptions.google?.autoPost) {
+                this.autoPosters.push("google");
             }
             if (appOptions.custom?.enabled && appOptions.custom?.autoPost) {
                 this.autoPosters.push("custom");
@@ -68,9 +87,9 @@ export class GlobalStateStore {
 
     @observable appOptions: ShotputBrowserConfig | null = null;
 
-    @observable availablePosters: ("slack" | "download" | "github" | "custom" | "auto")[] = [];
+    @observable availablePosters: ("slack" | "download" | "github" | "custom" | "auto" | "google")[] = [];
 
-    @observable autoPosters: ("slack" | "custom" | "github")[] = [];
+    @observable autoPosters: ("slack" | "custom" | "github" | "google")[] = [];
 
     slackService: SlackServiceClient | null = null;
 
@@ -84,6 +103,9 @@ export class GlobalStateStore {
 
     s3Service: ImageUploader | null = null;
 
+    googleService: GooglePoster | null = null;
+
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
+
 
 }

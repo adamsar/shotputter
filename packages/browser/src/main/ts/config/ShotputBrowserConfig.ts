@@ -6,9 +6,31 @@ import {pipe} from "fp-ts/pipeable";
 
 export type BrowserTemplate = string |  { templateKey: string; } | (() => string);
 
+
+export const defaultUnformattedTemplate = `
+{{#if image }}{{ image }}{{/if}}
+{{#if message}}{{message}}{{/if}}
+{{#if metadata}}
+Metadata:
+--------------
+{{{  metadata }}}
+{{/if}}
+
+{{#if systemInfo}}
+--------------
+{{{  systemInfo }}}
+{{/if}}
+
+{{#if logs}}
+--------------
+Logs:
+{{logs}}
+{{/if}}
+`
 // message, metadata, logs, image
 export const defaultTemplate =  `
-{{ image }}
+{{#if image }}{{ image }}{{/if}}
+{{#if message}}{{message}}{{/if}}
 {{#if metadata}}
 Metadata:
 --------------
@@ -173,7 +195,13 @@ export interface ShotputBrowserConfig {
         defaultRepo?: string;
         defaultLabels?: string[];
         autoPost?: boolean;
-    }
+    };
+
+    google?: ({
+        enabled: boolean;
+        template?: BrowserTemplate;
+        autoPost?: boolean;
+    })
 
     custom?: ({
         enabled: true
