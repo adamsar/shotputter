@@ -49,7 +49,7 @@ export interface S3Config {
 
 export interface GoogleConfig {
     enabled: boolean;
-    securityFile: string;
+    webhookUrl: string;
 }
 
 export interface ServerConfig {
@@ -100,9 +100,13 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
             console.warn("Github id not configured. Not using Github integration.")
         }
     }
-    if (serverConfig.google?.securityFile && serverConfig.google?.enabled) {
-        console.log("Google enabled")
-        app.use("/google", googleRouter(serverConfig.google?.securityFile));
+    if (serverConfig.google?.webhookUrl && serverConfig.google?.enabled) {
+        if (imgurUploader || s3Uploader) {
+            console.log("Google enabled")
+            app.use("/google", googleRouter(serverConfig.google?.webhookUrl, imgurUploader || s3Uploader));
+        } else {
+            console.warn("Google chat enabled, but no image poster was registered! Not using Google chat")
+        }
     }
     return app;
 };
