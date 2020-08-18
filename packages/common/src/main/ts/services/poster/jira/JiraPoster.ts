@@ -15,7 +15,5 @@
  */
 
 export interface JiraPoster {
-    post: (project: string, priorityId: string, summary: string, message: string, image: string) {
-
-    }
+    post: (project: string, priorityId: string, summary: string, message: string, image: string) => void;
 }

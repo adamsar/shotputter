@@ -7,11 +7,12 @@ import {GithubModal} from "./GithubModal";
 import {DownloadModal} from "./DownloadModal";
 import {CustomModal} from "./CustomModal";
 import {AutoPostHandler} from "./AutoPostHandler";
+import {GoogleModal} from "./GoogleModal";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
     const initial = (typeof global.appOptions?.service === "object" && global.appOptions.service.autoPostFirst) ? "auto" : "base";
-    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto">(initial);
+    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto" | "google">(initial);
 
     const onClose = () => {
         screenshot.setPost(null);
@@ -20,6 +21,8 @@ export const PostModal = observer(() => {
 
     const posterButtons = global.availablePosters.map(poster => {
         switch (poster) {
+            case "google":
+                return <li key={"google"} onClick={() => setRoute("google")}>Google</li>;
             case "github":
                 return <li key={"github"} onClick={() => setRoute("github")}>Github</li>;
             case "download":
@@ -76,7 +79,9 @@ export const PostModal = observer(() => {
 ***REMOVED*** else {
                 onBack = () => setRoute("base")
 ***REMOVED***
-            return <AutoPostHandler onBack={onBack} />
+            return <AutoPostHandler onBack={onBack} />;
 
+        case "google":
+            return <GoogleModal onClose={() => setRoute("base")} />
     }
 });

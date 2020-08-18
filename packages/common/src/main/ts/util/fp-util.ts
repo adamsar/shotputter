@@ -22,7 +22,8 @@ export const taskEitherExtensions = {
     fromPromise: promiseToTaskEither,
     toDeferFn,
     errorValidation: getTaskValidation(getMonoid<any>()),
-    mapLeftValidation: <A>() => mapLeft((input: A) => [input])
+    mapLeftValidation: <A>() => mapLeft((input: A) => [input]),
+    mapLeftString: mapLeft((x:any) => x.toString())
 }
 
 export const eitherExtensions = {

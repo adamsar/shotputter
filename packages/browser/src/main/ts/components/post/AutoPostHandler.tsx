@@ -5,7 +5,13 @@ import {useStores} from "../../stores";
 import {Loader} from "../processor/Loader";
 import {SuccessModal} from "../common/SuccessModal";
 import {pipe} from "fp-ts/pipeable";
-import {applyTemplate, defaultSlackTemplate, defaultTemplate, SlackParams} from "../../config/ShotputBrowserConfig";
+import {
+    applyTemplate,
+    defaultSlackTemplate,
+    defaultTemplate,
+    defaultUnformattedTemplate,
+    SlackParams
+} from "../../config/ShotputBrowserConfig";
 import {mapSlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {chain} from "fp-ts/TaskEither";
 import {sequenceT} from "fp-ts/lib/Apply";
@@ -31,6 +37,25 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
          const fileName = `[Screenshot]-${new Date().toISOString()}.png`;
 
          switch (autoPoster) {
+             case "google":
+                 return pipe(
+                     applyTemplate(
+                         global.appOptions?.google?.template ?? defaultUnformattedTemplate,
+                         {
+                             message: post.message,
+                             metadata: JSON.stringify(post.metadata ?? {}, null, 2),
+                             systemInfo: JSON.stringify(post.systemInfo, null, 2),
+                             ...logs
+             ***REMOVED***
+                     ),
+                     taskEitherExtensions.mapLeftString,
+                     chain(message => pipe(
+                         global.googleService.post({message, image: post.image}),
+                         taskEitherExtensions.mapLeftString)
+                     ),
+                     taskEitherExtensions.mapLeftValidation()
+                 )
+
             case "slack":
                return pipe(
                    applyTemplate(
