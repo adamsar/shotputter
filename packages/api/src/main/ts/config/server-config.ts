@@ -12,6 +12,10 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const s3Prefix = process.env['S3_PREFIX'];
     const s3Enabled = process.env['S3_ENABLED'] === "true";
     const googleWebhookUrl = process.env['SHOTPUT_GOOGLE_WEBHOOK_URL'];
+    const jiraUserName = process.env["SHOTPUT_JIRA_USERNAME"];
+    const jiraPassword = process.env["SHOTPUT_JIRA_PASSWORD"];
+    const jiraHostName = process.env["SHOTPUT_JIRA_HOST"];
+
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
         ...((githubToken || githubDefaultOwner || githubDefaultRepo) ? {
@@ -33,7 +37,8 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
                 prefix: s3Prefix
 ***REMOVED***
         } : {}),
-        ...(googleWebhookUrl ? {google: {enabled: true, webhookUrl: googleWebhookUrl}} : {})
+        ...(googleWebhookUrl ? {google: {enabled: true, webhookUrl: googleWebhookUrl}} : {}),
+        ...((jiraPassword && jiraUserName && jiraHostName) ? {jira: {enabled: true, password: jiraPassword, username: jiraUserName, host: jiraHostName}}: {})
     };
 };
 

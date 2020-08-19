@@ -13,6 +13,7 @@ import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uplo
 import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images";
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 import {googleRouter} from "./google/google-router";
+import {getJiraRouter} from "./jira/jira-router";
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -58,6 +59,14 @@ export interface ServerConfig {
     imgur?: ImgurServerConfig;
     s3?: S3Config;
     google?: GoogleConfig;
+    jira?: JiraConfig;
+}
+
+export interface JiraConfig {
+    enabled: boolean;
+    username: string;
+    password: string;
+    host?: string;
 }
 
 export const getApp = (serverConfig: ServerConfig = {}): Express => {
@@ -106,6 +115,14 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
             app.use("/google", googleRouter(serverConfig.google?.webhookUrl, imgurUploader || s3Uploader));
         } else {
             console.warn("Google chat enabled, but no image poster was registered! Not using Google chat")
+        }
+    }
+    if (serverConfig.jira?.enabled && serverConfig.jira.username && serverConfig.jira.password) {
+        if (imgurUploader || s3Uploader) {
+            console.log("JIRA enabled");
+            app.use("/jira", getJiraRouter(serverConfig.jira, imgurUploader || s3Uploader))
+        } else {
+            console.log("JIRA enabled, but no image poster was registered! Not using JIRA");
         }
     }
     return app;
