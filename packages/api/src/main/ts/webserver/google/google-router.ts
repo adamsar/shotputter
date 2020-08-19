@@ -24,6 +24,8 @@ const cardFormat = (imageUrl: string, message: string) => ({
     }]
 });
 
+
+
 export const googleRouter = (webhookUrl: string, imageUploader: ImageUploader): express.Router => {
 
     const requester = new HostedRequester(webhookUrl);
