@@ -201,6 +201,25 @@ export interface ShotputBrowserConfig {
         enabled: boolean;
         template?: BrowserTemplate;
         autoPost?: boolean;
+    });
+
+    jira?: (({
+        enabled: true;
+        template?: BrowserTemplate;
+    } & ({
+        autoPost: true;
+        defaultIssuetype: string;
+        defaultProject: string;
+    } | {
+        autoPost?: false;
+        defaultIssueType?: string;
+        defaultProject: string;
+    })) | {
+        enabled: false;
+        defaultIssuetype?: string;
+        defaultProject?: string;
+        autoPost?: boolean;
+        template?: BrowserTemplate;
     })
 
     custom?: ({
