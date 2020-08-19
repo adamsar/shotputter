@@ -7,6 +7,7 @@ import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/Ht
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
 import {ShotputBrowserConfig} from "../config/ShotputBrowserConfig";
 import {GooglePoster, HostedGooglePoster} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
+import {HostedJiraPoster, JiraPoster} from "@shotputter/common/src/main/ts/services/poster/jira/JiraPoster";
 
 interface WindowSize {
     width: number;
@@ -56,6 +57,12 @@ export class GlobalStateStore {
                 this.availablePosters.push("google");
 ***REMOVED***
         }
+        if (requester && appOptions.jira?.enabled) {
+            this.jiraService = HostedJiraPoster(requester);
+            if (!appOptions.jira.autoPost) {
+                this.availablePosters.push("jira");
+***REMOVED***
+        }
         if (appOptions.custom?.enabled) {
             this.customRequestService = HttpPoster(appOptions.custom.endpoint);
             if (!appOptions.custom.autoPost) {
@@ -73,6 +80,9 @@ export class GlobalStateStore {
             if (appOptions.google?.autoPost) {
                 this.autoPosters.push("google");
 ***REMOVED***
+            if (appOptions.jira?.autoPost) {
+                this.autoPosters.push("jira");
+***REMOVED***
             if (appOptions.custom?.enabled && appOptions.custom?.autoPost) {
                 this.autoPosters.push("custom");
 ***REMOVED***
@@ -87,9 +97,9 @@ export class GlobalStateStore {
 
     @observable appOptions: ShotputBrowserConfig | null = null;
 
-    @observable availablePosters: ("slack" | "download" | "github" | "custom" | "auto" | "google")[] = [];
+    @observable availablePosters: ("slack" | "download" | "github" | "custom" | "auto" | "google" | "jira")[] = [];
 
-    @observable autoPosters: ("slack" | "custom" | "github" | "google")[] = [];
+    @observable autoPosters: ("slack" | "custom" | "github" | "google" | "jira")[] = [];
 
     slackService: SlackServiceClient | null = null;
 
@@ -104,6 +114,8 @@ export class GlobalStateStore {
     s3Service: ImageUploader | null = null;
 
     googleService: GooglePoster | null = null;
+
+    jiraService: JiraPoster | null = null;
 
     @computed get isMobile(): boolean { return this.windowSize.width < 768 }
 

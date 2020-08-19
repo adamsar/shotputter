@@ -8,11 +8,12 @@ import {DownloadModal} from "./DownloadModal";
 import {CustomModal} from "./CustomModal";
 import {AutoPostHandler} from "./AutoPostHandler";
 import {GoogleModal} from "./GoogleModal";
+import {JiraPostModal} from "./JiraPostModal";
 
 export const PostModal = observer(() => {
     const { screenshot, global } = useStores();
     const initial = (typeof global.appOptions?.service === "object" && global.appOptions.service.autoPostFirst) ? "auto" : "base";
-    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto" | "google">(initial);
+    const [route, setRoute] = React.useState<"base" | "slack" | "github" | "download" | "custom" | "auto" | "google" | "jira">(initial);
 
     const onClose = () => {
         screenshot.setPost(null);
@@ -29,6 +30,8 @@ export const PostModal = observer(() => {
                 return <li key={"download"} onClick={() => setRoute("download")}>Download</li>;
             case "slack":
                 return <li key={"slack"} onClick={() => setRoute("slack")}>Slack</li>;
+            case "jira":
+                return <li key={"jira"} onClick={() => setRoute("jira")}>JIRA</li>;
             case "auto":
                 if (typeof global.appOptions.service === "object" && global.appOptions.service.autoPostFirst) {
                     return null
@@ -41,6 +44,9 @@ export const PostModal = observer(() => {
     });
 
     switch (route) {
+
+        case "jira":
+            return <JiraPostModal onClose={() => setRoute("base")} />;
 
         case "github":
             const goBack = () => setRoute("base")
