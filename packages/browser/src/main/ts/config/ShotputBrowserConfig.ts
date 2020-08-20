@@ -208,15 +208,21 @@ export interface ShotputBrowserConfig {
         template?: BrowserTemplate;
     } & ({
         autoPost: true;
-        defaultIssuetype: string;
+        defaultPriority: string;
+        defaultIssueType: string;
         defaultProject: string;
+        defaultSummary: string;
     } | {
         autoPost?: false;
         defaultIssueType?: string;
-        defaultProject: string;
+        defaultPriority?: string;
+        defaultSummary?: string;
+        defaultProject?: string;
     })) | {
         enabled: false;
-        defaultIssuetype?: string;
+        defaultSummary?: string;
+        defaultPriority?: string;
+        defaultIssueType?: string;
         defaultProject?: string;
         autoPost?: boolean;
         template?: BrowserTemplate;
