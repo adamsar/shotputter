@@ -14,23 +14,31 @@ import {
 import {ioUtils} from "@shotputter/common/src/main/ts/util/io-utils";
 import {BadDecodeResponse} from "../routing/response-errors";
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
+import {doPostRequest} from "@shotputter/common/src/main/ts/services/HostedRequester";
 
-const jiraFormat = (postData: JiraPoster$Post$Params, imageUrl: string) => ({
-    project: {
-        key: postData.project
-    },
-    summary: postData.summary,
-    issuetype: {
-        name: postData.issuetype
-    },
-    priority: {
-        id: postData.priorityId
-    },
-    description: `
-    !${imageUrl}!
-    ${postData.message}
-    `
-})
+const jiraFormat = (postData: JiraPoster$Post$Params, imageUrl: string) => {
+    const data =  {
+        update: {},
+        fields: {
+            project: {
+                id: postData.project
+***REMOVED***
+            summary: postData.summary,
+                issuetype: {
+                id: postData.issuetype
+***REMOVED***
+            "priority": {
+                id: postData.priorityId
+***REMOVED***
+            description: `
+        !${imageUrl}!
+        ${postData.message}
+        `
+        }
+    }
+    console.log(data);
+    return data;
+}
 
 export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUploader) => {
     const router = express.Router();
@@ -38,8 +46,6 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
         protocol: 'https',
         username: jiraConfig.username,
         password: jiraConfig.password,
-        apiVersion: '2',
-        strictSSL: true,
         host: jiraConfig.host
     });
     router.post("/post", _route(({req}) => {
@@ -48,11 +54,27 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
             chain((postData) => pipe(
                 imageUploader.uploadImage(postData.image),
                 mapLeft(error => ServerError(error)),
-                chain(imageUrl => pipe(
-                    taskEitherExtensions.fromPromise(jira.postIssue(jiraFormat(postData, imageUrl))),
-                    mapLeft(error => ServerError({error})),
-                    map((response: object) => Ok(response))
-                )))));
+                chain(imageUrl => {
+                    console.log(JSON.stringify(jiraFormat(postData, imageUrl), null, 2))
+                    return pipe(
+                            doPostRequest(
+                                `https://${jiraConfig.host}/rest/api/latest/issue`,
+                                jiraFormat(postData, imageUrl),
+                                {
+                                    Authorization: `Basic ${new Buffer(`${jiraConfig.username}:${jiraConfig.password}`).toString("base64")}`
+                    ***REMOVED***
+                            ),
+                        mapLeft(error => ServerError({error})),
+                        chain(response => pipe(
+                            taskEitherExtensions.fromPromise(
+                                response.json()
+                            ),
+                            mapLeft(error => ServerError({error}))
+                            )
+                        ),
+                        map((response: object) => Ok(response))
+                    )
+    ***REMOVED***))));
     }));
 
     router.get("/projects", _route(() => {
@@ -69,6 +91,14 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
             mapLeft(error => ServerError({error})),
             map((response: object) => Ok(response))
         )
-    }))
+    }));
+
+    router.get("/priorities", _route(() => {
+        return pipe(
+            taskEitherExtensions.fromPromise(jira.listPriorities()),
+            mapLeft(error => ServerError({error})),
+            map((response: object) => Ok(response))
+        )
+    }));
     return router;
 }

@@ -1,22 +1,7 @@
-
-/**
- *    const fields = {
-      project: {
-        key: config.projectKey
-      },
-      summary: bug.summary,
-      issuetype: {
-        name: config.bugIssueName
-      },
-      priority: {
-        id: priority
-      },
-      description: bug.description
-    };
- */
 import {HostedRequester, HttpError} from "../../HostedRequester";
 import {TaskEither} from "fp-ts/lib/TaskEither";
 import * as t from "io-ts";
+import {withRequired} from "../../../util/io-utils";
 
 export interface JiraPoster$Post$Params {
     project: string;
@@ -41,13 +26,19 @@ export interface JiraIssueType {
     description: string;
 }
 
+export interface JiraPriority {
+    id: string;
+    name: string;
+    description: string;
+}
+
 export const jiraPosterPostDecode: t.Type<JiraPoster$Post$Params> = t.strict({
-    project: t.string,
-    priorityId: t.string,
-    summary: t.string,
-    message: t.string,
-    issuetype: t.string,
-    image: t.string
+    project: withRequired(t.string),
+    priorityId: withRequired(t.string),
+    summary: withRequired(t.string),
+    message: withRequired(t.string),
+    issuetype: withRequired(t.string),
+    image: withRequired(t.string)
 });
 
 export interface JiraPoster {
@@ -55,6 +46,7 @@ export interface JiraPoster {
     post({project, priorityId, summary, message, image}: JiraPoster$Post$Params): TaskEither<HttpError, true>;
     listProjects(): TaskEither<HttpError, JiraProject[]>;
     listIssueTypes(): TaskEither<HttpError, JiraIssueType[]>;
+    listPriorities(): TaskEither<HttpError, JiraPriority[]>;
 
 }
 
@@ -68,6 +60,9 @@ export const HostedJiraPoster = (requester: HostedRequester): JiraPoster => {
         },
         listIssueTypes: () => {
             return requester.get("/jira/issuetypes")
+        },
+        listPriorities: () => {
+            return requester.get("/jira/priorities");
         }
     }
 }
