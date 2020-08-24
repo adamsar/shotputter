@@ -5,7 +5,7 @@ import JiraApi from "jira-client";
 import {_route} from "../routing/route";
 import {pipe} from "fp-ts/lib/pipeable";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import {map, mapLeft, chain} from "fp-ts/TaskEither";
+import {chain, map, mapLeft} from "fp-ts/TaskEither";
 import {Ok, ServerError} from "../routing/responses";
 import {
     JiraPoster$Post$Params,
@@ -14,31 +14,31 @@ import {
 import {ioUtils} from "@shotputter/common/src/main/ts/util/io-utils";
 import {BadDecodeResponse} from "../routing/response-errors";
 import {ImageUploader} from "@shotputter/common/src/main/ts/services/images/uploader";
-import {doPostRequest} from "@shotputter/common/src/main/ts/services/HostedRequester";
+import {getRequest} from "@shotputter/common/src/main/ts/services/HostedRequester";
 
-const jiraFormat = (postData: JiraPoster$Post$Params, imageUrl: string) => {
-    const data =  {
-        update: {},
-        fields: {
-            project: {
-                id: postData.project
-***REMOVED***
-            summary: postData.summary,
-                issuetype: {
+const jiraFormat = (postData: JiraPoster$Post$Params, imageUrl: string) => ({
+    update: {},
+    fields: {
+        project: {
+            id: postData.project
+        },
+        ...(postData.summary ? {summary: postData.summary} : {}),
+        ...(postData.issuetype ? {
+            issuetype: {
                 id: postData.issuetype
 ***REMOVED***
-            "priority": {
+        } : {}),
+        ...(postData.priorityId ? {
+            priority: {
                 id: postData.priorityId
 ***REMOVED***
-            description: `
-        !${imageUrl}!
-        ${postData.message}
-        `
-        }
+***REMOVED*** : {}),
+        description: `
+    !${imageUrl}!
+    ${postData.message}
+    `
     }
-    console.log(data);
-    return data;
-}
+})
 
 export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUploader) => {
     const router = express.Router();
@@ -55,23 +55,11 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
                 imageUploader.uploadImage(postData.image),
                 mapLeft(error => ServerError(error)),
                 chain(imageUrl => {
-                    console.log(JSON.stringify(jiraFormat(postData, imageUrl), null, 2))
                     return pipe(
-                            doPostRequest(
-                                `https://${jiraConfig.host}/rest/api/latest/issue`,
-                                jiraFormat(postData, imageUrl),
-                                {
-                                    Authorization: `Basic ${new Buffer(`${jiraConfig.username}:${jiraConfig.password}`).toString("base64")}`
-                    ***REMOVED***
-                            ),
-                        mapLeft(error => ServerError({error})),
-                        chain(response => pipe(
-                            taskEitherExtensions.fromPromise(
-                                response.json()
-                            ),
-                            mapLeft(error => ServerError({error}))
-                            )
+                        taskEitherExtensions.fromPromise(
+                            jira.addNewIssue(jiraFormat(postData, imageUrl))
                         ),
+                        mapLeft(error => ServerError({error})),
                         map((response: object) => Ok(response))
                     )
     ***REMOVED***))));
@@ -100,5 +88,18 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
             map((response: object) => Ok(response))
         )
     }));
+
+    router.get("/createmetadata", _route(() => {
+        return pipe(
+                getRequest(
+                    `https://${jiraConfig.host}/rest/api/3/issue/createmeta?expand=projects.issuetypes.fields`,
+                    {
+                        Authorization: `Basic ${new Buffer(`${jiraConfig.username}:${jiraConfig.password}`).toString("base64")}`
+        ***REMOVED***
+                ),
+            mapLeft(error => ServerError({error})),
+            map((response: object) => Ok(response))
+        )
+    }))
     return router;
 }
