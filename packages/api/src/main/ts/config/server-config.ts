@@ -15,6 +15,9 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const jiraUserName = process.env["SHOTPUT_JIRA_USERNAME"];
     const jiraPassword = process.env["SHOTPUT_JIRA_PASSWORD"];
     const jiraHostName = process.env["SHOTPUT_JIRA_HOST"];
+    const cloudinaryCloudName = process.env["SHOTPUT_CLOUDINARY_CLOUD_NAME"];
+    const cloudinaryApiKey = process.env["SHOTPUT_CLOUDINARY_API_KEY"];
+    const cloudinaryApiSecret = process.env["SHOTPUT_CLOUDINARY_API_SECRET"];
 
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
@@ -38,7 +41,8 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
 ***REMOVED***
         } : {}),
         ...(googleWebhookUrl ? {google: {enabled: true, webhookUrl: googleWebhookUrl}} : {}),
-        ...((jiraPassword && jiraUserName && jiraHostName) ? {jira: {enabled: true, password: jiraPassword, username: jiraUserName, host: jiraHostName}}: {})
+        ...((jiraPassword && jiraUserName && jiraHostName) ? {jira: {enabled: true, password: jiraPassword, username: jiraUserName, host: jiraHostName}}: {}),
+        ...((cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret) ? {cloudinary: {enabled: true, cloudName: cloudinaryCloudName, apiKey: cloudinaryApiKey, apiSecret: cloudinaryApiSecret}} : {})
     };
 };
 
