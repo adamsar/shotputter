@@ -15,6 +15,7 @@ import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgu
 import {googleRouter} from "./google/google-router";
 import {getJiraRouter} from "./jira/jira-router";
 import {CloudinaryUploader} from "./cloudinary/CloudinaryImageUploader";
+import {CustomerImageUploader} from "../../../../../common/src/main/ts/services/images/custom-uploader";
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -62,6 +63,7 @@ export interface ServerConfig {
     google?: GoogleConfig;
     jira?: JiraConfig;
     cloudinary?: CloudinaryConfig;
+    customImageUploader?: CustomImageUploaderConfig;
 }
 
 export interface JiraConfig {
@@ -78,12 +80,18 @@ export interface CloudinaryConfig {
     apiSecret: string;
 }
 
+export interface CustomImageUploaderConfig {
+    enabled: boolean;
+    endpoint: string;
+}
+
 export const getApp = (serverConfig: ServerConfig = {}): Express => {
     const app = express();
     const enabledPosters = [];
     let imgurUploader: ImageUploader;
     let s3Uploader: ImageUploader;
     let cloudinaryUploader: ImageUploader;
+    let customUploader: ImageUploader;
 
     app.use(express.json({
         limit: "10mb"
@@ -111,7 +119,10 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
         console.log("Using Cloudinary");
         cloudinaryUploader = CloudinaryUploader(serverConfig.cloudinary?.cloudName, serverConfig.cloudinary?.apiKey, serverConfig.cloudinary?.apiSecret);
     }
-    const uploader = imgurUploader || s3Uploader || cloudinaryUploader;
+    if (serverConfig.customImageUploader?.enabled && serverConfig.customImageUploader?.endpoint) {
+        customUploader = CustomerImageUploader(serverConfig.customImageUploader?.endpoint);
+    }
+    const uploader = customUploader || imgurUploader || s3Uploader || cloudinaryUploader;
 
     if (serverConfig.github?.token && uploader) {
         console.log("Github enabled");

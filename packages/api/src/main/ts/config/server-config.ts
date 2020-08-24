@@ -18,6 +18,7 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const cloudinaryCloudName = process.env["SHOTPUT_CLOUDINARY_CLOUD_NAME"];
     const cloudinaryApiKey = process.env["SHOTPUT_CLOUDINARY_API_KEY"];
     const cloudinaryApiSecret = process.env["SHOTPUT_CLOUDINARY_API_SECRET"];
+    const customImageUploadUrl = process.env["SHOTPUT_CUSTOM_IMAGE_UPLOAD_URL"];
 
     return {
         ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
@@ -42,7 +43,8 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
         } : {}),
         ...(googleWebhookUrl ? {google: {enabled: true, webhookUrl: googleWebhookUrl}} : {}),
         ...((jiraPassword && jiraUserName && jiraHostName) ? {jira: {enabled: true, password: jiraPassword, username: jiraUserName, host: jiraHostName}}: {}),
-        ...((cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret) ? {cloudinary: {enabled: true, cloudName: cloudinaryCloudName, apiKey: cloudinaryApiKey, apiSecret: cloudinaryApiSecret}} : {})
+        ...((cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret) ? {cloudinary: {enabled: true, cloudName: cloudinaryCloudName, apiKey: cloudinaryApiKey, apiSecret: cloudinaryApiSecret}} : {}),
+        ...(customImageUploadUrl ? {customImageUploader: {enabled: true, endpoint: customImageUploadUrl}} : {})
     };
 };
 
