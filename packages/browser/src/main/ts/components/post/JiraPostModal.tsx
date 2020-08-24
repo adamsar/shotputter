@@ -4,6 +4,8 @@ import React, {ChangeEvent} from "react";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {Async, useAsync} from "react-async";
 import {
+    JiraCreateMetadata,
+    JiraField,
     JiraIssueType,
     JiraPoster$Post$Params,
     jiraPosterPostDecode,
@@ -13,7 +15,6 @@ import {
 import {Loader} from "../processor/Loader";
 import {ErrorModal} from "../common/ErrorModal";
 import {Modal} from "../common/Modal";
-import {sequenceT} from "fp-ts/Apply";
 import {pipe} from "fp-ts/pipeable";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
 import {map, TaskEither} from "fp-ts/TaskEither";
@@ -163,13 +164,10 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
     const [priority, setPriority] = React.useState<string>(global.appOptions.jira.defaultPriority);
     const [errors, setErrors] = React.useState<JiraPostModal$Errors>({});
     const [running, setRunning] = React.useState(false);
-    const bootstrapPromise: Promise<[JiraIssueType[], JiraProject[], JiraPriority[]]> = React.useMemo(() => {
-        return taskEitherExtensions.toDeferFn(sequenceT(taskEitherExtensions.errorValidation)(
-                taskEitherExtensions.mapLeftValidation()(global.jiraService.listIssueTypes()),
-                taskEitherExtensions.mapLeftValidation()(global.jiraService.listProjects()),
-                taskEitherExtensions.mapLeftValidation()(global.jiraService.listPriorities())
-        ))()
+    const bootstrapPromise: Promise<JiraCreateMetadata> = React.useMemo(() => {
+        return taskEitherExtensions.toDeferFn(global.jiraService.getCreateMetadata())()
     }, []);
+    const bootstrapState = useAsync({promise: bootstrapPromise});
     const postState = useAsync({deferFn: ([form]: [JiraPoster$Post$Params]) => {
         return taskEitherExtensions.toDeferFn(global.jiraService.post(form))()
     }});
@@ -183,7 +181,12 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
             setRunning(false);
         }
     },[])
-    const onChangeProject = (project: JiraProject) => setProject(project.id);
+    const onChangeProject = (project: JiraProject) => {
+        setProject(project.id);
+        setIssuetype(undefined);
+        setSummary(undefined);
+        setPriority(undefined);
+    }
     const onChangeIssuetype = (issuetype: JiraIssueType) => setIssuetype(issuetype.id);
     const onChangeSummary = (summary: string) => setSummary(summary);
     const onChangePriority = (priority: JiraPriority) => setPriority(priority.id);
@@ -222,7 +225,7 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
     const onClickBack = () => onClose();
 
     return (
-        <Async promise={bootstrapPromise}>
+        <Async {...bootstrapState}>
             <Async.Pending>
                 <Loader/>
             </Async.Pending>
@@ -234,47 +237,68 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                     </code>
                 </ErrorModal>
             )}</Async.Rejected>
-            <Async.Fulfilled>{([issueTypes, projects, priorities]) => (
-                <Async {...postState}>
-                    <Async.Pending>
-                        {
-                            running ? (
-                                <Loader/>
-                            ) : (
-                                <Modal>
-                                    <h3>Post to Jira</h3>
-                                    <div className={"shotput-jira-field"}>
-                                        <JiraField$Project projects={projects} onChange={onChangeProject}/>
-                                        <JiraField$Issuetype issuetypes={issueTypes} onChange={onChangeIssuetype}/>
-                                        <JiraField$Summary onChange={onChangeSummary} error={errors?.summary}/>
-                                        <JiraField$Priority priorities={priorities} onChange={onChangePriority}/>
-                                    </div>
-                                    <div className={"shotput-bottom-buttons"}>
-                                        <div className={"shotput-bottom-button"} onClick={onClickPost}>
-                                            Post
-                                        </div>
-                                        <div className={"shotput-bottom-button"} onClick={onClickBack}>
-                                            Close
-                                        </div>
-                                    </div>
-                                </Modal>
-                            )
-                        }
+            <Async.Fulfilled>{(createMetadata: JiraCreateMetadata) => {
+                const _project: JiraProject & { issuetypes: (JiraIssueType & { fields: { [p: string]: JiraField } })[] } = createMetadata.projects.find(({id}) => id === project)
+                const _issuetype: JiraIssueType & { fields: { [p: string]: JiraField } } = _project?.issuetypes.find(({id}) => id === issuetype)
+                const summaryRequired: boolean = _issuetype?.fields['summary']?.required;
+                const priorityRequired: boolean = _issuetype?.fields['priorityId']?.required;
+                // @ts-ignore
+                const priorities: JiraPriority[] = _issuetype?.fields['priorityId']?.allowedValues;
+                return (
+                    <Async {...postState}>
+                        <Async.Pending>
+                            {
+                                running ? (
+                                    <Loader/>
+                                ) : (
+                                    <Modal>
+                                        <h3>Post to Jira</h3>
+                                        <div className={"shotput-jira-field"}>
+                                            <JiraField$Project projects={createMetadata.projects} onChange={onChangeProject}/>
+                                            {
+                                                project ? (
+                                                    <JiraField$Issuetype issuetypes={_project.issuetypes} onChange={onChangeIssuetype}/>
+                                                ) : null
+                                            }
+                                            {
+                                                summaryRequired ? (
+                                                    <JiraField$Summary onChange={onChangeSummary} error={errors?.summary}/>
+                                                ) : null
+                                            }
+                                            {
+                                                priorityRequired ? (
+                                                    <JiraField$Priority priorities={priorities} onChange={onChangePriority}/>
+                                                ) : null
+                                            }
 
-                    </Async.Pending>
-                    <Async.Rejected>{error => (
-                        <ErrorModal onClose={onClose}>
-                            Error occurred while posting issue to jira <br/>
-                            <code className={"shotput-code"}>
-                                {JSON.stringify(error, null, "")}
-                            </code>
-                        </ErrorModal>
-                    )}</Async.Rejected>
-                    <Async.Fulfilled>{() => <SuccessModal onClose={onClose}>
-                        Successfully posted to JIRA!
-                    </SuccessModal>}</Async.Fulfilled>
-                </Async>
-            )}</Async.Fulfilled>
+                                        </div>
+                                        <div className={"shotput-bottom-buttons"}>
+                                            <div className={"shotput-bottom-button"} onClick={onClickPost}>
+                                                Post
+                                            </div>
+                                            <div className={"shotput-bottom-button"} onClick={onClickBack}>
+                                                Close
+                                            </div>
+                                        </div>
+                                    </Modal>
+                                )
+                            }
+
+                        </Async.Pending>
+                        <Async.Rejected>{error => (
+                            <ErrorModal onClose={onClose}>
+                                Error occurred while posting issue to jira <br/>
+                                <code className={"shotput-code"}>
+                                    {JSON.stringify(error, null, "")}
+                                </code>
+                            </ErrorModal>
+                        )}</Async.Rejected>
+                        <Async.Fulfilled>{() => <SuccessModal onClose={onClose}>
+                            Successfully posted to JIRA!
+                        </SuccessModal>}</Async.Fulfilled>
+                    </Async>
+                )
+            }}</Async.Fulfilled>
         </Async>
     )
 })

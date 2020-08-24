@@ -5,9 +5,9 @@ import {withRequired} from "../../../util/io-utils";
 
 export interface JiraPoster$Post$Params {
     project: string;
-    priorityId: string;
-    summary: string;
-    issuetype: string;
+    priorityId?: string;
+    summary?: string;
+    issuetype?: string;
     message: string;
     image: string;
 }
@@ -32,12 +32,31 @@ export interface JiraPriority {
     description: string;
 }
 
+export interface JiraField {
+    required: boolean;
+    schema: {
+        type: string;
+        system: string;
+    };
+    hasDefaultValue: boolean;
+    allowedValues: {
+        id: string;
+        name?: string;
+    }[];
+}
+
+export interface JiraCreateMetadata {
+    projects: (JiraProject & {
+        issuetypes: (JiraIssueType & {fields: {[key: string]: JiraField}})[]
+    })[]
+}
+
 export const jiraPosterPostDecode: t.Type<JiraPoster$Post$Params> = t.strict({
     project: withRequired(t.string),
-    priorityId: withRequired(t.string),
-    summary: withRequired(t.string),
+    priorityId: t.union([t.undefined, t.null, t.string]),
+    summary: t.union([t.undefined, t.null, t.string]),
     message: withRequired(t.string),
-    issuetype: withRequired(t.string),
+    issuetype: t.union([t.undefined, t.null, t.string]),
     image: withRequired(t.string)
 });
 
@@ -47,6 +66,7 @@ export interface JiraPoster {
     listProjects(): TaskEither<HttpError, JiraProject[]>;
     listIssueTypes(): TaskEither<HttpError, JiraIssueType[]>;
     listPriorities(): TaskEither<HttpError, JiraPriority[]>;
+    getCreateMetadata(): TaskEither<HttpError, JiraCreateMetadata>;
 
 }
 
@@ -63,6 +83,9 @@ export const HostedJiraPoster = (requester: HostedRequester): JiraPoster => {
         },
         listPriorities: () => {
             return requester.get("/jira/priorities");
+        },
+        getCreateMetadata: () => {
+            return requester.get("/jira/createmetadata");
         }
     }
 }
