@@ -35,6 +35,7 @@
     "blob-polyfill": "^4.0.20200601",
     "boxen": "^4.2.0",
     "chalk": "^4.1.0",
+    "cloudinary": "^1.22.0",
     "convict": "^6.0.0",
     "es6-promise": "^4.2.8",
     "express": "^4.17.1",

@@ -14,6 +14,7 @@ import {S3Images} from "@shotputter/common/src/main/ts/services/images/s3-images
 import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgur";
 import {googleRouter} from "./google/google-router";
 import {getJiraRouter} from "./jira/jira-router";
+import {CloudinaryUploader} from "./cloudinary/CloudinaryImageUploader";
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -60,6 +61,7 @@ export interface ServerConfig {
     s3?: S3Config;
     google?: GoogleConfig;
     jira?: JiraConfig;
+    cloudinary?: CloudinaryConfig;
 }
 
 export interface JiraConfig {
@@ -69,11 +71,19 @@ export interface JiraConfig {
     host?: string;
 }
 
+export interface CloudinaryConfig {
+    enabled: boolean;
+    cloudName: string;
+    apiKey: string;
+    apiSecret: string;
+}
+
 export const getApp = (serverConfig: ServerConfig = {}): Express => {
     const app = express();
     const enabledPosters = [];
     let imgurUploader: ImageUploader;
     let s3Uploader: ImageUploader;
+    let cloudinaryUploader: ImageUploader;
 
     app.use(express.json({
         limit: "10mb"
@@ -97,30 +107,35 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
         console.log("Using Imgur");
         imgurUploader = ImgurUploader(serverConfig.imgur.clientId)
     }
+    if (serverConfig.cloudinary?.enabled && serverConfig.cloudinary?.apiKey && serverConfig.cloudinary?.apiSecret && serverConfig.cloudinary?.cloudName) {
+        console.log("Using Cloudinary");
+        cloudinaryUploader = CloudinaryUploader(serverConfig.cloudinary?.cloudName, serverConfig.cloudinary?.apiKey, serverConfig.cloudinary?.apiSecret);
+    }
+    const uploader = imgurUploader || s3Uploader || cloudinaryUploader;
 
-    if (serverConfig.github?.token && (imgurUploader || s3Uploader)) {
+    if (serverConfig.github?.token && uploader) {
         console.log("Github enabled");
-        app.use("/github", githubRouter(serverConfig.github, (imgurUploader || s3Uploader)));
+        app.use("/github", githubRouter(serverConfig.github, uploader));
         enabledPosters.push("github");
     } else {
-        if ((imgurUploader || s3Uploader)) {
+        if (uploader) {
             console.warn("No image uploader configured");
         } else {
             console.warn("Github id not configured. Not using Github integration.")
         }
     }
     if (serverConfig.google?.webhookUrl && serverConfig.google?.enabled) {
-        if (imgurUploader || s3Uploader) {
+        if (uploader) {
             console.log("Google enabled")
-            app.use("/google", googleRouter(serverConfig.google?.webhookUrl, imgurUploader || s3Uploader));
+            app.use("/google", googleRouter(serverConfig.google?.webhookUrl, uploader));
         } else {
             console.warn("Google chat enabled, but no image poster was registered! Not using Google chat")
         }
     }
     if (serverConfig.jira?.enabled && serverConfig.jira.username && serverConfig.jira.password) {
-        if (imgurUploader || s3Uploader) {
+        if (uploader) {
             console.log("JIRA enabled");
-            app.use("/jira", getJiraRouter(serverConfig.jira, imgurUploader || s3Uploader))
+            app.use("/jira", getJiraRouter(serverConfig.jira, uploader))
         } else {
             console.log("JIRA enabled, but no image poster was registered! Not using JIRA");
         }
