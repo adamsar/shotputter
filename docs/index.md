@@ -2,6 +2,8 @@
 layout: default
 title: Introduction
 nav_order: 1
+description: "This is a test description"
+permalink: /
 ---
 
 Shotputter is a development tool that helps small to medium-sized teams report bugs,
@@ -26,3 +28,4 @@ staging environment.
 
 ## Getting started
 
+Quick start.
