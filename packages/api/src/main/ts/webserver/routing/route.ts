@@ -34,6 +34,9 @@ export const _route = (fn: (options: {req: Request, res: Response}) => TaskEithe
                     _next()
                 } else if ("body" in response) {
                     _res.status(response.statusCode).send(response.body);
+                } else if ("file" in response) {
+                    _res.writeHead(200, {'Content-Type': 'image/png'});
+                    _res.end(response.file);
                 } else {
                     _res.sendStatus(response.statusCode);
                 }

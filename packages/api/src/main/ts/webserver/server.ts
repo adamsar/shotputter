@@ -16,6 +16,8 @@ import {googleRouter} from "./google/google-router";
 import {getJiraRouter} from "./jira/jira-router";
 import {CloudinaryUploader} from "./cloudinary/CloudinaryImageUploader";
 import {CustomerImageUploader} from "../../../../../common/src/main/ts/services/images/custom-uploader";
+import {ImageArchiver, LocalImageArchiver} from "./local_files/LocalImageArchiver";
+import {imagesRouter} from "./local_files/images-router";
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -56,6 +58,7 @@ export interface GoogleConfig {
 }
 
 export interface ServerConfig {
+
     slack?: SlackServerConfig;
     github?: GithubServerConfig;
     imgur?: ImgurServerConfig;
@@ -64,6 +67,13 @@ export interface ServerConfig {
     jira?: JiraConfig;
     cloudinary?: CloudinaryConfig;
     customImageUploader?: CustomImageUploaderConfig;
+    files?: FileServerConfig;
+}
+
+export interface FileServerConfig {
+    enabled: boolean;
+    directory: string;
+    host: string;
 }
 
 export interface JiraConfig {
@@ -92,10 +102,20 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
     let s3Uploader: ImageUploader;
     let cloudinaryUploader: ImageUploader;
     let customUploader: ImageUploader;
+    let localImageUploader: ImageArchiver;
 
     app.use(express.json({
         limit: "10mb"
     }));
+    if (serverConfig.files?.enabled) {
+        localImageUploader = LocalImageArchiver(
+            serverConfig.files.directory,
+            serverConfig.files.host
+        );
+        localImageUploader.testWrite()().then(console.log)
+        app.use("/images", imagesRouter);
+        console.log("Serving images from " + serverConfig.files.directory);
+    }
     if (serverConfig.slack?.clientId) {
         console.log("Slack enabled");
         app.use("/slack", slackRouter(serverConfig.slack));
@@ -122,7 +142,7 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
     if (serverConfig.customImageUploader?.enabled && serverConfig.customImageUploader?.endpoint) {
         customUploader = CustomerImageUploader(serverConfig.customImageUploader?.endpoint);
     }
-    const uploader = customUploader || imgurUploader || s3Uploader || cloudinaryUploader;
+    const uploader = localImageUploader || customUploader || imgurUploader || s3Uploader || cloudinaryUploader;
 
     if (serverConfig.github?.token && uploader) {
         console.log("Github enabled");
