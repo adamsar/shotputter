@@ -6,22 +6,7 @@ const options = yargs.usage("Usage: cli.js")
     .options({
         'port': {
             type: "number",
-            default: 6000
-        },
-       'githubToken': {
-            type: "string"
-       },
-        'githubRepo': {
-            type: 'string'
-        },
-        'githubOwner': {
-            type: 'string'
-        },
-        'slackClientId': {
-            type: "string"
-        },
-        "imgurClientId": {
-            type: "string"
+            default: 3000
         },
         "configFile": {
             type: "string"

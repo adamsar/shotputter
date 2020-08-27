@@ -1,4 +1,4 @@
-import {getTaskValidation, mapLeft, TaskEither} from "fp-ts/lib/TaskEither";
+import {getTaskValidation, mapLeft, TaskEither, left as taskEitherLeft, right as taskEitherRight} from "fp-ts/lib/TaskEither";
 import {Either, isLeft, left, right} from "fp-ts/lib/Either";
 import {getMonoid} from "fp-ts/lib/Array";
 
@@ -21,6 +21,8 @@ const toDeferFn = <A, B>(taskEither: TaskEither<A, B>): () => Promise<B> => {
 export const taskEitherExtensions = {
     fromPromise: promiseToTaskEither,
     toDeferFn,
+    left: taskEitherLeft,
+    right: taskEitherRight,
     errorValidation: getTaskValidation(getMonoid<any>()),
     mapLeftValidation: <A>() => mapLeft((input: A) => [input]),
     mapLeftString: mapLeft((x:any) => x.toString())
