@@ -1,3 +1,5 @@
+$information-phone: "only screen and (max-width : 770px)";
+
 $main-color: #103E66;
 $secondary-color: #795E3A;
 
@@ -140,8 +142,13 @@ $orange-color: #FFB239;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 
-  @media (min-width: 768px) {
+  @media #{$information-phone} {
     width: 100%;
+    padding: 1em 0;
+    border-left: 0;
+    border-right: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   .shotput-editor-toolbar-top {
@@ -180,6 +187,9 @@ $orange-color: #FFB239;
   .shotput-editor-toolbar-body {
     padding-top: 1em;
     padding-bottom: 1em;
+    @media #{$information-phone} {
+      padding-top: 0;
+    }
 
     ul.shotput-editor-tools {
       list-style: none;
@@ -232,6 +242,11 @@ $orange-color: #FFB239;
         .shotput-list-color-block {
           width: 1.5em;
           height: 1.5em;
+
+          @media #{$information-phone} {
+            width: 5vw;
+            height: 5vw;
+          }
           display: inline-block;
           border: 1px dotted black;
           &.active {
@@ -253,6 +268,10 @@ $orange-color: #FFB239;
       textarea {
         width:100%;
         resize: none;
+      }
+      @media #{$information-phone} {
+        padding-left: 1em;
+        padding-right: 1em;
       }
     }
   }
