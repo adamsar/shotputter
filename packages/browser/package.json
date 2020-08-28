@@ -44,6 +44,7 @@
     "html2canvas": "^1.0.0-rc.5",
     "io-ts": "^2.2.9",
     "io-ts-types": "^0.5.8",
+    "is-mobile": "^2.2.2",
     "lodash": "^4.17.19",
     "merge-images": "^2.0.0",
     "mobx": "^5.15.4",
