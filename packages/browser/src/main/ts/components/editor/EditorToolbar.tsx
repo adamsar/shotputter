@@ -30,7 +30,7 @@ export const EditorToolbar = observer(() => {
         global.displayMode = "display_poster";
     };
 
-    const onClickTool = (tool: "text" | "draw" | "shape" | "arrow") => action(() => {
+    const onClickTool = (tool: "text" | "draw" | "shape" | "arrow" | null) => action(() => {
         if (tools.currentTool === tool) {
             tools.currentTool = null;
         } else {
@@ -60,9 +60,13 @@ export const EditorToolbar = observer(() => {
 
    return (
        <div className={"shotput-editor-toolbar"} style={style} ref={divRef}>
-           <div className={"shotput-editor-toolbar-top"}>
-               <SubToolSection/>
-           </div>
+           {
+               (!global.isMobile || tools.currentTool) ? (
+                   <div className={"shotput-editor-toolbar-top"}>
+                       <SubToolSection/>
+                   </div>
+               ) : null
+           }
            <div className={"shotput-editor-toolbar-body"}>
                {
                    (!tools.currentTool || !global.isMobile) ? (
@@ -82,33 +86,49 @@ export const EditorToolbar = observer(() => {
                        </ul>
                    )  : null
                }
-               <ul className={"shotput-editor-colors"}>
-                   {
-                       colors.map(color => {
-                           return (
-                               <li key={color} className="shotput-list-color">
-                                   <div className={"shotput-list-color-block" + (color === tools.color ? " active" : "")} style={{backgroundColor: color}} onClick={onColorClick(color)}/>
-                               </li>
-                           )
-                       })
-                   }
-               </ul>
+               {
+                   (!global.isMobile || tools.currentTool) ? (
+                       <ul className={"shotput-editor-colors"}>
+                           {
+                               colors.map(color => {
+                                   return (
+                                       <li key={color} className="shotput-list-color">
+                                           <div className={"shotput-list-color-block" + (color === tools.color ? " active" : "")} style={{backgroundColor: color}} onClick={onColorClick(color)}/>
+                                       </li>
+                                   )
+                               })
+                           }
+                       </ul>
+                   ) : null
+               }
 
-               <div className={"shotput-editor-comment-container"}>
                    {
                        (!tools.currentTool || !global.isMobile) ? (
-                           <textarea value={message} onChange={({target: {value}}) => setMessage(value)} placeholder={"Comments"}/>
+                           <div className={"shotput-editor-comment-container"}>
+                                <textarea value={message} onChange={({target: {value}}) => setMessage(value)} placeholder={"Comments"}/>
+                           </div>
                        ) : null
                    }
-               </div>
            </div>
            <div className={"shotput-editor-toolbar-bottom"}>
-               <div className={"shotput-editor-button cancel-button"} onClick={onCancel}>
-                   Cancel
-               </div>
-               <div className={"shotput-editor-button submit-button"} onClick={onSubmit}>
-                   Submit
-               </div>
+
+               {
+                   (!tools.currentTool || !global.isMobile) ? (
+                       <>
+                           <div className={"shotput-editor-button cancel-button"} onClick={onCancel}>
+                               Cancel
+                           </div>
+                           <div className={"shotput-editor-button submit-button"} onClick={onSubmit}>
+                               Submit
+                           </div>
+                       </>
+                   ) : (
+                       <div className={"shotput-editor-button cancel-button"} onClick={onClickTool(null)}>
+                           Done editing
+                       </div>
+                   )
+               }
+
            </div>
        </div>
    );
