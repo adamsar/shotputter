@@ -19,6 +19,9 @@ import {pipe} from "fp-ts/lib/pipeable";
 import {fold} from "fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {DelayedAction} from "../common/DelayedAction";
+import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
+import {map} from "fp-ts/TaskEither";
+import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 
 interface GithubModal {
    onClose: () => void;
@@ -60,9 +63,9 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
 
    const [errors, setErrors] = React.useState<ShotputFormError>();
 
-   const postState = useAsync({deferFn: ([form]: [GithubModalForm]) => {
+   const postState = useAsync({deferFn: ([post, form]: [Post, GithubModalForm]) => {
       return taskEitherExtensions.toDeferFn(githubService.postIssue({
-            post: screenshot.post,
+          post,
             ...form
          }))();
       }})
@@ -90,21 +93,25 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
 
    const onPost = () => {
        return pipe(
-           decodeForm(validator, {...form,
-               repo: form.repo || global.appOptions.github?.defaultRepo,
-               owner: form.owner || global.appOptions.github?.defaultOwner
-           }),
-           fold(
-               errors => {
-                   console.error(errors);
-                   setErrors(errors)
-               },
-               (form) => {
-                   postState.run(form);
-                   setErrors(undefined);
-               }
-           )
-       );
+           applyTemplate(defaultTemplate, screenshot.templateParams),
+           map(message => pipe(
+               decodeForm(validator, {
+                       ...form,
+                   repo: form.repo || global.appOptions.github?.defaultRepo,
+                   owner: form.owner || global.appOptions.github?.defaultOwner
+               }),
+               fold(
+                   errors => {
+                       console.error(errors);
+                       setErrors(errors)
+                   },
+                   (form) => {
+                       postState.run({...screenshot.post, message}, form);
+                       setErrors(undefined);
+                   }
+               )
+           ))
+       )();
    }
 
    const defaultRepo = global.appOptions?.github?.defaultRepo;

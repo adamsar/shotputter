@@ -37,9 +37,12 @@ const slackHandler = (appOptions: ShotputBrowserConfig, slack?: SlackServiceClie
                 appOptions?.errorReporting?.template ?? defaultSlackTemplate,
                 {
                     message,
-                    systemInfo: JSON.stringify(systemInfo),
-                    logs: logs?.join("\n"),
-                    metadata: JSON.stringify(metadata)
+                    systemInfo,
+                    logs,
+                    metadata,
+                    systemInfoString: JSON.stringify(systemInfo, null, 2),
+                    logsString: logs?.join("\n"),
+                    metadataString: JSON.stringify(metadata, null, 2)
                 }
             ),
                 mapSlackError,

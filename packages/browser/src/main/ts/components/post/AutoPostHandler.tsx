@@ -9,8 +9,7 @@ import {
     applyTemplate,
     defaultSlackTemplate,
     defaultTemplate,
-    defaultUnformattedTemplate,
-    SlackParams
+    defaultUnformattedTemplate
 } from "../../config/ShotputBrowserConfig";
 import {mapSlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {chain} from "fp-ts/TaskEither";
@@ -32,21 +31,15 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
 
    React.useEffect(() => {
       const tasks = global.autoPosters.map((autoPoster) => {
-         const post = screenshot.post;
-         const logs = (global.appOptions.captureLogs ? {logs: screenshot.logBuffer.peekN(10).join("\n")} : {})
          const fileName = `[Screenshot]-${new Date().toISOString()}.png`;
+         const post = screenshot.post;
 
          switch (autoPoster) {
              case "google":
                  return pipe(
                      applyTemplate(
                          global.appOptions?.google?.template ?? defaultUnformattedTemplate,
-                         {
-                             message: post.message,
-                             metadata: JSON.stringify(post.metadata ?? {}, null, 2),
-                             systemInfo: JSON.stringify(post.systemInfo, null, 2),
-                             ...logs
-                         }
+                         screenshot.templateParams
                      ),
                      taskEitherExtensions.mapLeftString,
                      chain(message => pipe(
@@ -61,13 +54,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                    applyTemplate(
                        global.appOptions.slack.slackTemplate ?? (
                            typeof global.appOptions.service === "object" ? global.appOptions.service.messageTemplate ?? defaultSlackTemplate : defaultSlackTemplate
-                       ),
-                       {
-                          message: post.message,
-                          metadata: JSON.stringify(post.metadata ?? {}, null, 2),
-                          systemInfo: JSON.stringify(post.systemInfo, null, 2),
-                           ...logs
-                       } as SlackParams),
+                       ),screenshot.templateParams),
                    mapSlackError,
                    chain(message => global.slackService.uploadFile({
                       channels: [global.appOptions.slack.defaultChannel],
@@ -90,12 +77,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                        pipe(
                            applyTemplate(
                            typeof global.appOptions.service === "object" ? global.appOptions.service.messageTemplate ?? defaultTemplate : defaultTemplate,
-                           {
-                               message: post.message,
-                               metadata: JSON.stringify(post.metadata ?? {}, null, 2),
-                               systemInfo: JSON.stringify(post.systemInfo, null, 2),
-                               ...logs
-                           }),
+                           screenshot.templateParams),
                            taskEitherExtensions.mapLeftValidation()
                        ),
                        pipe(

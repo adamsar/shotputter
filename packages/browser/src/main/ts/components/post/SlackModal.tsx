@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useMemo} from "react";
 import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
 import {SlackChannel, SlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
@@ -8,27 +9,24 @@ import {Async, IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "re
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {SuccessModal} from "../common/SuccessModal";
 import {ErrorModal} from "../common/ErrorModal";
-import {codeBlockString} from "../../util/system-utils";
-import {useMemo} from "react";
+import {pipe} from "fp-ts/lib/pipeable";
+import {applyTemplate, defaultSlackTemplate} from "../../config/ShotputBrowserConfig";
+import {chain} from "fp-ts/es6/TaskEither";
+import {TaskEither} from "fp-ts/TaskEither";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {
     const {global, screenshot} = useStores();
     const [channel, setChannel] = React.useState<string>();
     const slackService = global.slackService;
     const postChannelState =  useAsync({
-        deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(slackService.uploadFile({
+        deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(pipe(
+            applyTemplate(defaultSlackTemplate, screenshot.templateParams) as TaskEither<any, string>,
+            chain(message => slackService.uploadFile({
             channels,
-            message: (screenshot.post.message || "") + (
-                `\nSystem info: \n${codeBlockString(JSON.stringify(screenshot.post.systemInfo || "", null, 2))}`
-            ) + (
-                screenshot.post.metadata ? `\nMetadata\n${codeBlockString(JSON.stringify(screenshot.post.metadata, null, 2))}` : ""
-            ) + (
-                (screenshot.post.logs?.length ?? 0 > 0) ? `\nLogs\n${codeBlockString(screenshot.post.logs.join("\n"))}` : ""
-                )
-            ,
+            message,
             fileName: `[Screenshot]-${new Date().toISOString()}.png`,
             base64File: screenshot.post.image
-        }))()
+        }))))()
     });
     const defaultChannel = global.appOptions.slack?.defaultChannel;
     const doPost = () => {

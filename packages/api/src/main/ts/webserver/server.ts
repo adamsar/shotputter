@@ -26,9 +26,6 @@ global.atob = atob;
 // @ts-ignore
 global.Blob = Blob;
 
-// @ts-ignore
-
-
 export interface SlackServerConfig {
     enabled: boolean;
     clientId: string;

@@ -20,17 +20,11 @@ interface GoogleModalProps {
 export const GoogleModal = observer(({onClose}: GoogleModalProps) => {
     const {global, screenshot} = useStores()
     const post = screenshot.post;
-    const logs = (global.appOptions.captureLogs ? {logs: screenshot.logBuffer.peekN(10).join("\n")} : {})
     const promise = React.useMemo(taskEitherExtensions.toDeferFn(
             pipe(
                 applyTemplate(
                 global.appOptions?.google?.template ?? defaultUnformattedTemplate,
-                {
-                    message: post.message,
-                    metadata: JSON.stringify(post.metadata ?? {}, null, 2),
-                    systemInfo: JSON.stringify(post.systemInfo, null, 2),
-                    ...logs
-                }
+                screenshot.templateParams
             ) as TaskEither<any, string>,
                 chain(message => global.googleService.post({message, image: post.image}))
     )), []);

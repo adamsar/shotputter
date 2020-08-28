@@ -191,16 +191,10 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
     const onChangeSummary = (summary: string) => setSummary(summary);
     const onChangePriority = (priority: JiraPriority) => setPriority(priority.id);
     const onClickPost = () => {
-        const logs = (global.appOptions.captureLogs ? {logs: screenshot.logBuffer.peekN(10).join("\n")} : {})
         pipe(
             applyTemplate(
                 global.appOptions.jira.template ?? defaultTemplate,
-                {
-                    message: screenshot.post.message,
-                    metadata: JSON.stringify(screenshot.post.metadata ?? {}, null, 2),
-                    systemInfo: JSON.stringify(screenshot.post.systemInfo, null, 2),
-                    ...logs
-                }) as TaskEither<any, string>,
+                screenshot.templateParams) as TaskEither<any, string>,
             map((message) => {
                 const params: JiraPoster$Post$Params = {
                     project,
