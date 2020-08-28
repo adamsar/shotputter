@@ -6,49 +6,50 @@ import {pipe} from "fp-ts/pipeable";
 
 export type BrowserTemplate = string |  { templateKey: string; } | (() => string);
 
-
 export const defaultUnformattedTemplate = `
 {{#if image }}{{ image }}{{/if}}
 {{#if message}}{{message}}{{/if}}
-{{#if metadata}}
+{{#if metadataString}}
 Metadata:
 --------------
-{{{  metadata }}}
+{{{  metadataString }}}
 {{/if}}
 
-{{#if systemInfo}}
+{{#if systemInfoString}}
+System info
 --------------
-{{{  systemInfo }}}
+{{{  systemInfoString }}}
 {{/if}}
 
-{{#if logs}}
---------------
+{{#if logsString}}
 Logs:
-{{logs}}
+--------------
+{{logsString}}
 {{/if}}
 `
 // message, metadata, logs, image
 export const defaultTemplate =  `
 {{#if image }}{{ image }}{{/if}}
-{{#if message}}{{message}}{{/if}}
-{{#if metadata}}
+{{#if message }}{{ message }}{{/if}}
+{{#if metadataString}}
 Metadata:
 --------------
 \`\`\`
-{{{  metadata }}}
+{{{  metadataString }}}
 \`\`\`
 {{/if}}
-{{#if systemInfo}}
+{{#if systemInfoString }}
+System info:
 --------------
 \`\`\`
-{{{  systemInfo }}}
+{{{  systemInfoString }}}
 \`\`\`
 {{/if}}
-{{#if logs}}
---------------
+{{#if logsString}}
 Logs:
+--------------
 \`\`\`
-{{logs}}
+{{logsString}}
 {{/if}}
 \`\`\`
 `;
@@ -56,33 +57,37 @@ Logs:
 export const defaultSlackTemplate = `
 {{ message }}
 
-{{#if metadata}}
+{{#if metadataString}}
 Metadata:
 --------------
 \`\`\`
-{{{  metadata }}}
+{{{  metadataString }}}
 \`\`\`
 {{/if}}
-{{#if systemInfo}}
+{{#if systemInfoString}}
+System info
 --------------
 \`\`\`
-{{{  systemInfo }}}
+{{{  systemInfoString }}}
 \`\`\`
 {{/if}}
-{{#if logs}}
---------------
+{{#if logsString}}
 Logs:
+--------------
 \`\`\`
-{{logs}}
+{{logsString}}
 {{/if}}
 \`\`\`
 `;
 
 export type SlackParams = {
     message: string;
-    metadata: string;
-    systemInfo: string;
-    logs?: string;
+    metadata: object;
+    systemInfo: object;
+    metadataString: string;
+    systemInfoString: string;
+    logs?: string[];
+    logsString?: string;
 }
 
 export type ImageParams = SlackParams;
