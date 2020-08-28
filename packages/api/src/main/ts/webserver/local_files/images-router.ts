@@ -10,6 +10,8 @@ export const imagesRouter = (imageArchiver: ImageArchiver) : express.Router => {
     const router = express.Router();
 
     router.get("/:image", _route(({req}) => {
+        console.log("HERE")
+        console.log(req.params);
         const getImage = fromOption(
             () => NotFound
         )(fromNullable(req.params['image']));
@@ -18,10 +20,10 @@ export const imagesRouter = (imageArchiver: ImageArchiver) : express.Router => {
             getImage,
              chain(imageName => pipe(
                  imageArchiver.getImage(imageName),
-                 mapLeft(error => error === "not-found" ? NotFound : ServerError(error))
+                 mapLeft((error: any) => error === "not-found" ? NotFound : ServerError({error}))
                 )
              ),
-             map(file => OkFile(file))
+             map((file: Buffer) => OkFile(file))
         );
     }));
     return router

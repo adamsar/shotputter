@@ -15,9 +15,9 @@ import {ImgurUploader} from "@shotputter/common/src/main/ts/services/images/imgu
 import {googleRouter} from "./google/google-router";
 import {getJiraRouter} from "./jira/jira-router";
 import {CloudinaryUploader} from "./cloudinary/CloudinaryImageUploader";
-import {CustomerImageUploader} from "../../../../../common/src/main/ts/services/images/custom-uploader";
+import {CustomerImageUploader} from "@shotputter/common/src/main/ts/services/images/custom-uploader";
 import {ImageArchiver, LocalImageArchiver} from "./local_files/LocalImageArchiver";
-import {imagesRouter} from "./local_files/images-router";
+const cors = require("cors");
 
 es6Promise.polyfill();
 // @ts-ignore
@@ -30,17 +30,20 @@ global.Blob = Blob;
 
 
 export interface SlackServerConfig {
+    enabled: boolean;
     clientId: string;
     defaultChannel?: string;
 }
 
 export interface GithubServerConfig {
+    enabled: boolean;
     token: string;
     defaultOwner?: string;
     defaultRepo?: string;
 }
 
 export interface ImgurServerConfig {
+    enabled: boolean;
     clientId: string;
 }
 
@@ -68,6 +71,7 @@ export interface ServerConfig {
     cloudinary?: CloudinaryConfig;
     customImageUploader?: CustomImageUploaderConfig;
     files?: FileServerConfig;
+
 }
 
 export interface FileServerConfig {
@@ -107,13 +111,14 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
     app.use(express.json({
         limit: "10mb"
     }));
+    app.use(cors());
     if (serverConfig.files?.enabled) {
         localImageUploader = LocalImageArchiver(
             serverConfig.files.directory,
             serverConfig.files.host
         );
         localImageUploader.testWrite()().then(console.log)
-        app.use("/images", imagesRouter);
+        app.use("/images", express.static(serverConfig.files.directory));
         console.log("Serving images from " + serverConfig.files.directory);
     }
     if (serverConfig.slack?.clientId) {

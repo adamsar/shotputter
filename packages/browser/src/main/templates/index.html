@@ -11,25 +11,25 @@
     <script type="application/javascript">
         const instance = window.Shotput({
                 service: {
-                    url: "http://localhost:3000/dev",
-                    autoPost: true,
+                    url: "http://localhost:6001",
+                    //autoPost: true,
                     //       autoPostFirst: true
                 },
             captureLogs: true,
             github: {
                 enabled: true,
-                autoPost: true,
+                //autoPost: true,
                 defaultRepo: "shotputter",
                 defaultOwner: "adamsar",
                 defaultLabels: ["test"],
                 titleTemplate: "Test post"
             },
             google: {
-                enabled: true,
+                enabled: false,
                 autoPost: true
             },
             jira: {
-                enabled: true
+                enabled: false
             }
         });
 
