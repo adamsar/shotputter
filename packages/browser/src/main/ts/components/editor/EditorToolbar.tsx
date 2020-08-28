@@ -5,14 +5,13 @@ import {action} from "mobx";
 import {colors} from "../../stores/ToolStore";
 import {SubToolSection} from "./subtools/SubToolSection";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
-
 // @ts-ignore
 import mergeImages from 'merge-images';
 import {getSystemInfo} from "../../util/system-utils";
 
 export const EditorToolbar = observer(() => {
     const { global, screenshot, tools } = useStores();
-    const commentRef = React.createRef<HTMLTextAreaElement>();
+    const [message, setMessage] = React.useState<string>("");
     const divRef = React.createRef<HTMLDivElement>();
     const [width, setWidth] = React.useState<number>(0);
 
@@ -24,7 +23,7 @@ export const EditorToolbar = observer(() => {
     const onSubmit = async () => {
         const post: Post = {
             image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/png")]),
-            message: commentRef.current.value || undefined,
+            message: message || undefined,
             systemInfo: getSystemInfo(window)
         };
         screenshot.setPost(post);
@@ -57,7 +56,7 @@ export const EditorToolbar = observer(() => {
         }
     });
 
-    const style = {left: `calc(50% - ${width / 2}px)`};
+    const style = global.isMobile ? {} : {left: `calc(50% - ${width / 2}px)`};
 
    return (
        <div className={"shotput-editor-toolbar"} style={style} ref={divRef}>
@@ -65,20 +64,24 @@ export const EditorToolbar = observer(() => {
                <SubToolSection/>
            </div>
            <div className={"shotput-editor-toolbar-body"}>
-               <ul className={"shotput-editor-tools"}>
-                   <li onClick={onClickTool("shape")} className={tools.currentTool === "shape" ? "active" : null}>
-                       Box
-                   </li>
-                   <li onClick={onClickTool("draw")} className={tools.currentTool === "draw" ? "active" : null}>
-                       Draw
-                   </li>
-                   <li onClick={onClickTool("text")} className={tools.currentTool === "text" ? "active" : null}>
-                       Text
-                   </li>
-                   <li onClick={onClickTool("arrow")} className={tools.currentTool === "arrow" ? "active" : null}>
-                       Arrow
-                   </li>
-               </ul>
+               {
+                   (!tools.currentTool || !global.isMobile) ? (
+                       <ul className={"shotput-editor-tools"}>
+                           <li onClick={onClickTool("shape")} className={tools.currentTool === "shape" ? "active" : null}>
+                               Box
+                           </li>
+                           <li onClick={onClickTool("draw")} className={tools.currentTool === "draw" ? "active" : null}>
+                               Draw
+                           </li>
+                           <li onClick={onClickTool("text")} className={tools.currentTool === "text" ? "active" : null}>
+                               Text
+                           </li>
+                           <li onClick={onClickTool("arrow")} className={tools.currentTool === "arrow" ? "active" : null}>
+                               Arrow
+                           </li>
+                       </ul>
+                   )  : null
+               }
                <ul className={"shotput-editor-colors"}>
                    {
                        colors.map(color => {
@@ -90,8 +93,13 @@ export const EditorToolbar = observer(() => {
                        })
                    }
                </ul>
+
                <div className={"shotput-editor-comment-container"}>
-                   <textarea ref={commentRef} placeholder={"Comments"}/>
+                   {
+                       (!tools.currentTool || !global.isMobile) ? (
+                           <textarea value={message} onChange={({target: {value}}) => setMessage(value)} placeholder={"Comments"}/>
+                       ) : null
+                   }
                </div>
            </div>
            <div className={"shotput-editor-toolbar-bottom"}>

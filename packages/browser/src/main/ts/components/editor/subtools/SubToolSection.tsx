@@ -7,7 +7,7 @@ import {TextSubTools} from "./TextSubTools";
 import {ArrowSubTool} from "./ArrowSubTool";
 
 export const SubToolSection = observer(() => {
-    const { tools } = useStores();
+    const { tools, global } = useStores();
 
     let _Component = null;
 
@@ -30,7 +30,7 @@ export const SubToolSection = observer(() => {
             break;
 
         default:
-            _Component = <>Select tool to get started, or just leave a comment.</>;
+            _Component = global.isMobile ? null : <>Select tool to get started, or just leave a comment.</>;
     }
 
     return _Component;
