@@ -41,5 +41,6 @@ module.exports = {
                     from: "src/main/docker/Dockerfile",
                     to: "docker/Dockerfile"
     ***REMOVED***]
-        })]
+        })],
+    externals: ['fs.promises']
 };

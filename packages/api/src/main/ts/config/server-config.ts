@@ -21,8 +21,12 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
     const customImageUploadUrl = process.env["SHOTPUT_CUSTOM_IMAGE_UPLOAD_URL"];
 
     return {
-        ...((slackClientId || slackDefaultChannel) ? { slack: {clientId: slackClientId || conf.slack?.clientId, defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
+        ...((slackClientId || slackDefaultChannel) ? { slack: {
+            enabled: true,
+            clientId: slackClientId || conf.slack?.clientId,
+            defaultChannel: conf.slack?.clientId }} : conf.slack ? {slack: conf.slack} : {}),
         ...((githubToken || githubDefaultOwner || githubDefaultRepo) ? {
+***REMOVED***
 ***REMOVED***
                 token: githubToken || conf.github?.token,
                 defaultRepo: githubDefaultRepo || conf.github?.defaultRepo,
@@ -31,6 +35,7 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
         } : conf.github ? {github: conf.github} : {}),
         ...(imgurClientId ? {
             imgur: {
+***REMOVED***
                 clientId: imgurClientId || conf.imgur?.clientId
 ***REMOVED***
         } : conf.imgur ? {imgur: conf.imgur} : {}),
@@ -50,6 +55,12 @@ export const applyEnvironmentVars = (conf: ServerConfig): ServerConfig => {
 
 const serverConfigConvictDefinition = convict<ServerConfig>({
     slack: {
+        enabled: {
+            doc: "Posting to Slack enabled",
+            default: false,
+            format: Boolean,
+            env: "SHOTPUT_SLACK_ENABLED"
+        },
         clientId: {
             doc: "Client ID for slack application for posting to channels",
             default: null,
@@ -64,6 +75,12 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
         }
     },
     github: {
+        enabled: {
+            doc: "Posting to Github enabled",
+            default: false,
+            format: Boolean,
+            env: "SHOTPUT_GITHUB_ENABLED"
+        },
         token: {
             doc: "Github token for posting new issues to Github",
             default: null,
@@ -84,6 +101,12 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
         }
     },
     imgur: {
+        enabled: {
+            doc: "Posting to imgur enabled",
+            default: false,
+            format: Boolean,
+            env: "SHOTPUT_IMGUR_ENABLED"
+        },
         clientId: {
             doc: "Client ID to post images to imgur using",
             default: null,
@@ -214,5 +237,11 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
 });
 
 export const parseFile = (fileName: string): ServerConfig => {
-    return serverConfigConvictDefinition.loadFile(fileName).validate().getProperties();
+    try {
+        console.log("LOADING: " + fileName);
+        return serverConfigConvictDefinition.loadFile(fileName).validate().getProperties();
+    } catch (error) {
+        console.error(error)
+    }
+
 };

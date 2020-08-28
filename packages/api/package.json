@@ -39,6 +39,7 @@
     "chalk": "^4.1.0",
     "cloudinary": "^1.22.0",
     "convict": "^6.0.0",
+    "cors": "^2.8.5",
     "es6-promise": "^4.2.8",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",

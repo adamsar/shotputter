@@ -3,7 +3,7 @@ import {ImageUploader, ImageUploadError} from "@shotputter/common/src/main/ts/se
 import {chain, map, mapLeft, TaskEither, tryCatch} from "fp-ts/TaskEither";
 import {v1 as uuid} from "uuid";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import * as fs from "fs/promises";
+import {promises as fs} from "fs";
 import {pipe} from "fp-ts/lib/pipeable";
 import {left, right} from "fp-ts/lib/Either";
 
@@ -15,6 +15,7 @@ export type ImageArchiver = ImageUploader & {
 }
 
 export const LocalImageArchiver = (localDir: string, host: string) => {
+    console.log(__dirname);
     const uploadDir = localDir.charAt(0) === "/" ? localDir : path.join(__dirname, localDir);
     return {
         uploadImage: (image: string): TaskEither<ImageUploadError, string> => {
@@ -30,11 +31,13 @@ export const LocalImageArchiver = (localDir: string, host: string) => {
         },
         getImage: (imageName: string ): TaskEither<ImageGet$Error, Buffer> => {
             const _path = path.join(uploadDir, imageName);
+            console.log(_path);
             return async () => {
                 try {
                     const result = await fs.readFile(_path)
                     return right(result)
     ***REMOVED*** catch (error) {
+                    console.log(error)
                     if (error?.code === "ENOENT") {
                         return left("not-found");
         ***REMOVED*** else {

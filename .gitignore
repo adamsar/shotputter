@@ -1,5 +1,7 @@
 *.map
 packages/api/dev/*
+packages/api/config.json
+packages/api/images
 .DS_Store
 packages/api/src/**/*.js
 packages/common/src/**/*.js

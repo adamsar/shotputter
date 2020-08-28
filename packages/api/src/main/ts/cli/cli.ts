@@ -18,6 +18,6 @@ let _options = options.configFile ? parseFile(options.configFile) : applyEnviron
 
 const app = getApp(_options);
 
-app.listen(options.port, () => {
+app.listen(options.port, "127.0.0.1", () => {
     console.log("Serving api on port " + options.port);
 });
