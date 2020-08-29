@@ -55,8 +55,8 @@ export const PostModal = observer(() => {
         case "base":
             return (
                 <Modal onClose={onClose}>
-                    <h3 style={{textAlign: "left"}}>
-                        Screenshot actions
+                    <h3 className={"shotput-title"}>
+                        Post screenshot
                     </h3>
                     <div>
                         <ul className={"shotput-poster-list"}>
@@ -64,7 +64,7 @@ export const PostModal = observer(() => {
                         </ul>
                     </div>
                     <div className={"shotput-bottom-buttons"}>
-                        <span className={"shotput-bottom-button"} onClick={onClose}>Close</span>
+                        <span className={"shotput-editor-button cancel-button"} onClick={onClose}>Close</span>
                     </div>
                 </Modal>
             );

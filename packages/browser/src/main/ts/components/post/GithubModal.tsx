@@ -182,8 +182,8 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                              />
                           </div>
                           <div className={"shotput-bottom-buttons"}>
-                             <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>
-                             <span className={"shotput-bottom-button"} onClick={onPost}>Post</span>
+                             <span className={"shotput-editor-button cancel-button"} onClick={onClose}>Back</span>
+                             <span className={"shotput-editor-button submit-button"} onClick={onPost}>Post</span>
                           </div>
                        </div>
                  </Modal>
