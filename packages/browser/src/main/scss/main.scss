@@ -381,6 +381,20 @@ $cancel: #666666;
 
 .shotput-field-container {
   margin-bottom: 1em;
+  .react-tags__selected-tag {
+    margin-top: 5px;
+    border: 1px solid $cancel;
+    background-color: #fafafa;
+    color: $cancel;
+    margin-right: 1em;
+    cursor: pointer;
+    &:after {
+      color: $cancel;
+      content: "\2A02";
+      font-weight: bold;
+      margin-left: 5px;
+    }
+  }
   select {
     width: 100%;
     padding: 2px 5px;

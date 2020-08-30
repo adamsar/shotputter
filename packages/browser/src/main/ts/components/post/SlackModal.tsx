@@ -32,6 +32,7 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
     const doPost = () => {
         postChannelState.run([channel || defaultChannel]);
     }
+    const staticChannel = global.appOptions.slack?.forceChannel && global.appOptions.slack?.defaultChannel;
 
     const promise = useMemo(taskEitherExtensions.toDeferFn(slackService.listChannels()), []);
 
@@ -69,15 +70,24 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                                     Channel
                                 </div>
                                 <div className={"shotput-field-container"}>
-                                    <select
-                                        defaultValue={defaultChannel ? channels.find(({name}) => name === defaultChannel)?.id ?? channels[0]?.id : channels[0]?.id}
-                                        onChange={(value) => setChannel(value.target.value)}>
-                                        {
-                                            channels.map(channel => (
-                                                <option key={channel.id} value={channel.id}>#{channel.name}</option>
-                                            ))
-                                        }
-                                    </select>
+                                    {
+                                        staticChannel ? (
+                                            <p>
+                                                #{channels.find(({name}) => name === defaultChannel).name}
+                                            </p>
+                                        ) : (
+                                            <select
+                                                defaultValue={defaultChannel ? channels.find(({name}) => name === defaultChannel)?.id ?? channels[0]?.id : channels[0]?.id}
+                                                onChange={(value) => setChannel(value.target.value)}>
+                                                {
+                                                    channels.map(channel => (
+                                                        <option key={channel.id} value={channel.id}>#{channel.name}</option>
+                                                    ))
+                                                }
+                                            </select>
+                                        )
+                                    }
+
                                 </div>
                                 <div className={"shotput-bottom-buttons"}>
                                     <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>
