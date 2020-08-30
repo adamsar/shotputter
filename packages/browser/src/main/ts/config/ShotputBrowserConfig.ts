@@ -174,12 +174,14 @@ export interface ShotputBrowserConfig {
 
     slack?: ({
         enabled: true;
+        forceChannel?: boolean;
     } & ({slackTemplate?: string; defaultChannel: string; autoPost: true;} | {
         slackTemplate?: string;
         defaultChannel?: string;
         autoPost?: false;
     })) | {
         enabled?: false;
+        forceChannel?: boolean;
         autoPost?: boolean
         defaultChannel?: string;
         slackTemplate?: string;
@@ -187,6 +189,7 @@ export interface ShotputBrowserConfig {
 
     github?: ({
         enabled: true;
+        forceRepo?: boolean;
         defaultLabels?: string[];
         titleTemplate?: BrowserTemplate;
     } & ({
@@ -195,6 +198,7 @@ export interface ShotputBrowserConfig {
         autoPost: boolean;
     } | { defaultLabels?: string[]; defaultOwner?: string; defaultRepo?: string; autoPost?: false})) | {
         enabled?: false;
+        forceRepo?: boolean;
         titleTemplate?: BrowserTemplate;
         defaultOwner?: string;
         defaultRepo?: string;

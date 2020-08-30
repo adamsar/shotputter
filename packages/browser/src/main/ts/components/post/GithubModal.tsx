@@ -60,6 +60,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    const [form, setForm] = React.useState<Partial<GithubModalForm>>({
       labels: global.appOptions?.github?.defaultLabels ?? []
    });
+   const staticRepo = global.appOptions.github?.forceRepo && global.appOptions.github?.defaultRepo && global.appOptions.github?.defaultOwner;
 
    const [errors, setErrors] = React.useState<ShotputFormError>();
 
@@ -79,7 +80,10 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
    };
 
    const onDeleteTag = (index: number) => {
-      updateForm({labels: form.labels.filter((_, _index) => _index !== index)});
+       form.labels.splice(index, 1);
+      updateForm({
+          labels: form.labels
+      });
    };
 
    React.useEffect(() => {
@@ -142,17 +146,26 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                              Repo
                   ***REMOVED***
                           <div className={"shotput-field-container"}>
-                             <select onChange={({target: {value: repoOwner}}) => {
-                                 const [owner, repo] = repoOwner.split("/")
-                                 updateForm({owner, repo});
-                 ***REMOVED***}
-                                     defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
-                                {
-                                   repos.map(repo => (
-                                       <option key={repo.repo} value={repo.owner + "/" + repo.repo}>{repo.owner}/{repo.repo}</option>
-                                   ))
-                    ***REMOVED***
-                             </select>
+                              {
+                                  !staticRepo ? (
+                                      <select onChange={({target: {value: repoOwner}}) => {
+                                          const [owner, repo] = repoOwner.split("/")
+                                          updateForm({owner, repo});
+                          ***REMOVED***}
+                                              defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
+                                          {
+                                              repos.map(repo => (
+                                                  <option key={repo.repo} value={repo.owner + "/" + repo.repo}>{repo.owner}/{repo.repo}</option>
+                                              ))
+                              ***REMOVED***
+                                      </select>
+                                  ) : (
+                                      <p>
+                                          {form.owner}/{form.repo}
+                                      </p>
+                                  )
+                  ***REMOVED***
+
                   ***REMOVED***
                           <div className={"shotput-label"}>
                              Title <RequiredStar/>
