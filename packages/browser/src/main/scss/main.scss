@@ -296,6 +296,10 @@ $cancel: #666666;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
+  margin-right: 5px;
+  &:last-child {
+    margin-right: 0;
+  }
 
   &.main-color {
     color: white;
@@ -371,7 +375,7 @@ $cancel: #666666;
   border-radius: 10px;
   z-index: 113;
   position: fixed;
-  text-align: center;
+  text-align: left;
 
   .shotput-poster-list {
     width: 100%;
@@ -398,10 +402,10 @@ $cancel: #666666;
 
   .shotput-bottom-buttons {
 
-    text-align: right;
     margin-top: 1em;
     width: 100%;
     display:block;
+    text-align: right;
 
     .shotput-bottom-button {
       display: inline-block;
