@@ -13,6 +13,7 @@ import {pipe} from "fp-ts/lib/pipeable";
 import {applyTemplate, defaultSlackTemplate} from "../../config/ShotputBrowserConfig";
 import {chain} from "fp-ts/es6/TaskEither";
 import {TaskEither} from "fp-ts/TaskEither";
+import {ShotputButton} from "../common/forms/ShotputButton";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {
     const {global, screenshot} = useStores();
@@ -90,18 +91,16 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
 
                         ***REMOVED***
                                 <div className={"shotput-bottom-buttons"}>
-                                    <span className={"shotput-bottom-button"} onClick={onClose}>Back</span>
-                                    <span className={"shotput-bottom-button"} onClick={doPost}>Post</span>
+                                    <ShotputButton onClick={onClose} color={"white"}>Back</ShotputButton>
+                                    <ShotputButton onClick={doPost} color={"main"}>Post</ShotputButton>
                         ***REMOVED***
                     ***REMOVED***
                         </Modal>
                     </IfInitial>
                     <IfFulfilled state={postChannelState}>{ _ => (
-                        <>
                             <SuccessModal onClose={onClose}>
                                 Successfully posted message to #{channel} in Slack!
                             </SuccessModal>
-                        </>
                     )}</IfFulfilled>
                     </>
             )
