@@ -160,6 +160,9 @@ export interface ShotputBrowserConfig {
             enabled: boolean;
             channel: string;
         };
+        google?: {
+            enabled: boolean;
+        }
         customEndpoint?: string;
         consoleLog?: {
             enabled: boolean;
