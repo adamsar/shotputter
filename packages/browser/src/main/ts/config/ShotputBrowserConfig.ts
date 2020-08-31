@@ -215,6 +215,8 @@ export interface ShotputBrowserConfig {
     jira?: (({
         enabled: true;
         template?: BrowserTemplate;
+        forceProject?: boolean;
+        forceIssueType?: boolean;
     } & ({
         autoPost: true;
         defaultPriority?: string;
@@ -229,6 +231,8 @@ export interface ShotputBrowserConfig {
         defaultProject?: string;
     })) | {
         enabled: false;
+        forceProject?: boolean;
+        forceIssueType?: boolean;
         defaultSummary?: string;
         defaultPriority?: string;
         defaultIssueType?: string;
