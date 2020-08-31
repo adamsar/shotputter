@@ -15,7 +15,7 @@ export const ErrorModal = ({onClose, children}: PropsWithChildren<ErrorModalProp
             {children}
         </p>
         <div className={"shotput-error-button-bar"}>
-            <ShotputButton onClick={onClose} color={"main"}>
+            <ShotputButton onClick={onClose} color={"white"}>
                 Close
             </ShotputButton>
         </div>
