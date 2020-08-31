@@ -159,9 +159,11 @@ export interface ShotputBrowserConfig {
         slack?: {
             enabled: boolean;
             channel: string;
+            template?: BrowserTemplate;
         };
         google?: {
             enabled: boolean;
+            template?: BrowserTemplate
         }
         customEndpoint?: string;
         consoleLog?: {

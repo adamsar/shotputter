@@ -10,6 +10,10 @@ export interface GooglePoster$Post$Params {
 
 }
 
+export interface GooglePoster$Message$Params {
+    message: string;
+}
+
 export const googlePostDecoder: t.Type<GooglePoster$Post$Params> = t.strict({
 
     image: t.string,
@@ -17,11 +21,16 @@ export const googlePostDecoder: t.Type<GooglePoster$Post$Params> = t.strict({
 
 });
 
+export const googleMessageDecoder: t.Type<GooglePoster$Message$Params> = t.strict({
+    message: t.string
+})
+
 export type GoogleError = { type: "google", error: any } | HttpError;
 
 export interface GooglePoster {
 
-    post: (options: GooglePoster$Post$Params) => TaskEither<GoogleError, true>
+    post: (options: GooglePoster$Post$Params) => TaskEither<GoogleError, true>;
+    message: (messageOptions: GooglePoster$Message$Params) => TaskEither<GoogleError, true>;
 
 }
 
@@ -31,6 +40,10 @@ export const HostedGooglePoster = (requester: HostedRequester): GooglePoster => 
 
         post(options: GooglePoster$Post$Params): TaskEither<GoogleError, true> {
             return requester.post("/google/post", options);
+        },
+
+        message(options: GooglePoster$Message$Params): TaskEither<GoogleError, true> {
+            return requester.post("/google/message", options);
         }
 
     }
