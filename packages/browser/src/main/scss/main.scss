@@ -289,11 +289,49 @@ $cancel: #666666;
   //}
 }
 
+.shotput-button {
+  padding: .5em;
+  display: inline-block;
+  width: calc(50% - 30px);
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+
+  &.main-color {
+    color: white;
+    background-color: $main;
+    &:hover {
+      background-color: darken($main, 10%);
+    }
+  }
+
+  &.secondary-color {
+    color: $secondary;
+    background: #f1f1f1;
+    border: 1px solid $secondary;
+    &:hover {
+      background-color: darken(#f1f1f1, 10%);
+    }
+  }
+
+  &.white-color {
+    border: 1px solid $cancel;
+    background-color: #fafafa;
+    color: $cancel;
+    margin-right: 1em;
+    &:hover {
+      background-color: #f3f3f3;
+    }
+  }
+}
+
 .shotput-editor-button {
   padding: .5em;
   display: inline-block;
   font-weight: bold;
   cursor: pointer;
+  width: calc(50% - 30px);
+  text-align: center;
 
   &.cancel-button {
     border: 1px solid $cancel;
@@ -325,6 +363,10 @@ $cancel: #666666;
   font-family: Arial;
   background-color: #f1f1f1;
   max-width: 400px;
+  min-width: 200px;
+  @media #{$information-phone} {
+    width: 90vw;
+  }
   padding: 1em;
   border-radius: 10px;
   z-index: 113;
@@ -449,40 +491,20 @@ $cancel: #666666;
 }
 
 
-.shotput-button {
-  padding: .5em 1em;
-  border: 1px solid;
-  border-radius: 3px;
-  &.main-color {
-    background-color: $main-color;
-    border-color: darken($main-color, 10%);
-    color: ghostwhite;
-    &:hover {
-      cursor: pointer;
-      background-color: lighten($main-color, 5%);
-      border-color: $main-color;
-    }
-  }
-  &.secondary-color {
-    background-color: $secondary-color;
-    border-color: darken($secondary-color, 10%);
-    color: ghostwhite;
-    &:hover {
-      cursor: pointer;
-      background-color: lighten($secondary-color, 5%);
-      border-color: $secondary-color;
-    }
-  }
-}
 
 .shotput-success-modal {
   font-family: Arial;
   word-break: break-word;
-  background-color: #A1DED6;
+  background-color: #f1f1f1;
   max-height: 80vh;
+  min-width: 200px;
   overflow-y: auto;
+  border: 1px solid $main;
   h2 {
     letter-spacing: .2em;
+    svg {
+      color: $main;
+    }
   }
   p {
     margin-top: 1em;
@@ -524,7 +546,7 @@ $cancel: #666666;
       }
 
       &.shotput-is-active {
-        color: $orange-color;
+        color: $main;
         font-weight: bold;
       }
     }

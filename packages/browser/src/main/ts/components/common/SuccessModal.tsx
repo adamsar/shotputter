@@ -18,7 +18,7 @@ export const SuccessModal = ({children, onClose, className, ...props}: PropsWith
                 {children}
             </p>
             <div className={"shotput-success-button-bar"}>
-                <ShotputButton onClick={onClose} color={"secondary"}>
+                <ShotputButton onClick={onClose} color={"main"}>
                     OK
                 </ShotputButton>
             </div>
