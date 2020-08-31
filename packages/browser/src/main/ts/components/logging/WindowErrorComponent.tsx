@@ -9,11 +9,17 @@ import {getSystemInfo} from "../../util/system-utils";
 import {applyTemplate, defaultSlackTemplate, ShotputBrowserConfig} from "../../config/ShotputBrowserConfig";
 import {pipe} from "fp-ts/pipeable";
 import {chain, fromIO, getTaskValidation, TaskEither} from "fp-ts/lib/TaskEither";
-import {mapSlackError, SlackServiceClient} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
+import {
+    HostedSlackService,
+    mapSlackError,
+    SlackServiceClient
+} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {getMonoid, sequence} from "fp-ts/lib/Array";
 import {isLeft} from "fp-ts/Either";
+import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
+import {HostedGooglePoster} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
 
 interface WindowErrorComponentProps {
     appOptions: ShotputBrowserConfig;
@@ -29,12 +35,13 @@ const logHandler: ErrorHandler = ({metadata, message, systemInfo}) => fromIO(() 
     console.log(metadata);
 });
 
-const slackHandler = (appOptions: ShotputBrowserConfig, slack?: SlackServiceClient): ErrorHandler | undefined => {
-    if (appOptions.errorReporting?.enabled && appOptions.errorReporting?.slack?.enabled && slack) {
+const slackHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefined => {
+    if (appOptions.service !== false && appOptions.errorReporting?.enabled && appOptions.errorReporting?.slack?.enabled) {
+        const slack = HostedSlackService(new HostedRequester(appOptions.service.url));
         // @ts-ignore
         return ({message, metadata, systemInfo, logs}) => pipe(
             applyTemplate(
-                appOptions?.errorReporting?.template ?? defaultSlackTemplate,
+                appOptions.errorReporting?.slack?.template ?? appOptions?.errorReporting?.template ?? defaultSlackTemplate,
                 {
                     message,
                     systemInfo,
@@ -54,6 +61,28 @@ const slackHandler = (appOptions: ShotputBrowserConfig, slack?: SlackServiceClie
     }
 }
 
+const googleHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefined => {
+    if (appOptions.service !== false && appOptions.errorReporting?.enabled && appOptions.errorReporting?.google?.enabled) {
+        const google = HostedGooglePoster(new HostedRequester(appOptions.service.url));
+        return ({message, metadata, systemInfo, logs}) => {
+            return pipe(
+                applyTemplate(
+                appOptions.errorReporting?.google?.template ?? appOptions.errorReporting?.template ?? defaultSlackTemplate,
+                {
+                    message,
+                    systemInfo,
+                    logs,
+                    metadata,
+                    systemInfoString: JSON.stringify(systemInfo, null, 2),
+                    logsString: logs?.join("\n"),
+                    metadataString: JSON.stringify(metadata, null, 2)
+                }) as TaskEither<any, string>,
+                chain(message => google.message({ message }))
+            )
+        }
+    }
+}
+
 const customHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefined => {
     if (appOptions?.errorReporting?.customEndpoint && appOptions?.errorReporting?.enabled) {
         const requester = HttpPoster(appOptions.errorReporting.customEndpoint)
@@ -64,7 +93,7 @@ const customHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefin
 }
 
 export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponentProps) => {
-    const { global, screenshot } = useStores();
+    const { screenshot } = useStores();
     const [failure, setFailure] = React.useState<string>();
 
     if (appOptions.errorReporting?.enabled) {
@@ -73,10 +102,12 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
             if (appOptions.errorReporting?.consoleLog?.enabled) {
                 handlers.push(logHandler);
             }
-            const _slackHandler = slackHandler(appOptions, global.slackService);
+            const _slackHandler = slackHandler(appOptions);
             if (_slackHandler) handlers.push(_slackHandler);
             const _customHandler = customHandler(appOptions);
             if (_customHandler) handlers.push(_customHandler);
+            const _googleHandler = googleHandler(appOptions);
+            if (_googleHandler) handlers.push(_googleHandler);
 
             const handleError: OnErrorEventHandler = async (msg: string, _2: any, _3: any, _4: any, error: Error) => {
                 const results = await pipe(

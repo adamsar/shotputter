@@ -2,7 +2,10 @@ import * as express from "express";
 import {_route} from "../routing/route";
 import {pipe} from "fp-ts/lib/pipeable";
 import {ioUtils} from "@shotputter/common/src/main/ts/util/io-utils";
-import {googlePostDecoder} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
+import {
+    googleMessageDecoder,
+    googlePostDecoder
+} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
 import {ServerError} from "../routing/responses";
 import {BadDecodeResponse} from "../routing/response-errors";
 import {chain, map, mapLeft} from "fp-ts/lib/TaskEither";
@@ -24,7 +27,9 @@ const cardFormat = (imageUrl: string, message: string) => ({
     }]
 });
 
-
+const messageFormat = (text: string) => ({
+    text
+})
 
 export const googleRouter = (webhookUrl: string, imageUploader: ImageUploader): express.Router => {
 
@@ -45,6 +50,17 @@ export const googleRouter = (webhookUrl: string, imageUploader: ImageUploader): 
                 )),
             map(_ => Posted)
         )
+    }));
+
+    router.post("/message", _route(({req}) => {
+       return pipe(
+           ioUtils.toTaskEither(req.body, googleMessageDecoder, BadDecodeResponse),
+           chain(({message}) => pipe(
+               requester.post("", messageFormat(message)),
+               mapLeft(error => ServerError(error))
+           )),
+           map(_ => Posted)
+       );
     }));
 
     return router;

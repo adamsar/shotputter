@@ -41,7 +41,7 @@ npm install shotputter
 here, you will need to launch/host an API server somewhere. [Details on how to launch an server can be found here](/api-server)
 2) With an API server running somewhere in your browser code, you will need to initialize 
 the `Shotput` object. An example of which is below: 
-```$javascript
+```
 const {Shotput} = require("shotputter");
 Shotput({
     service: {
@@ -84,7 +84,7 @@ Shotput({service: false});
 ```
 
 * `service.url` *string* URL where the [shotput api service](/api-service) is running.
-* `service.messageTemplate` *string | function* Override default [template](/templates) when posting a message to a service.
+* `service.messageTemplate` *string \| function* Override default [template](/templates) when posting a message to a service.
 * `service.autoPost` *boolean* Enable [auto posting](#non-technical-users) when submitting screenshots or messages. Default *false*
 * `service.autoPostFirst` *boolean* Posts to endpoints that are configured as [auto post](#non-technical-users) immediately instead of prompting a post. Default *false*
 * `metadata` *object* Set initial [metadata](/metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
