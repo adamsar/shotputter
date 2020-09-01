@@ -11,8 +11,7 @@ import {pipe} from "fp-ts/pipeable";
 import {chain, fromIO, getTaskValidation, TaskEither} from "fp-ts/lib/TaskEither";
 import {
     HostedSlackService,
-    mapSlackError,
-    SlackServiceClient
+    mapSlackError
 } from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
