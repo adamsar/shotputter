@@ -17,7 +17,7 @@ export const CustomModal = observer(({onClose}: CustomModalProps) => {
     const { screenshot, global } = useStores();
 
     return (
-        <Async promiseFn={taskEitherExtensions.toDeferFn(global.customRequestService.sendPost(screenshot.post))}>
+        <Async promiseFn={taskEitherExtensions.toDeferFn(global.customRequestService.sendPost({...screenshot.post, ...screenshot.logs}))}>
             <Async.Pending>
                 <Loader/>
             </Async.Pending>
