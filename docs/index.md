@@ -108,7 +108,7 @@ Shotput({service: false});
 * `errorReporting.google.enabled` *boolean* Post errors to Google chats. Defualts to *false*;
 * `errorReporting.google.template` *string \| function* Change the default [template](/shotputter/templates) when posting errors to Google Chats.
 * `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)
-```
+```$xslt
 {
     type: "page_error",
     payload: {
@@ -148,7 +148,7 @@ Shotput({service: false});
 * `jira.autoPost` *boolean* Include jira in [auto posting](#non-technical-user). Requires `jira.defaultProject` and `jira.defaultIssueType` to also be set, and `jira.defaultPriority` if required, and `jira.defaultSummary` is also recommended to be used.
 * `custom.enabled` *boolean* Enabled posting screenshots to a custom webhook. `custom.endpoint` required when enabled
 * `custom.endpoint` *string* Endpoint to post screenshots and system information to. The endpoint must handle a POST request with the following JSON body
-```
+```$xslt
 {
     type: "screenshot_post",
     payload: {
