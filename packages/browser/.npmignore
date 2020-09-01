@@ -1,0 +1,5 @@
+node_modules
+src/main/templates
+dist/index.html
+src/**/.js
+src/**/.map
