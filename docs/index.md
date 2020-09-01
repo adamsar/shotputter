@@ -99,7 +99,7 @@ Shotput({service: false});
 * `service.messageTemplate` *string \| function* Override default [template](/templates) when posting a message to a service.
 * `service.autoPost` *boolean* Enable [auto posting](#non-technical-users) when submitting screenshots or messages. Default *false*
 * `service.autoPostFirst` *boolean* Posts to endpoints that are configured as [auto post](#non-technical-users) immediately instead of prompting a post. Default *false*
-* `metadata` *object* Set initial [metadata](/metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
+* `metadata` *object* Set initial [metadata](#metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
 * `captureLogs` *boolean* Capture logs (up to 20 lines) to include in reports. Default *false* 
 * `errorReporting.enabled` *boolean* Enable capturing of errors in the browser (and rejected promises) and report them as per additional configuration in the object. Defaults to *false*
 * `errorReporting.slack.enabled` *boolean* Send errors to slack, requires the `errorReporting.slack.channel` option to be set if set to to true. Default *false*
@@ -110,10 +110,14 @@ Shotput({service: false});
 * `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)
 ```
 {
-    message: "Stack trace\n", // Stack trace of the error occurred
-    systemInfo: {}, // All system info obtained from the browser
-    metadata: {}, // Any metadata that is set
-    logs: [] // If `captureLogs` is enabled, this will be an array of the last 20 log messages.
+    type: "page_error",
+    payload: {
+        message: "Stack trace\n", // Stack trace of the error occurred
+        systemInfo: {}, // All system info obtained from the browser
+        metadata: {}, // Any metadata that is set
+        logs: [] // If `captureLogs` is enabled, this will be an array of the last 20 log messages.
+    },
+
 }
 ```
 * `errorReporting.template` *string \| function* Change the default template for all error reporting endpoints.
@@ -133,9 +137,30 @@ Shotput({service: false});
 * `github.defaultRepo` *string* Automatically set the default Github repo when listing repos from Github. When used with [auto posting](#non-technical-users) via `github.autoPost` this must be set with `github.defaultOwner`.
 * `github.forceRepo` *boolean* Force posts to automatically to a specific repo for a specific owner. This will disable being able to select a repo. `github.defaultRepo` and `github.defaultOwner` must be set with this.
 * `github.defaultLabels` *array<string>* Set default labels for each post on Github.
+* `github.autoPost` *boolean* Include Github when [auto posting](#non-technical-users). Requires `github.defaultOwner` and `github.defaultRepo` to also be set. `github.titleTemplate` strongly recommended to also be set. 
 * `jira.enabled` *boolean* Enabled posting to Jira.
 * `jira.template` *string \| function* Change the default [template](/templates) for posting to Jira.
-* `jira.defaultProject` *string* Project Is   
+* `jira.defaultProject` *string* Default project to select for posting, name or ID. Use with `jira.forceProject` to remove the option to select different projects. Required when using the [auto posting](#non-technical-user) feature and `jira.autoPost`
+* `jira.forceProject` *boolean* Use with `jira.defaultProject` to force the user to use only a specific Jira Project.
+* `jira.defaultIssueType` *string* Default issue type to use when posting issues; ID or name permitted. Make sure this issue type exists on the default project, and use `jira.forceIssueType` to force the user to only use this issue type. Required when using the [auto posting](#non-technical-user) feature and `jira.autoPost`
+* `jira.defaultSummary` *string* Default summary to use for issues posted to jira. Recommended when using the [auto posting](#non-technical-user) feature and `jira.autoPost`.
+* `jira.defaultPriority` *string* PriorityId or name. Required when using the [auto posting](#non-technical-user) feature/`jira.autoPost` and the issue type used requires a priority.
+* `jira.autoPost` *boolean* Include jira in [auto posting](#non-technical-user). Requires `jira.defaultProject` and `jira.defaultIssueType` to also be set, and `jira.defaultPriority` if required, and `jira.defaultSummary` is also recommended to be used.
+* `custom.enabled` *boolean* Enabled posting screenshots to a custom webhook. `custom.endpoint` required when enabled
+* `custom.endpoint` *string* Endpoint to post screenshots and system information to. The endpoint must handle a POST request with the following JSON body
+```
+{
+    type: "screenshot_post",
+    payload: {
+        logs: [], // array of log strings
+        image: "", //Base64 encoded screenshot
+        systemInfo: {}, // Object containing browser and system information
+        metadata: {} // Metadata provided for the current environment is any.
+    },
+    timestamp: "2020-09-01T04:44:50.283Z" // ISO string for when the post request was made
+}
+```
+     
   
 
   
