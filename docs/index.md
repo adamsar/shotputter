@@ -46,15 +46,21 @@ It is possible to set up Shotputter in your development environment to [be more 
 Shotputter is distributed through NPM, and you can install it the usual NPM way.
 
 ```$xslt
-npm install shotputter
+npm install @shotputter/browser
 ```  
+
+The API and its associated files are available through the `@shotputter/api` package
+
+```$xslt
+npm install @shotputter/api
+```
 
 1) When it's installed, unless you are only using the download feature demonstrated
 here, you will need to launch/host an API server somewhere. [Details on how to launch an server can be found here](/api-server)
 2) With an API server running somewhere in your browser code, you will need to initialize 
 the `Shotput` object. An example of which is below: 
 ```
-const {Shotput} = require("shotputter");
+const {Shotput} = require("@shotputter/browser");
 Shotput({
     service: {
         url: "https://my-shotput-api.example.com"
@@ -91,7 +97,7 @@ The Shotput object on the browser has the following options configurable.
 To just use the download feature or a custom endpoint with no server, initialize a Shotput object with `service` set to *false*.
 
 ```
-const {Shotput} = require("shotputter");
+const {Shotput} = require("@shotputter/browser");
 Shotput({service: false});
 ```
 
@@ -172,7 +178,7 @@ for use in [templates](/shotputter/templates) through the [browser configuration
 
 Example:
 ```
-const {Shotput} = require("shotputter");
+const {Shotput} = require("@shotputter/browser");
 const instance = Shotput({
 ...config,
 metadata: {

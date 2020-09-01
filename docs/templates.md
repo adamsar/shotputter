@@ -23,7 +23,7 @@ a string, or a function that returns a string, which has access to the following
 Ex:
 
 ```$xslt
-const {Shotput} = require("shotputter");
+const {Shotput} = require("@shotputter/browser");
 Shotput({
     service: {
         "url": "https://api.example.com",
