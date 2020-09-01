@@ -1,0 +1,7 @@
+node_modules
+images
+serverless.yml
+config.json
+dev
+src/**/*.js
+src/**/*.map
