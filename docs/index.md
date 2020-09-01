@@ -96,7 +96,7 @@ Shotput({service: false});
 ```
 
 * `service.url` *string* URL where the [shotput api service](/api-service) is running.
-* `service.messageTemplate` *string \| function* Override default [template](/templates) when posting a message to a service.
+* `service.messageTemplate` *string \| function* Override default [template](/shotputter/templates) when posting a message to a service.
 * `service.autoPost` *boolean* Enable [auto posting](#non-technical-users) when submitting screenshots or messages. Default *false*
 * `service.autoPostFirst` *boolean* Posts to endpoints that are configured as [auto post](#non-technical-users) immediately instead of prompting a post. Default *false*
 * `metadata` *object* Set initial [metadata](#metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
@@ -104,9 +104,9 @@ Shotput({service: false});
 * `errorReporting.enabled` *boolean* Enable capturing of errors in the browser (and rejected promises) and report them as per additional configuration in the object. Defaults to *false*
 * `errorReporting.slack.enabled` *boolean* Send errors to slack, requires the `errorReporting.slack.channel` option to be set if set to to true. Default *false*
 * `errorReporting.slack.channel` *string* Which slack channel to post browser errors to.
-* `errorReporting.slack.template` *string \| function* Change the default [template](/templates) to use when posting errors to Slack.  
+* `errorReporting.slack.template` *string \| function* Change the default [template](/shotputter/templates) to use when posting errors to Slack.  
 * `errorReporting.google.enabled` *boolean* Post errors to Google chats. Defualts to *false*;
-* `errorReporting.google.template` *string \| function* Change the default [template](/templates) when posting errors to Google Chats.
+* `errorReporting.google.template` *string \| function* Change the default [template](/shotputter/templates) when posting errors to Google Chats.
 * `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)
 ```
 {
@@ -125,21 +125,21 @@ Shotput({service: false});
 * `slack.enabled` *boolean* Enable posting screenshots and messages to slack.
 * `slack.defaultChannel` *string* Name or ID of channel to post screenshots to by default. If `slack.forceChannel` is not set to true, it will be possible to change channels when posting manually.
 * `slack.forceChannel` *boolean* When set to *true* with a channel provided via `slack.defaultChannel`, this will force all messages to only post to the specified channel.
-* `slack.template` *string \| function* Change the default [template](/templates) when posting to Slack.
+* `slack.template` *string \| function* Change the default [template](/shotputter/templates) when posting to Slack.
 * `slack.autoPost` *boolean* Automatically post to slack when using the [auto posting](#non-technical-users) feature. Requires `slack.defaultChannel` to also be configured.
 * `google.enabled` *boolean* Posting to Google Chats is enabled.
-* `google.template` *string \| function* Change the default [template](/templates) when posting to Google Chats.
+* `google.template` *string \| function* Change the default [template](/shotputter/templates) when posting to Google Chats.
 * `google.autoPost` *boolean* Automatically post to slack when using the [auto posting](#non-technical-users) feature.
 * `github.enabled` *boolean* Posting to Github is enabled. 
-* `github.template` *string \| function* Change the default [template](/templates) when posting to Github.
-* `github.titleTemplate` *string \| function* Change the default [template](/templates) for the issue title when posting to Github. It is recommended to set this when auto posting to Github.
+* `github.template` *string \| function* Change the default [template](/shotputter/templates) when posting to Github.
+* `github.titleTemplate` *string \| function* Change the default [template](/shotputter/templates) for the issue title when posting to Github. It is recommended to set this when auto posting to Github.
 * `github.defaultOwner` *string* Automatically set the default Github owner when listing repos from Github. When used with [auto posting](#non-technical-users) via `github.autoPost` this must be set with `github.defaultRepo`.
 * `github.defaultRepo` *string* Automatically set the default Github repo when listing repos from Github. When used with [auto posting](#non-technical-users) via `github.autoPost` this must be set with `github.defaultOwner`.
 * `github.forceRepo` *boolean* Force posts to automatically to a specific repo for a specific owner. This will disable being able to select a repo. `github.defaultRepo` and `github.defaultOwner` must be set with this.
 * `github.defaultLabels` *array<string>* Set default labels for each post on Github.
 * `github.autoPost` *boolean* Include Github when [auto posting](#non-technical-users). Requires `github.defaultOwner` and `github.defaultRepo` to also be set. `github.titleTemplate` strongly recommended to also be set. 
 * `jira.enabled` *boolean* Enabled posting to Jira.
-* `jira.template` *string \| function* Change the default [template](/templates) for posting to Jira.
+* `jira.template` *string \| function* Change the default [template](/shotputter/templates) for posting to Jira.
 * `jira.defaultProject` *string* Default project to select for posting, name or ID. Use with `jira.forceProject` to remove the option to select different projects. Required when using the [auto posting](#non-technical-user) feature and `jira.autoPost`
 * `jira.forceProject` *boolean* Use with `jira.defaultProject` to force the user to use only a specific Jira Project.
 * `jira.defaultIssueType` *string* Default issue type to use when posting issues; ID or name permitted. Make sure this issue type exists on the default project, and use `jira.forceIssueType` to force the user to only use this issue type. Required when using the [auto posting](#non-technical-user) feature and `jira.autoPost`
