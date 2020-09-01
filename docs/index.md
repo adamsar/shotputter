@@ -168,7 +168,7 @@ Shotput({service: false});
 
 Since Shotputter is designed to help get developers the information they need to make
 the changes their test users want, sometimes additional data about the user or their actions would help. Metadata can be provided or changed
-for use in [templates](/shoputter/templates) through the [browser configuration](/shotputter/#browser-configuration) and a small interface on the Shotput instance that is created.
+for use in [templates](/shotputter/templates) through the [browser configuration](/shotputter/#browser-configuration) and a small interface on the Shotput instance that is created.
 
 Example:
 ```
@@ -191,3 +191,21 @@ These functions are available on the Shotput instance to manipulate metadata.
 * `updateMetadata(metadata: object)` Updates existing metadata with the object provided. Overwrites existing keys.
 * `setMetadata(metadata: object)` Completely replaces the existing metadata with the new object. All existing data is deleted.
 * `purgeMetadata()` Sets the metadata object to a blank object   
+
+
+## Non technical users
+
+Sometimes you want to fold in non-technical testers and designers and in your workflow, and
+prompting them to select Github repo or other technical details can be challenging. To automate the posting
+process for these users, a streamlined workflow is configurable through the browser configuration. 
+
+First to replace the selection of which service the user would like to post to with a simple
+"post" option, set the `service.autoPost` option to true, and then when configuring
+services, set their individual `autoPost` settings, such as `github.autoPost` to true. On an service-by-service
+basis additional settings may also be required to be set (such as which repo and owner for github, or which project and issuetype for jira). You can
+check the [browser configuration](/shotputter/#browser-configuration) for the specifics on this. 
+
+With this set, the user will be presented with a simple "Download" or "Post" option after making a screenshot. To get rid of the
+download option, use the `service.autoPostFirst` option, which will post to third-party services first, and then present the user with
+the option to download after.
+   
