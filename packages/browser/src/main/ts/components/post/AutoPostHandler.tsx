@@ -12,12 +12,13 @@ import {
     defaultUnformattedTemplate
 } from "../../config/ShotputBrowserConfig";
 import {mapSlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
-import {chain} from "fp-ts/TaskEither";
+import {chain, TaskEither} from "fp-ts/TaskEither";
 import {sequenceT} from "fp-ts/lib/Apply";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {sequence} from "fp-ts/Array";
 import {isLeft} from "fp-ts/These";
 import {ErrorModal} from "../common/ErrorModal";
+import {JiraPoster$Post$Params} from "@shotputter/common/src/main/ts/services/poster/jira/JiraPoster";
 
 interface AutoPostHandlerProps {
    onBack: () => void;
@@ -33,8 +34,55 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
       const tasks = global.autoPosters.map((autoPoster) => {
          const fileName = `[Screenshot]-${new Date().toISOString()}.png`;
          const post = screenshot.post;
+         const overriddenTemplate = typeof global.appOptions.service === "object" ? global.appOptions.service?.messageTemplate : undefined;
 
          switch (autoPoster) {
+             case "jira":
+                 const jiraOptions = global.appOptions.jira;
+                 return pipe(
+                   sequenceT(taskEitherExtensions.errorValidation)(
+                       pipe(
+                           applyTemplate(jiraOptions.template ?? overriddenTemplate ?? defaultSlackTemplate, screenshot.templateParams) as TaskEither<any, string>,
+                           taskEitherExtensions.mapLeftValidation()
+                       ),
+                       jiraOptions.defaultSummary ? pipe(
+                           applyTemplate(jiraOptions.defaultSummary, {}),
+                           taskEitherExtensions.mapLeftValidation()
+                           ) : taskEitherExtensions.right("New report from Shotputter"),
+                       pipe(
+                           global.jiraService.getCreateMetadata(),
+                           taskEitherExtensions.mapLeftValidation()
+                       )
+                   ),
+                     chain(([message, summary, createMetadata]) => {
+                         const project = createMetadata.projects.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
+                         if (!project) {
+                             return taskEitherExtensions.left([{type: "configuration", error: `Jira default project ${jiraOptions.defaultProject} not found in metadata`}]);
+                         }
+                         const issuetype = project.issuetypes.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
+                         if (!issuetype) {
+                             return taskEitherExtensions.left([{type: "configuration", error: `Jira default issue type ${jiraOptions.defaultIssueType} not found in project configuration`}])
+                         }
+                         const post: JiraPoster$Post$Params = {
+                             message,
+                             project: project.id,
+                             issuetype: issuetype.id,
+                             image: screenshot.post.image
+                         };
+                         if (issuetype.fields['summary']?.required) {
+                             post.summary = summary;
+                         }
+                         if (issuetype.fields['priorityId']?.required) {
+                             const priority = issuetype.fields['priorityId'].allowedValues.find(({id, name}) => id === jiraOptions.defaultPriority || name === jiraOptions.defaultPriority)?.id
+                             if (priority) {
+                                 post.priorityId = jiraOptions.defaultPriority;
+                             } else {
+                                 return taskEitherExtensions.left([{type: "configuration", error: `Jira default priority required but not found`}]);
+                             }
+                         }
+                         return pipe(global.jiraService.post(post), taskEitherExtensions.mapLeftValidation())
+                     })
+                 );
              case "google":
                  return pipe(
                      applyTemplate(
@@ -52,7 +100,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
             case "slack":
                return pipe(
                    applyTemplate(
-                       global.appOptions.slack.slackTemplate ?? (
+                       global.appOptions.slack.template ?? (
                            typeof global.appOptions.service === "object" ? global.appOptions.service.messageTemplate ?? defaultSlackTemplate : defaultSlackTemplate
                        ),screenshot.templateParams),
                    mapSlackError,

@@ -21,7 +21,7 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
     const slackService = global.slackService;
     const postChannelState =  useAsync({
         deferFn: ([channels]: [string[]]) => taskEitherExtensions.toDeferFn(pipe(
-            applyTemplate(defaultSlackTemplate, screenshot.templateParams) as TaskEither<any, string>,
+            applyTemplate(global.appOptions.slack?.template ?? defaultSlackTemplate, screenshot.templateParams) as TaskEither<any, string>,
             chain(message => slackService.uploadFile({
             channels,
             message,

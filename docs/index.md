@@ -10,7 +10,19 @@ Shotputter is a development tool that helps small to medium-sized teams report b
 request features and changes, and provide targeted system information for developers via browser screenshots. 
 The main feature of Shotputter is to provide a tab/button that the user can click to 
 take an annotated screenshot, and then send immediately to the dev team via a (self hosted) API that posts to other services that may be in use.
-These third party service include Slack, Github, Google Chat, etc. 
+Current third party implementions are
+* Google Chat
+* Slack
+* Jira
+* Github
+* Custom webhook
+
+Additionally for screenshot image hosting, the providers are
+* Local filesystem (from the API)
+* AWS S3
+* Imgur
+* Cloudinary
+ 
 
 For particularly small teams or if hosting the API proves to be challenging, good old fashion
 downloads and copy/paste system information is also available for configuration.
@@ -76,7 +88,7 @@ you can read more about configuring the application in the [browser configuratio
 ## Browser configuration
 
 The Shotput object on the browser has the following options configurable.
-To just use the download feature with no server, intialize a shotput object with `service` set to false.
+To just use the download feature or a custom endpoint with no server, initialize a Shotput object with `service` set to *false*.
 
 ```
 const {Shotput} = require("shotputter");
@@ -92,6 +104,38 @@ Shotput({service: false});
 * `errorReporting.enabled` *boolean* Enable capturing of errors in the browser (and rejected promises) and report them as per additional configuration in the object. Defaults to *false*
 * `errorReporting.slack.enabled` *boolean* Send errors to slack, requires the `errorReporting.slack.channel` option to be set if set to to true. Default *false*
 * `errorReporting.slack.channel` *string* Which slack channel to post browser errors to.
-* `errorReporting.` 
+* `errorReporting.slack.template` *string \| function* Change the default [template](/templates) to use when posting errors to Slack.  
+* `errorReporting.google.enabled` *boolean* Post errors to Google chats. Defualts to *false*;
+* `errorReporting.google.template` *string \| function* Change the default [template](/templates) when posting errors to Google Chats.
+* `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)
+```
+{
+    message: "Stack trace\n", // Stack trace of the error occurred
+    systemInfo: {}, // All system info obtained from the browser
+    metadata: {}, // Any metadata that is set
+    logs: [] // If `captureLogs` is enabled, this will be an array of the last 20 log messages.
+}
+```
+* `errorReporting.template` *string \| function* Change the default template for all error reporting endpoints.
+* `download.enabled` *boolean* Set to *false* to explicitly disable the Download option.
+* `slack.enabled` *boolean* Enable posting screenshots and messages to slack.
+* `slack.defaultChannel` *string* Name or ID of channel to post screenshots to by default. If `slack.forceChannel` is not set to true, it will be possible to change channels when posting manually.
+* `slack.forceChannel` *boolean* When set to *true* with a channel provided via `slack.defaultChannel`, this will force all messages to only post to the specified channel.
+* `slack.template` *string \| function* Change the default [template](/templates) when posting to Slack.
+* `slack.autoPost` *boolean* Automatically post to slack when using the [auto posting](#non-technical-users) feature. Requires `slack.defaultChannel` to also be configured.
+* `google.enabled` *boolean* Posting to Google Chats is enabled.
+* `google.template` *string \| function* Change the default [template](/templates) when posting to Google Chats.
+* `google.autoPost` *boolean* Automatically post to slack when using the [auto posting](#non-technical-users) feature.
+* `github.enabled` *boolean* Posting to Github is enabled. 
+* `github.template` *string \| function* Change the default [template](/templates) when posting to Github.
+* `github.titleTemplate` *string \| function* Change the default [template](/templates) for the issue title when posting to Github. It is recommended to set this when auto posting to Github.
+* `github.defaultOwner` *string* Automatically set the default Github owner when listing repos from Github. When used with [auto posting](#non-technical-users) via `github.autoPost` this must be set with `github.defaultRepo`.
+* `github.defaultRepo` *string* Automatically set the default Github repo when listing repos from Github. When used with [auto posting](#non-technical-users) via `github.autoPost` this must be set with `github.defaultOwner`.
+* `github.forceRepo` *boolean* Force posts to automatically to a specific repo for a specific owner. This will disable being able to select a repo. `github.defaultRepo` and `github.defaultOwner` must be set with this.
+* `github.defaultLabels` *array<string>* Set default labels for each post on Github.
+* `jira.enabled` *boolean* Enabled posting to Jira.
+* `jira.template` *string \| function* Change the default [template](/templates) for posting to Jira.
+* `jira.defaultProject` *string* Project Is   
+  
 
   
