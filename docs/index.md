@@ -99,7 +99,7 @@ Shotput({service: false});
 * `service.messageTemplate` *string \| function* Override default [template](/shotputter/templates) when posting a message to a service.
 * `service.autoPost` *boolean* Enable [auto posting](#non-technical-users) when submitting screenshots or messages. Default *false*
 * `service.autoPostFirst` *boolean* Posts to endpoints that are configured as [auto post](#non-technical-users) immediately instead of prompting a post. Default *false*
-* `metadata` *object* Set initial [metadata](#metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
+* `metadata` *object* Set initial [metadata](/shotputter/#metadata) to include in information when submitting screenshots. Useful for adding app-specific data such as current user, etc. Default *undefined*
 * `captureLogs` *boolean* Capture logs (up to 20 lines) to include in reports. Default *false* 
 * `errorReporting.enabled` *boolean* Enable capturing of errors in the browser (and rejected promises) and report them as per additional configuration in the object. Defaults to *false*
 * `errorReporting.slack.enabled` *boolean* Send errors to slack, requires the `errorReporting.slack.channel` option to be set if set to to true. Default *false*
@@ -107,8 +107,9 @@ Shotput({service: false});
 * `errorReporting.slack.template` *string \| function* Change the default [template](/shotputter/templates) to use when posting errors to Slack.  
 * `errorReporting.google.enabled` *boolean* Post errors to Google chats. Defualts to *false*;
 * `errorReporting.google.template` *string \| function* Change the default [template](/shotputter/templates) when posting errors to Google Chats.
-* `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)
-```$xslt
+* `errorReporting.customEndpoint` *string* Send errors to a custom endpoint. The endpoint must accept a *POST* request with the following JSON body (depending on what is configured)   
+
+```
 {
     type: "page_error",
     payload: {
@@ -120,6 +121,7 @@ Shotput({service: false});
 
 }
 ```
+
 * `errorReporting.template` *string \| function* Change the default template for all error reporting endpoints.
 * `download.enabled` *boolean* Set to *false* to explicitly disable the Download option.
 * `slack.enabled` *boolean* Enable posting screenshots and messages to slack.
@@ -148,7 +150,8 @@ Shotput({service: false});
 * `jira.autoPost` *boolean* Include jira in [auto posting](#non-technical-user). Requires `jira.defaultProject` and `jira.defaultIssueType` to also be set, and `jira.defaultPriority` if required, and `jira.defaultSummary` is also recommended to be used.
 * `custom.enabled` *boolean* Enabled posting screenshots to a custom webhook. `custom.endpoint` required when enabled
 * `custom.endpoint` *string* Endpoint to post screenshots and system information to. The endpoint must handle a POST request with the following JSON body
-```$xslt
+
+```
 {
     type: "screenshot_post",
     payload: {
@@ -160,7 +163,31 @@ Shotput({service: false});
     timestamp: "2020-09-01T04:44:50.283Z" // ISO string for when the post request was made
 }
 ```
-     
-  
 
-  
+## Metadata
+
+Since Shotputter is designed to help get developers the information they need to make
+the changes their test users want, sometimes additional data about the user or their actions would help. Metadata can be provided or changed
+for use in [templates](/shoputter/templates) through the [browser configuration](/shotputter/#browser-configuration) and a small interface on the Shotput instance that is created.
+
+Example:
+```
+const {Shotput} = require("shotputter");
+const instance = Shotput({
+...config,
+metadata: {
+    userName: getUserName()
+}
+});
+
+///... later in the application
+instance.updateMetadata({
+    groups: ["test", "test1"]
+});
+```
+
+These functions are available on the Shotput instance to manipulate metadata.
+
+* `updateMetadata(metadata: object)` Updates existing metadata with the object provided. Overwrites existing keys.
+* `setMetadata(metadata: object)` Completely replaces the existing metadata with the new object. All existing data is deleted.
+* `purgeMetadata()` Sets the metadata object to a blank object   
