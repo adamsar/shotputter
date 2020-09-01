@@ -1,4 +1,5 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
 
@@ -57,5 +58,27 @@ module.exports = {
                 loader: 'svg-inline-loader'
             }
         ]
+    },
+    optimization: process.env.NODE_MODE !== "production" ? {} : {
+        minimizer: [new TerserPlugin({
+            cache: true,
+            parallel: true,
+            sourceMap: true, // Must be set to true if using source-maps in production
+            terserOptions: {
+            }})],
+        namedModules: false,
+        namedChunks: false,
+        nodeEnv: 'production',
+        flagIncludedChunks: true,
+        occurrenceOrder: true,
+        sideEffects: true,
+        usedExports: true,
+        concatenateModules: true,
+        noEmitOnErrors: true,
+        checkWasmTypes: true,
+        minimize: true,
+        removeAvailableModules: true,
+        removeEmptyChunks: true,
+        mergeDuplicateChunks: true
     }
 };
