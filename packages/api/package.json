@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build:dev": "webpack --mode=development",
-    "build:production": "webpack --mode=production"
+    "build:dev": "webpack --mode=development && chmod +x dist/shotput-server.js",
+    "build:production": "webpack --mode=production && chmod +x dist/shotput-server.js"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
