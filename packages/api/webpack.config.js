@@ -40,7 +40,7 @@ module.exports = {
 ***REMOVED***
                 {
                     from: "src/main/docker/Dockerfile",
-                    to: "docker/Dockerfile"
+                    to: "docker"
     ***REMOVED***]
         }),
         new webpack.BannerPlugin({
@@ -49,5 +49,5 @@ module.exports = {
             include: ["cli.ts", "shotput-server"]
         })
         ],
-    externals: ['fs.promises']
+    externals: [    ]
 };

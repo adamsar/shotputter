@@ -1,8 +1,8 @@
 import * as yargs from "yargs";
 import {getApp} from "../webserver/server";
-import {applyEnvironmentVars, parseFile} from "../config/server-config";
+import {parseEnv, parseFile} from "../config/server-config";
 
-const options = yargs.usage("Usage: cli.js")
+const options = yargs.usage("Usage: shotput-server.js")
     .options({
         'port': {
             type: "number",
@@ -14,10 +14,10 @@ const options = yargs.usage("Usage: cli.js")
     }).argv;
 
 // @ts-ignore
-let _options = options.configFile ? parseFile(options.configFile) : applyEnvironmentVars(options);
+let _options = options.configFile ? parseFile(options.configFile) : parseEnv();
 
 const app = getApp(_options);
 
-app.listen(options.port, "127.0.0.1", () => {
+app.listen(options.port, '0.0.0.0', () => {
     console.log("Serving api on port " + options.port);
 });

@@ -5,3 +5,4 @@ config.json
 dev
 src/**/*.js
 src/**/*.map
+dist/docker
