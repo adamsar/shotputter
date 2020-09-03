@@ -237,11 +237,20 @@ const serverConfigConvictDefinition = convict<ServerConfig>({
 });
 
 export const parseFile = (fileName: string): ServerConfig => {
+    console.log("LOADING: " + fileName);
     try {
-        console.log("LOADING: " + fileName);
         return serverConfigConvictDefinition.loadFile(fileName).validate().getProperties();
     } catch (error) {
         console.error(error)
+        throw error;
     }
-
 };
+
+export const parseEnv = (): ServerConfig => {
+    try {
+        return serverConfigConvictDefinition.load({}).validate().getProperties();
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

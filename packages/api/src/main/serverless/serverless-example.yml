@@ -24,6 +24,11 @@ provider:
 #      -
 #    subnetIds:
 #      -
+# Roles for posting images to s3
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action: "s3:Put*"
+#      Resource: "arn:aws:s3:::${S3_BUCKET}/*"
 
 
 functions:
@@ -40,6 +45,3 @@ functions:
           method: ANY
           path: "{proxy+}"
           cors: true
-
-          # Uncomment this section if you want to keep the function warm.
-#      - schedule: rate(5 minutes)

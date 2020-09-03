@@ -1,7 +1,8 @@
 FROM node:12-alpine
 
-COPY "./cli.js" "/opt/app/cli.js"
+COPY "./shotput-server.js" "/opt/app/shotput-server.js"
 
-EXPOSE 6000
+EXPOSE 3000
 
-ENTRYPOINT ["node", "/opt/app/cli.js"]
+ENTRYPOINT ["node", "/opt/app/shotput-server.js"]
+CMD ['--help']
