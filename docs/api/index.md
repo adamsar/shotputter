@@ -14,25 +14,25 @@ allow access to it. For example, if you are running the server locally on port 2
 ## Run via CLI
 
 You can install the cli server globally. 
-```$xslt
+```
 npm install -g @shotput/api
 ```
 
 or locally 
-```$xslt
+```
 npm install @shotput/api
 ``` 
 
 If you installed it globally, you can simply start up the server with
 
-```$xslt
+```
 shotput-server --port {port} --config {config file}
 ```
 
 While locally, you will need to use the node_modules directory
 
 
-```$xslt
+```
 node node_modules/@shotputter/api/dist/shotput-server.js --port {port} --config {config file}
 ```
 
@@ -48,7 +48,7 @@ docker container is a wrapper for the [cli](/shotputter/api#run-via-cli) and can
 
 An example for running the docker container if there is a "config.json" in the current working directory.
 
-```$xslt
+```
 docker run -d -p 3000:3000 --mount type=bind,source="$(pwd)",target=/opt/app/configuration adamsar/shotputter --configFile /opt/app/configuration/config.json
 ```
  
