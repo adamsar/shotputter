@@ -4,7 +4,7 @@ import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
 import {Loader} from "../processor/Loader";
 import {SuccessModal} from "../common/SuccessModal";
-import {pipe} from "fp-ts/pipeable";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
 import {
     applyTemplate,
     defaultSlackTemplate,
@@ -12,11 +12,11 @@ import {
     defaultUnformattedTemplate
 } from "../../config/ShotputBrowserConfig";
 import {mapSlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
-import {chain, TaskEither} from "fp-ts/TaskEither";
-import {sequenceT} from "fp-ts/lib/Apply";
+import {chain, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {sequenceT} from "@shotputter/common/node_modules/fp-ts/lib/Apply";
+import {array} from "@shotputter/common/node_modules/fp-ts/lib/Array";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import {sequence} from "fp-ts/Array";
-import {isLeft} from "fp-ts/These";
+import {isLeft} from "@shotputter/common/node_modules/fp-ts/lib/These";
 import {ErrorModal} from "../common/ErrorModal";
 import {JiraPoster$Post$Params} from "@shotputter/common/src/main/ts/services/poster/jira/JiraPoster";
 
@@ -146,7 +146,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                     ))
          }
       })
-       const result = sequence(taskEitherExtensions.errorValidation)(tasks)();
+       const result = array.sequence(taskEitherExtensions.errorValidation)(tasks)();
        result.then((eitherResult) => {
            if (isLeft(eitherResult)) {
                setErrors(eitherResult.left);
