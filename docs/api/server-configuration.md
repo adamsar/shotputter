@@ -61,7 +61,9 @@ Config Key | Env Var | Type | Description
 `files.directory` | `SHOTPUT_LOCAL_FILES_DIRECTORY` | *string* | Absolute path to the directory to save images to on the API file system. 
 `files.host` | `SHOTPUT_HOST_NAME` | *string* | The host name to use when returning image links to files that are saved locally. 
 `customImageUploader.enabled` | `SHOTPUT_CUSTOM_IMAGE_UPLOADER_ENABLED` | *boolean* | If custom image uploading is enabled or not. `customImageUploader.endpoint` must be set if true. 
-`customImageUploader.endpoint` | `SHOTPUT_CUSTOM_IMAGE_UPLOAD_URL` | *string* | Endpoint that will do image processing. Must take a JSON body containing 
+`customImageUploader.endpoint` | `SHOTPUT_CUSTOM_IMAGE_UPLOAD_URL` | *string* | Endpoint that will do image processing. Must take a JSON body containing
+
+ 
 ```
 {
     "image": "base64..." // base64 encoded image
