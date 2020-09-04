@@ -8,7 +8,8 @@ export interface TabbedComponentProps {
 
 
 export const TabbedComponent  = ({children}: TabbedComponentProps) => {
-    const tabs: Tab[] = Array.isArray(children) ? children.filter(x => typeof x === "object" && "type" in x && x.type === Tab) as Tab[] : [];
+    console.log(children);
+    const tabs: Tab[] = Array.isArray(children) ? children.filter(x => x && typeof x === "object" && "type" in x && x.type === Tab) as Tab[] : [];
     const tabKeys = tabs.map(x => x.props.tabKey);
     const [currentTab, setCurrentTab] = React.useState<string>(tabKeys?.[0]);
 

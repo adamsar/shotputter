@@ -9,39 +9,40 @@
     <link rel="stylesheet" type="text/css" href="css/mobile.css">
     <script src="js/mobile.js" type="text/javascript"></script>
     <script type="application/javascript">
-        const instance = window.Shotput({
-                service: {
-                    url: "http://localhost:6001",
-                    //autoPost: true,
-                    //       autoPostFirst: true
-                },
-            captureLogs: true,
-            github: {
-                enabled: true,
-                //autoPost: true,
-                forceRepo: true,
-                defaultRepo: "shotputter",
-                defaultOwner: "adamsar",
-                defaultLabels: ["test"],
-                titleTemplate: "Test post"
-            },
-            slack: {
-              enabled: true,
-              forceChannel: true,
-              defaultChannel: "test-posts"
-            },
-            google: {
-                enabled: false,
-                //autoPost: true
-            },
-            jira: {
-                enabled: true,
-                defaultProject: "Mamagolf",
-                forceProject: true,
-                defaultIssueType: "Bug",
-                defaultSummary: "This is a bug"
-            }
-        });
+        const instance = window.Shotput({service: false});
+        // const instance = window.Shotput({
+        //         service: {
+        //             url: "http://localhost:6001",
+        //             //autoPost: true,
+        //             //       autoPostFirst: true
+        //         },
+        //     captureLogs: true,
+        //     github: {
+        //         enabled: true,
+        //         //autoPost: true,
+        //         forceRepo: true,
+        //         defaultRepo: "shotputter",
+        //         defaultOwner: "adamsar",
+        //         defaultLabels: ["test"],
+        //         titleTemplate: "Test post"
+        //     },
+        //     slack: {
+        //       enabled: true,
+        //       forceChannel: true,
+        //       defaultChannel: "test-posts"
+        //     },
+        //     google: {
+        //         enabled: false,
+        //         //autoPost: true
+        //     },
+        //     jira: {
+        //         enabled: true,
+        //         defaultProject: "Mamagolf",
+        //         forceProject: true,
+        //         defaultIssueType: "Bug",
+        //         defaultSummary: "This is a bug"
+        //     }
+        // });
 
         instance.setMetadata({userId: 19120832109, page: "testPage"});
     </script>
