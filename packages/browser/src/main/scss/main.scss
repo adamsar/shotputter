@@ -508,6 +508,9 @@ $cancel: #666666;
   min-width: 200px;
   overflow-y: auto;
   border: 1px solid $main;
+  h4 {
+    color: black;
+  }
   h2 {
     letter-spacing: .2em;
     color: black;
