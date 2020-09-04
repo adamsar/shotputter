@@ -1,6 +1,6 @@
 {
   "name": "@shotputter/api",
-  "version": "1.0.0-4",
+  "version": "1.0.0-5",
   "description": "",
   "main": "dist/index.js",
   "keywords": ["screenshot", "error-reporting", "typescript", "dev-tool"],
@@ -29,11 +29,12 @@
     "ts-loader": "^8.0.2",
     "typescript": "^3.9.7",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "@shotputter/common": "^1.0.0"
   },
   "dependencies": {
     "@microsoft/teams-js": "^1.7.0",
-    "@shotputter/common": "^1.0.0",
+
     "atob": "^2.1.2",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",

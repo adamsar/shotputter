@@ -48,13 +48,12 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             screenshot.screenshotCanvas.width = window.innerWidth;
             screenshot.screenshotCanvas.height = window.innerHeight;
             canvasElement.appendChild(screenshot.screenshotCanvas);
-            const _canvas = new fabric.Canvas('shotput-canvas');
+            const _canvas = new fabric.Canvas(screenshot.screenshotCanvas);
             _canvas.on({
                 "object:added": onAddObject,
                 "object:removed": onRemoveObject
 ***REMOVED***);
             setCanvas(_canvas);
-
         }
         return () => {
             canvas?.dispose();
