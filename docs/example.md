@@ -16,6 +16,9 @@ the type of data that it's possible to pass on to developers.
 <script>
 const instance = window.Shotput({
                 service: false,
-                captureLogs: true
+                captureLogs: true,
+                metadata: {
+                    "userName": "Demo user"
+                }
         });
 </script>

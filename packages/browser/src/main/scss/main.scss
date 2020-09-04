@@ -367,7 +367,7 @@ $cancel: #666666;
   font-family: Arial;
   background-color: #f1f1f1;
   max-width: 400px;
-  min-width: 200px;
+  min-width: 300px;
   @media #{$information-phone} {
     width: 90vw;
   }
@@ -536,6 +536,7 @@ $cancel: #666666;
   .shotput-tab-bar {
     padding-left: 0;
     list-style: none;
+    text-align: center;
     .shotput-tab {
       display: inline-block;
       margin-left: 5px;
