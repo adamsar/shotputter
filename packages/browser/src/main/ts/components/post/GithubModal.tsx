@@ -15,12 +15,12 @@ import * as t from "@shotputter/common/node_modules/io-ts";
 import {withMessage} from "@shotputter/common/node_modules/io-ts-types/lib/withMessage"
 import {NonEmptyString} from "@shotputter/common/node_modules/io-ts-types/lib/NonEmptyString";
 import {decodeForm, ShotputFormError} from "@shotputter/common/src/main/ts/util/form-validation";
-import {pipe} from "fp-ts/lib/pipeable";
-import {fold} from "fp-ts/lib/Either";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
+import {fold} from "@shotputter/common/node_modules/fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {DelayedAction} from "../common/DelayedAction";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
-import {map} from "fp-ts/TaskEither";
+import {map} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 
 interface GithubModal {
@@ -103,16 +103,16 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                        ...form,
                    repo: form.repo || global.appOptions.github?.defaultRepo,
                    owner: form.owner || global.appOptions.github?.defaultOwner
-   ***REMOVED***),
+               }),
                fold(
                    errors => {
                        console.error(errors);
                        setErrors(errors)
-   ***REMOVED***
+                   },
                    (form) => {
                        postState.run({...screenshot.post, message}, form);
                        setErrors(undefined);
-       ***REMOVED***
+                   }
                )
            ))
        )();
@@ -132,7 +132,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                  <code className={"shotput-code"}>
                     {
                        JSON.stringify(error, null, 2)
-        ***REMOVED***
+                    }
                  </code>
               </ErrorModal>
           )
@@ -144,61 +144,61 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                        <div className={"shotput-left-align"}>
                           <div className={"shotput-label"}>
                              Repo
-                  ***REMOVED***
+                          </div>
                           <div className={"shotput-field-container"}>
                               {
                                   !staticRepo ? (
                                       <select onChange={({target: {value: repoOwner}}) => {
                                           const [owner, repo] = repoOwner.split("/")
                                           updateForm({owner, repo});
-                          ***REMOVED***}
+                                      }}
                                               defaultValue={(defaultRepo && defaultOwner) ? (defaultOwner + "/" + defaultRepo) : (repos[0]?.owner + "/" + repos[0]?.repo)}>
                                           {
                                               repos.map(repo => (
                                                   <option key={repo.repo} value={repo.owner + "/" + repo.repo}>{repo.owner}/{repo.repo}</option>
                                               ))
-                              ***REMOVED***
+                                          }
                                       </select>
                                   ) : (
                                       <p>
                                           {form.owner}/{form.repo}
                                       </p>
                                   )
-                  ***REMOVED***
+                              }
 
-                  ***REMOVED***
+                          </div>
                           <div className={"shotput-label"}>
                              Title <RequiredStar/>
-                  ***REMOVED***
+                          </div>
                           <div className={"shotput-field-container"}>
                              <input type={"text"} onChange={({target: {value: title}}) => updateForm({title})} className={errors?.title ? "shotput-field-error" : ""}/>
                              {
-                                errors?.title ? (<div className={"shotput-field-error-box"}>{errors.title}***REMOVED***) : null
-                 ***REMOVED***
-                  ***REMOVED***
+                                errors?.title ? (<div className={"shotput-field-error-box"}>{errors.title}</div>) : null
+                             }
+                          </div>
                           <div className={"shotput-label"}>
                              Labels
-                  ***REMOVED***
+                          </div>
                           <div className={"shotput-field-container"}>
                              <ReactTags
                                  tags={form.labels.map((label: string) => ({
                                     id: label,
                                     name: label
-                     ***REMOVED***))}
+                                 }))}
                                  onAddition={(tag) => {
                                     onAddTag(tag.name);
-                     ***REMOVED***}
+                                 }}
                                  onDelete={(index) => {
                                     onDeleteTag(index);
-                     ***REMOVED***}
+                                 }}
                                  allowNew={true}
                              />
-                  ***REMOVED***
+                          </div>
                           <div className={"shotput-bottom-buttons"}>
                              <span className={"shotput-editor-button cancel-button"} onClick={onClose}>Back</span>
                              <span className={"shotput-editor-button submit-button"} onClick={onPost}>Post</span>
-                  ***REMOVED***
-               ***REMOVED***
+                          </div>
+                       </div>
                  </Modal>
                  </IfInitial>
                  <IfPending state={postState}>
@@ -214,7 +214,7 @@ export const GithubModal = observer(({onClose}: GithubModal) => {
                         </SuccessModal>
                         <DelayedAction delay={5000} func={onClose}/>
                     </>)
-     ***REMOVED***
+                 }
                  </IfFulfilled>
               </>
           )

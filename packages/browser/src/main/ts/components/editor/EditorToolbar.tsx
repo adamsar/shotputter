@@ -68,7 +68,7 @@ export const EditorToolbar = observer(() => {
                (!global.isMobile || tools.currentTool) ? (
                    <div className={"shotput-editor-toolbar-top"}>
                        <SubToolSection/>
-           ***REMOVED***
+                   </div>
                ) : null
            }
            <div className={"shotput-editor-toolbar-body"}>
@@ -77,19 +77,19 @@ export const EditorToolbar = observer(() => {
                        <ul className={"shotput-editor-tools"}>
                            <li onClick={onClickTool("shape")} className={tools.currentTool === "shape" ? "active" : null}>
                                Box
-           ***REMOVED***
+                           </li>
                            <li onClick={onClickTool("draw")} className={tools.currentTool === "draw" ? "active" : null}>
                                Draw
-           ***REMOVED***
+                           </li>
                            <li onClick={onClickTool("text")} className={tools.currentTool === "text" ? "active" : null}>
                                Text
-           ***REMOVED***
+                           </li>
                            <li onClick={onClickTool("arrow")} className={tools.currentTool === "arrow" ? "active" : null}>
                                Arrow
-           ***REMOVED***
-   ***REMOVED***
+                           </li>
+                       </ul>
                    )  : null
-   ***REMOVED***
+               }
                {
                    (!global.isMobile || tools.currentTool) ? (
                        <ul className={"shotput-editor-colors"}>
@@ -98,22 +98,22 @@ export const EditorToolbar = observer(() => {
                                    return (
                                        <li key={color} className="shotput-list-color">
                                            <div className={"shotput-list-color-block" + (color === tools.color ? " active" : "")} style={{backgroundColor: color}} onClick={onColorClick(color)}/>
-                       ***REMOVED***
+                                       </li>
                                    )
-                   ***REMOVED***)
-               ***REMOVED***
-   ***REMOVED***
+                               })
+                           }
+                       </ul>
                    ) : null
-   ***REMOVED***
+               }
 
                    {
                        (!tools.currentTool || !global.isMobile) ? (
                            <div className={"shotput-editor-comment-container"}>
                                 <textarea value={message} onChange={({target: {value}}) => setMessage(value)} placeholder={"Comments"}/>
-                   ***REMOVED***
+                           </div>
                        ) : null
-       ***REMOVED***
-   ***REMOVED***
+                   }
+           </div>
            <div className={"shotput-editor-toolbar-bottom"}>
 
                {
@@ -121,19 +121,19 @@ export const EditorToolbar = observer(() => {
                        <>
                            <div className={"shotput-editor-button cancel-button"} onClick={onCancel}>
                                Cancel
-                   ***REMOVED***
+                           </div>
                            <div className={"shotput-editor-button submit-button"} onClick={onSubmit}>
                                Submit
-                   ***REMOVED***
+                           </div>
                        </>
                    ) : (
                        <div className={"shotput-editor-button cancel-button"} onClick={onClickTool(null)}>
                            Done editing
-               ***REMOVED***
+                       </div>
                    )
-   ***REMOVED***
+               }
 
-   ***REMOVED***
-   ***REMOVED***
+           </div>
+       </div>
    );
 });

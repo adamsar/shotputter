@@ -22,7 +22,7 @@ export const HttpPoster = (url: string): HttpPoster => {
                 type: "screenshot_post",
                 payload: post,
                 timestamp: new Date().toISOString()
-***REMOVED***
+            }
             return send(payload);
         },
         sendError: (stackTrace, systemInfo, metadata, logs) => {
@@ -33,9 +33,9 @@ export const HttpPoster = (url: string): HttpPoster => {
                     systemInfo,
                     metadata,
                     logs
-***REMOVED***
+                },
                 timestamp: new Date().toISOString()
-***REMOVED***
+            }
             return send(payload);
         }
     }

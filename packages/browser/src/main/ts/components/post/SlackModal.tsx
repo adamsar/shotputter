@@ -9,10 +9,9 @@ import {Async, IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "re
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {SuccessModal} from "../common/SuccessModal";
 import {ErrorModal} from "../common/ErrorModal";
-import {pipe} from "fp-ts/lib/pipeable";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
 import {applyTemplate, defaultSlackTemplate} from "../../config/ShotputBrowserConfig";
-import {chain} from "fp-ts/es6/TaskEither";
-import {TaskEither} from "fp-ts/TaskEither";
+import {TaskEither, chain} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
 import {ShotputButton} from "../common/forms/ShotputButton";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {
@@ -49,7 +48,7 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                         {JSON.stringify(error, null, 2)}
                     </code>
                 </ErrorModal>
-***REMOVED***</Async.Rejected>
+            }</Async.Rejected>
             <Async.Fulfilled>{ (channels: SlackChannel[]) => (
                 <>
                     <IfPending state={postChannelState}>
@@ -66,10 +65,10 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                     <IfInitial state={postChannelState}>
                         <Modal className={"shotput-slack-modal"} onClose={onClose}>
                             <h3>Post to Slack</h3>
-                    ***REMOVED***
+                            <div>
                                 <div className={"shotput-label"}>
                                     Channel
-                        ***REMOVED***
+                                </div>
                                 <div className={"shotput-field-container"}>
                                     {
                                         staticChannel ? (
@@ -84,17 +83,17 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                                                     channels.map(channel => (
                                                         <option key={channel.id} value={channel.id}>#{channel.name}</option>
                                                     ))
-                                    ***REMOVED***
+                                                }
                                             </select>
                                         )
-                        ***REMOVED***
+                                    }
 
-                        ***REMOVED***
+                                </div>
                                 <div className={"shotput-bottom-buttons"}>
                                     <ShotputButton onClick={onClose} color={"white"}>Back</ShotputButton>
                                     <ShotputButton onClick={doPost} color={"main"}>Post</ShotputButton>
-                        ***REMOVED***
-                    ***REMOVED***
+                                </div>
+                            </div>
                         </Modal>
                     </IfInitial>
                     <IfFulfilled state={postChannelState}>{ _ => (
@@ -104,7 +103,7 @@ export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => vo
                     )}</IfFulfilled>
                     </>
             )
-***REMOVED***</Async.Fulfilled>
+            }</Async.Fulfilled>
         </Async>
     )
 });

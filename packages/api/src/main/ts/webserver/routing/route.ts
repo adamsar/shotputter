@@ -11,12 +11,12 @@ export const route = (fn: (options: {req: Request, res: Response}) => EitherAsyn
             const parseResult = (response: HttpResponse) => {
                 if (response === "next") {
                     _next()
-    ***REMOVED*** else if ("body" in response) {
+                } else if ("body" in response) {
                     _res.status(response.statusCode).send(response.body);
-    ***REMOVED*** else {
+                } else {
                     _res.sendStatus(response.statusCode);
-    ***REMOVED***
-***REMOVED***;
+                }
+            };
             result.bimap(parseResult, parseResult);
         } catch (error) {
             _res.status(500).send({ error: "server", message: error });
@@ -32,15 +32,15 @@ export const _route = (fn: (options: {req: Request, res: Response}) => TaskEithe
             const parseResult = (response: HttpResponse) => {
                 if (response === "next") {
                     _next()
-    ***REMOVED*** else if ("body" in response) {
+                } else if ("body" in response) {
                     _res.status(response.statusCode).send(response.body);
-    ***REMOVED*** else if ("file" in response) {
+                } else if ("file" in response) {
                     _res.writeHead(200, {'Content-Type': 'image/png'});
                     _res.end(response.file);
-    ***REMOVED*** else {
+                } else {
                     _res.sendStatus(response.statusCode);
-    ***REMOVED***
-***REMOVED***;
+                }
+            };
             parseResult(result);
         } catch (error) {
             _res.status(500).send({error: "server", message: error})

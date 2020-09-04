@@ -7,5 +7,5 @@ export const ScreenshotEditor = observer(() => {
     return <div className={"shotput-editor-container"}>
             <EditorCanvas/>
             <EditorToolbar/>
-***REMOVED***
+        </div>
 });

@@ -15,11 +15,11 @@ import {
 import {Loader} from "../processor/Loader";
 import {ErrorModal} from "../common/ErrorModal";
 import {Modal} from "../common/Modal";
-import {pipe} from "fp-ts/pipeable";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
-import {map, TaskEither} from "fp-ts/TaskEither";
+import {map, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
 import {ioUtils} from "@shotputter/common/src/main/ts/util/io-utils";
-import {fold} from "fp-ts/lib/Either";
+import {fold} from "@shotputter/common/node_modules/fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {ShotputButton} from "../common/forms/ShotputButton";
 
@@ -43,7 +43,7 @@ const JiraField$Project = ({projects, onChange, defaultProject}: { projects: Jir
         <div className={"shotput-field-container"}>
             <div className={"shotput-label"}>
                 Project
-    ***REMOVED***
+            </div>
             <div className={"shotput-field"}>
                 <select onChange={onSelect} value={project.id}>
                     {
@@ -51,10 +51,10 @@ const JiraField$Project = ({projects, onChange, defaultProject}: { projects: Jir
                             <option value={id} key={id}>{name}</option>
 
                         ))
-        ***REMOVED***
+                    }
                 </select>
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     )
 }
 
@@ -80,17 +80,17 @@ const JiraField$Issuetype = ({issuetypes, onChange, defaultIssuetype}: JiraField
         <div className={"shotput-field-container"}>
             <div className={"shotput-label"}>
                 Issue Type
-    ***REMOVED***
+            </div>
             <div className={"shotput-field"}>
                 <select onChange={onSelect} value={issuetype.id}>
                     {
                         issuetypes.map(({name, id}) => (
                             <option value={id} key={id}>{name}</option>
                         ))
-        ***REMOVED***
+                    }
                 </select>
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     )
 }
 
@@ -108,18 +108,18 @@ const JiraField$Summary = ({error, onChange, defaultSummary}:{onChange: (summary
         <div className={"shotput-field-container"}>
             <div className={"shotput-label"}>
                 Summary
-    ***REMOVED***
+            </div>
             <div className={"shotput-field"}>
                 <input type={"text"} onChange={onSummaryChange} value={summary}/>
-    ***REMOVED***
+            </div>
             {
                 error ? (
                     <p className={"shotput-error-contents"}>
                         {error}
                     </p>
                 ) : null
-***REMOVED***
-***REMOVED***
+            }
+        </div>
     )
 }
 
@@ -139,17 +139,17 @@ const JiraField$Priority = ({priorities, onChange, defaultPriority}: {priorities
         <div className={"shotput-field-container"}>
             <div className={"shotput-label"}>
                 Priority
-    ***REMOVED***
+            </div>
             <div className={"shotput-field"}>
                 <select onChange={onSelect} value={priority.id}>
                     {
                         priorities.map(({name, id}) => (
                             <option value={id}>{name}</option>
                         ))
-        ***REMOVED***
+                    }
                 </select>
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     )
 }
 
@@ -197,16 +197,16 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                 const hasPriority: boolean = Boolean(issuetype?.fields['priorityId']);
                 if (hasSummary && defaultSummary) {
                     setSummary(defaultSummary);
-    ***REMOVED***
+                }
                 if (hasPriority) {
                     // @ts-ignore
                     const priorities: JiraPriority[] = issuetype.fields['priorityId']?.allowedValues;
                     if (priorities) {
                         const priority = priorities.find(({id, name}) => id === defaultPriority || name === defaultPriority) ?? priorities[0];
                         setPriority(priority.id)
-        ***REMOVED***
-    ***REMOVED***
-***REMOVED***
+                    }
+                }
+            }
         }
     }, [bootstrapState.data]);
     const onChangeProject = (project: JiraProject) => {
@@ -231,7 +231,7 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                     priorityId: priority,
                     message,
                     image: screenshot.post.image
-    ***REMOVED***
+                }
                 return pipe(
                     jiraPosterPostDecode.decode(params),
                     ioUtils.toErrorObject,
@@ -240,9 +240,9 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                         form => {
                             postState.run(form);
                             setRunning(true);
-            ***REMOVED***
+                        }
                         ));
-***REMOVED***))();
+            }))();
     }
     const onClickBack = () => onClose();
 
@@ -284,26 +284,26 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                                                 ) : _project ? (
                                                     <JiraField$Project defaultProject={_project.id} projects={createMetadata.projects} onChange={onChangeProject}/>
                                                 ) : null
-                                ***REMOVED***
+                                            }
                                             {
                                                 forcedIssuetype ? (
                                                     <p>{forcedIssuetype.name}</p>
                                                 ) : _issuetype ? (
                                                     <JiraField$Issuetype defaultIssuetype={_issuetype.id} issuetypes={_project.issuetypes} onChange={onChangeIssuetype}/>
                                                 ) : null
-                                ***REMOVED***
+                                            }
                                             {
                                                 summaryRequired ? (
                                                     <JiraField$Summary defaultSummary={summary ?? ""} onChange={onChangeSummary} error={errors?.summary}/>
                                                 ) : null
-                                ***REMOVED***
+                                            }
                                             {
                                                 priorityRequired ? (
                                                     <JiraField$Priority priorities={priorities} onChange={onChangePriority}/>
                                                 ) : null
-                                ***REMOVED***
+                                            }
 
-                                ***REMOVED***
+                                        </div>
                                         <div className={"shotput-bottom-buttons"}>
                                             <ShotputButton onClick={onClickPost} color={"main"}>
                                                 Post
@@ -311,10 +311,10 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                                             <ShotputButton onClick={onClickBack} color={"white"}>
                                                 Close
                                             </ShotputButton>
-                                ***REMOVED***
+                                        </div>
                                     </Modal>
                                 )
-                ***REMOVED***
+                            }
 
                         </Async.Pending>
                         <Async.Rejected>{error => (
@@ -330,7 +330,7 @@ export const JiraPostModal = observer(({onClose}: JiraPostModal$Props) => {
                         </SuccessModal>}</Async.Fulfilled>
                     </Async>
                 )
-***REMOVED***}</Async.Fulfilled>
+            }}</Async.Fulfilled>
         </Async>
     )
 })

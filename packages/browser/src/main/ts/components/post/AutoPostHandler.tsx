@@ -4,7 +4,7 @@ import {observer} from "mobx-react-lite";
 import {useStores} from "../../stores";
 import {Loader} from "../processor/Loader";
 import {SuccessModal} from "../common/SuccessModal";
-import {pipe} from "fp-ts/pipeable";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
 import {
     applyTemplate,
     defaultSlackTemplate,
@@ -12,11 +12,11 @@ import {
     defaultUnformattedTemplate
 } from "../../config/ShotputBrowserConfig";
 import {mapSlackError} from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
-import {chain, TaskEither} from "fp-ts/TaskEither";
-import {sequenceT} from "fp-ts/lib/Apply";
+import {chain, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {sequenceT} from "@shotputter/common/node_modules/fp-ts/lib/Apply";
+import {array} from "@shotputter/common/node_modules/fp-ts/lib/Array";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import {sequence} from "fp-ts/Array";
-import {isLeft} from "fp-ts/These";
+import {isLeft} from "@shotputter/common/node_modules/fp-ts/lib/These";
 import {ErrorModal} from "../common/ErrorModal";
 import {JiraPoster$Post$Params} from "@shotputter/common/src/main/ts/services/poster/jira/JiraPoster";
 
@@ -58,30 +58,30 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                          const project = createMetadata.projects.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
                          if (!project) {
                              return taskEitherExtensions.left([{type: "configuration", error: `Jira default project ${jiraOptions.defaultProject} not found in metadata`}]);
-             ***REMOVED***
+                         }
                          const issuetype = project.issuetypes.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
                          if (!issuetype) {
                              return taskEitherExtensions.left([{type: "configuration", error: `Jira default issue type ${jiraOptions.defaultIssueType} not found in project configuration`}])
-             ***REMOVED***
+                         }
                          const post: JiraPoster$Post$Params = {
                              message,
                              project: project.id,
                              issuetype: issuetype.id,
                              image: screenshot.post.image
-             ***REMOVED***;
+                         };
                          if (issuetype.fields['summary']?.required) {
                              post.summary = summary;
-             ***REMOVED***
+                         }
                          if (issuetype.fields['priorityId']?.required) {
                              const priority = issuetype.fields['priorityId'].allowedValues.find(({id, name}) => id === jiraOptions.defaultPriority || name === jiraOptions.defaultPriority)?.id
                              if (priority) {
                                  post.priorityId = jiraOptions.defaultPriority;
-                 ***REMOVED*** else {
+                             } else {
                                  return taskEitherExtensions.left([{type: "configuration", error: `Jira default priority required but not found`}]);
-                 ***REMOVED***
-             ***REMOVED***
+                             }
+                         }
                          return pipe(global.jiraService.post(post), taskEitherExtensions.mapLeftValidation())
-         ***REMOVED***)
+                     })
                  );
              case "google":
                  return pipe(
@@ -109,7 +109,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                       message,
                       fileName,
                       base64File: post.image
-       ***REMOVED***)),
+                   })),
                    taskEitherExtensions.mapLeftValidation()
                );
 
@@ -140,13 +140,13 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                                 owner: global.appOptions.github.defaultOwner,
                                 title,
                                 labels: global.appOptions.github.defaultLabels ?? []
-                ***REMOVED***),
+                            }),
                             taskEitherExtensions.mapLeftValidation()
                         )
                     ))
          }
       })
-       const result = sequence(taskEitherExtensions.errorValidation)(tasks)();
+       const result = array.sequence(taskEitherExtensions.errorValidation)(tasks)();
        result.then((eitherResult) => {
            if (isLeft(eitherResult)) {
                setErrors(eitherResult.left);

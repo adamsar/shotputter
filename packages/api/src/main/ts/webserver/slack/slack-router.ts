@@ -37,10 +37,10 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
                     // @ts-ignore
                     file: Buffer.from(postRequest.image.replace("data:image/png;base64,", ""), "base64"),
                     initial_comment: postRequest.message
-    ***REMOVED***);
+                });
 
                return liftEither(Right(Posted));
-***REMOVED***));
+            }));
     }));
 
     router.get("/channels", route(({}) => EitherAsync(async ({liftEither}) => {
@@ -60,10 +60,10 @@ export const slackRouter = (slackServerConfig: SlackServerConfig): express.Route
                 const response = await slackService.postMessage(post)()
                 if (isLeft(response)) {
                     return liftEither(Left(ServerError({error: "server", message: JSON.stringify(response.left)})));
-    ***REMOVED*** else {
+                } else {
                     return liftEither(Right(Posted))
-    ***REMOVED***
-***REMOVED***));
+                }
+            }));
     }))
 
     return router;

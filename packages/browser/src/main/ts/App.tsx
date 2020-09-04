@@ -36,7 +36,7 @@ export const ShotputStart = (options: ShotputBrowserConfig) => {
     } else {
         window.addEventListener("DOMContentLoaded", () => {
             load();
-***REMOVED***
+        });
     }
     return {
         setMetadata: (metadata: Metadata) => {

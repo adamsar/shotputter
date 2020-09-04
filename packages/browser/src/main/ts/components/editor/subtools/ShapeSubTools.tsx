@@ -31,5 +31,5 @@ export const ShapeSubTools = observer(() => {
                 Fill
             </li>
         </ul>
-***REMOVED***;
+    </div>;
 });

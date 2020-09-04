@@ -24,12 +24,12 @@ export const NativeSlackService = (slackToken: string): SlackServiceClient => {
                     initial_comment: message,
                     channels: channels.join(","),
                     filename
-    ***REMOVED***)),
+                })),
                 mapSlackError,
                 chain(result => result.error ? left({
                     type: "unknown",
                     error: result.error
-    ***REMOVED***) : right(true))
+                }) : right(true))
             )
         },
 

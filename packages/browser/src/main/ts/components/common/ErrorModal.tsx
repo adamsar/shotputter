@@ -19,6 +19,6 @@ export const ErrorModal = ({onClose, children}: PropsWithChildren<ErrorModalProp
             <ShotputButton onClick={onClose} color={"white"}>
                 Close
             </ShotputButton>
-***REMOVED***
+        </div>
     </Modal>
 }

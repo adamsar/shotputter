@@ -7,16 +7,16 @@ import {ErrorModal} from "../common/ErrorModal";
 import {SystemInfo} from "@shotputter/common/src/main/ts/models/SystemInfo";
 import {getSystemInfo} from "../../util/system-utils";
 import {applyTemplate, defaultSlackTemplate, ShotputBrowserConfig} from "../../config/ShotputBrowserConfig";
-import {pipe} from "fp-ts/pipeable";
-import {chain, fromIO, getTaskValidation, TaskEither} from "fp-ts/lib/TaskEither";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
+import {chain, taskEither, getTaskValidation, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
 import {
     HostedSlackService,
     mapSlackError
 } from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import {getMonoid, sequence} from "fp-ts/lib/Array";
-import {isLeft} from "fp-ts/Either";
+import {getMonoid, array} from "@shotputter/common/node_modules/fp-ts/lib/Array";
+import {isLeft} from "@shotputter/common/node_modules/fp-ts/lib/Either";
 import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
 import {HostedGooglePoster} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
 
@@ -26,7 +26,7 @@ interface WindowErrorComponentProps {
 
 type ErrorHandler = (opts: {metadata: object; message: string; systemInfo: SystemInfo; logs?: string[];}) => TaskEither<any, any>
 
-const logHandler: ErrorHandler = ({metadata, message, systemInfo}) => fromIO(() => {
+const logHandler: ErrorHandler = ({metadata, message, systemInfo}) => taskEither.fromIO(() => {
     console.log(message);
     console.log("SYSTEM INFO:");
     console.log(systemInfo);
@@ -49,13 +49,13 @@ const slackHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefine
                     systemInfoString: JSON.stringify(systemInfo, null, 2),
                     logsString: logs?.join("\n"),
                     metadataString: JSON.stringify(metadata, null, 2)
-    ***REMOVED***
+                }
             ),
                 mapSlackError,
                 chain(message => slack.postMessage({
                     message,
                     channel: appOptions?.errorReporting.slack.channel
-    ***REMOVED***))
+                }))
         )
     }
 }
@@ -75,7 +75,7 @@ const googleHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefin
                     systemInfoString: JSON.stringify(systemInfo, null, 2),
                     logsString: logs?.join("\n"),
                     metadataString: JSON.stringify(metadata, null, 2)
-    ***REMOVED***) as TaskEither<any, string>,
+                }) as TaskEither<any, string>,
                 chain(message => google.message({ message }))
             )
         }
@@ -100,7 +100,7 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
             const handlers: ErrorHandler[] = [];
             if (appOptions.errorReporting?.consoleLog?.enabled) {
                 handlers.push(logHandler);
-***REMOVED***
+            }
             const _slackHandler = slackHandler(appOptions);
             if (_slackHandler) handlers.push(_slackHandler);
             const _customHandler = customHandler(appOptions);
@@ -116,23 +116,23 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
                         const message = msg + "\n" + stackFrames.map((sf) => sf.toString()).join('\n');
                         const systemInfo = getSystemInfo(window);
                         const logs = (screenshot.logBuffer.size() ?? 0) > 0 ? screenshot.logBuffer.peekN(screenshot.logBuffer.size()) : undefined
-                        return sequence(getTaskValidation(getMonoid<any>()))(handlers.map(fn => fn({
+                        return array.sequence(getTaskValidation(getMonoid<any>()))(handlers.map(fn => fn({
                             message,
                             systemInfo,
                             logs,
                             metadata})))
-        ***REMOVED***)
+                    })
                 )()
                 if (isLeft(results)) {
                     setFailure(results.left.join("\n"))
-    ***REMOVED***
-***REMOVED***;
+                }
+            };
 
             const oldEventHandler = window.onerror;
             window.onerror = (a, b, c, d, e) => {
                 oldEventHandler?.(a, b, c, d, e);
                 handleError(a, b, c, d, e);
-***REMOVED***
+            }
             return () => window.onerror = oldEventHandler;
         }, []);
     }

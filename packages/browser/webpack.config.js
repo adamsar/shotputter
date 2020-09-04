@@ -1,6 +1,7 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const webpack = require('webpack');
 
 module.exports = {
 
@@ -21,7 +22,10 @@ module.exports = {
         extensions: [ '.tsx', '.ts', '.js', '.svg' ]
     },
     plugins: [
-        //new BundleAnalyzerPlugin()
+        //new BundleAnalyzerPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        })
     ],
 
     module: {
@@ -33,11 +37,11 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         options: {
-            ***REMOVED***
-    ***REMOVED***
+                        }
+                    },
                     'ts-loader'
                 ]
-***REMOVED***
+            },
 
             {
                 test: /\.scss$/,
@@ -46,7 +50,7 @@ module.exports = {
                     'css-loader',
                     'sass-loader'
                 ]
-***REMOVED***
+            },
 
             {
                 test: /\.html/,
@@ -54,13 +58,13 @@ module.exports = {
                     loader: 'file-loader',
                     options: {
                         name: '[name].[ext]'
-        ***REMOVED***
-    ***REMOVED***]
-***REMOVED***
+                    }
+                }]
+            },
             {
                 test: /\.svg$/,
                 loader: 'svg-inline-loader'
-***REMOVED***
+            }
         ]
     },
     optimization: process.env.NODE_MODE !== "production" ? {} : {
@@ -69,7 +73,7 @@ module.exports = {
             parallel: true,
             sourceMap: true, // Must be set to true if using source-maps in production
             terserOptions: {
-***REMOVED***})],
+            }})],
         namedModules: false,
         namedChunks: false,
         nodeEnv: 'production',

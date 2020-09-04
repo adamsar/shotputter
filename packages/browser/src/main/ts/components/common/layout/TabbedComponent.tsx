@@ -20,11 +20,11 @@ export const TabbedComponent  = ({children}: TabbedComponentProps) => {
             <ul className={"shotput-tab-bar"}>
                 {tabKeys.map(tabKey => (<li key={tabKey} className={"shotput-tab" + (currentTab === tabKey ? " shotput-is-active" : "")} onClick={switchTo(tabKey)}>
                     { tab(tabKey).props.title }
-***REMOVED***))}
-***REMOVED***
+                </li>))}
+            </ul>
             <div className={"shotput-tab-contents"}>
                 {tab(currentTab)}
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     )
 }

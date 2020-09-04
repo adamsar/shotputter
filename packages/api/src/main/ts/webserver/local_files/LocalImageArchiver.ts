@@ -36,30 +36,30 @@ export const LocalImageArchiver = (localDir: string, host: string) => {
                 try {
                     const result = await fs.readFile(_path)
                     return right(result)
-    ***REMOVED*** catch (error) {
+                } catch (error) {
                     console.log(error)
                     if (error?.code === "ENOENT") {
                         return left("not-found");
-        ***REMOVED*** else {
+                    } else {
                         return left(error.toString());
-        ***REMOVED***
-    ***REMOVED***
+                    }
+                }
 
-***REMOVED***
+            }
 
         },
         testWrite: (): TaskEither<{ error: any }, true> => {
             const directoryExists = async () => {
                 try {
                     return right(await fs.readdir(uploadDir));
-    ***REMOVED*** catch (error) {
+                } catch (error) {
                     if (error?.code === "ENOENT") {
                         return right(undefined)
-        ***REMOVED*** else {
+                    } else {
                         return left({error})
-        ***REMOVED***
-    ***REMOVED***
-***REMOVED***
+                    }
+                }
+            }
 
             const createIfNecessary = (input: string[] | undefined): TaskEither<{error: any}, any>=> {
                 if (input === undefined) {
@@ -67,10 +67,10 @@ export const LocalImageArchiver = (localDir: string, host: string) => {
                         () => fs.mkdir(uploadDir),
                         (error:any) => ({error})
                         )
-    ***REMOVED*** else {
+                } else {
                     return taskEitherExtensions.right(({}))
-    ***REMOVED***
-***REMOVED***
+                }
+            }
 
             const writeCheck = (_: any): TaskEither<{error: any}, any> => {
                 const testFile = path.join(uploadDir, "testFile.txt");
@@ -83,7 +83,7 @@ export const LocalImageArchiver = (localDir: string, host: string) => {
                         (error:any) => ({error})
                         )
                     ));
-***REMOVED***
+            }
 
             return pipe(
                 directoryExists,

@@ -29,17 +29,17 @@ export const S3Images = (region: string, bucket: string, credentials?: Credentia
                         Bucket: bucket,
                         Key,
                         ContentType: "image/png"
-        ***REMOVED***
+                    }
                     return () => new Promise<Either<ImageUploadError, string>>((resolve, _) => {
                         s3.putObject(request, (err) => {
                           if (!err) {
                               resolve(right(`https://${bucket}.s3-${region}.amazonaws.com/${Key}`))
-              ***REMOVED*** else {
+                          } else {
                               return resolve(left({type: "imageUpload", error: {section: "upload", err}}))
-              ***REMOVED***
-            ***REMOVED***)
-        ***REMOVED***).catch(error => left<ImageUploadError, string>({type: "imageUpload", error}))
-    ***REMOVED***)
+                          }
+                        })
+                    }).catch(error => left<ImageUploadError, string>({type: "imageUpload", error}))
+                })
             )
         }
     }

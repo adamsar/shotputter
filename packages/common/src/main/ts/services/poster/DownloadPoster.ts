@@ -20,15 +20,15 @@ export const DownloadPoster = (document: Document): DownloadPoster => {
                         const event = document.createEvent('MouseEvents');
                         event.initEvent('click', true, true);
                         pom.dispatchEvent(event);
-        ***REMOVED*** catch (error) {
+                    } catch (error) {
                         pom.click();
-        ***REMOVED***
-    ***REMOVED***
+                    }
+                }
                 else {
                     pom.click();
-    ***REMOVED***
+                }
                 return resolve(true);
-***REMOVED***), (error: string) => ({error, type: "downloadError"}));
+            }), (error: string) => ({error, type: "downloadError"}));
         }
     };
 

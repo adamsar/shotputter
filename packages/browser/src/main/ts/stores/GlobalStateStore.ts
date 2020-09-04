@@ -32,7 +32,7 @@ export class GlobalStateStore {
     constructor(appOptions: ShotputBrowserConfig) {
         window.addEventListener("resize", () => {
             this.windowSize = computeWindowSize();
-***REMOVED***
+        });
         this.appOptions = appOptions;
         const requester: HostedRequester | null = typeof appOptions.service === "object" ? new HostedRequester(appOptions.service.url) : null;
         if (appOptions.download?.enabled !== false) {
@@ -43,49 +43,49 @@ export class GlobalStateStore {
             this.slackService = HostedSlackService(requester);
             if (!appOptions.slack.autoPost) {
                 this.availablePosters.push("slack");
-***REMOVED***
+            }
         }
         if (requester && appOptions.github?.enabled) {
             this.githubService = HostedGithubPoster(requester);
             if (!appOptions.github.autoPost) {
                 this.availablePosters.push("github");
-***REMOVED***
+            }
         }
         if (requester && appOptions.google?.enabled) {
             this.googleService = HostedGooglePoster(requester);
             if (!appOptions.google.autoPost) {
                 this.availablePosters.push("google");
-***REMOVED***
+            }
         }
         if (requester && appOptions.jira?.enabled) {
             this.jiraService = HostedJiraPoster(requester);
             if (!appOptions.jira.autoPost) {
                 this.availablePosters.push("jira");
-***REMOVED***
+            }
         }
         if (appOptions.custom?.enabled) {
             this.customRequestService = HttpPoster(appOptions.custom.endpoint);
             if (!appOptions.custom.autoPost) {
                 this.availablePosters.push("custom");
-***REMOVED***
+            }
         }
         if (typeof appOptions.service === "object" && appOptions.service.autoPost) {
             this.availablePosters.push("auto");
             if (appOptions.slack?.enabled && appOptions.slack?.autoPost) {
                 this.autoPosters.push("slack");
-***REMOVED***
+            }
             if (appOptions.github?.enabled && appOptions.github?.autoPost) {
                 this.autoPosters.push("github");
-***REMOVED***
+            }
             if (appOptions.google?.autoPost) {
                 this.autoPosters.push("google");
-***REMOVED***
+            }
             if (appOptions.jira?.autoPost) {
                 this.autoPosters.push("jira");
-***REMOVED***
+            }
             if (appOptions.custom?.enabled && appOptions.custom?.autoPost) {
                 this.autoPosters.push("custom");
-***REMOVED***
+            }
         }
     }
 
