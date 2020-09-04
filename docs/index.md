@@ -52,7 +52,9 @@ npm install @shotputter/browser
 The API and its associated files are available through the `@shotputter/api` package
 
 This is hosted on a CDN at:
-
+```$xslt
+https://unpkg.com/@shotputter/browser
+```
 
 ```$xslt
 npm install @shotputter/api
