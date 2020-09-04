@@ -21,8 +21,12 @@ export const EditorToolbar = observer(() => {
     };
 
     const onSubmit = async () => {
+        const edits = screenshot.screenshotCanvas.toDataURL("image/png");
         const post: Post = {
-            image: await mergeImages([screenshot.screenshot, screenshot.screenshotCanvas.toDataURL("image/png")]),
+            image: await mergeImages([
+                screenshot.screenshot,
+                edits
+            ]),
             message: message || undefined,
             systemInfo: getSystemInfo(window)
         };
