@@ -3,6 +3,7 @@
   "version": "1.0.0-2",
   "description": "",
   "main": "dist/index.js",
+  "keywords": ["screenshot", "error-reporting", "typescript", "dev-tool"],
   "scripts": {
     "build:dev": "webpack --mode=development && chmod +x dist/shotput-server.js",
     "build:production": "webpack --mode=production && chmod +x dist/shotput-server.js"
