@@ -45,18 +45,18 @@ It is possible to set up Shotputter in your development environment to [be more 
 
 Shotputter is distributed through NPM, and you can install it the usual NPM way.
 
-```$xslt
+```
 npm install @shotputter/browser
 ```  
 
 The API and its associated files are available through the `@shotputter/api` package
 
 This is hosted on a CDN at:
-```$xslt
+```
 https://unpkg.com/@shotputter/browser
 ```
 
-```$xslt
+```
 npm install @shotputter/api
 ```
 
@@ -96,7 +96,7 @@ Shotput({
 
 or if you include the Shotput browser library from the CDN, it will be accessible on the `window`.
 
-```$xslt
+```
 window.Shotput({
     service: false,
     metadata: {userId: 1}

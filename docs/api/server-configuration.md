@@ -19,6 +19,7 @@ The config file must be provided in the JSON format, as the example below denote
 
 `config.json`
 
+
 ```
 {
     "github": {

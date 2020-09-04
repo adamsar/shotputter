@@ -22,7 +22,7 @@ a string, or a function that returns a string, which has access to the following
 
 Ex:
 
-```$xslt
+```
 const {Shotput} = require("@shotputter/browser");
 Shotput({
     service: {
