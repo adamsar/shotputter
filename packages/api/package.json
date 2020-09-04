@@ -1,6 +1,6 @@
 {
   "name": "@shotputter/api",
-  "version": "1.0.0-2",
+  "version": "1.0.0-3",
   "description": "",
   "main": "dist/index.js",
   "keywords": ["screenshot", "error-reporting", "typescript", "dev-tool"],
