@@ -58,7 +58,7 @@ Shotputter is bundled with a [serverless](https://serverless.com) file to help b
 centered deployment. This file is available in the `node_modules/@shotputter/api/serverless-example.yml` folder if installing locally,
 or [on Github](https://github.com/adamsar/shotputter/blob/master/packages/api/src/main/serverless/serverless-example.yml)
 
-To run this file, you will need to set the [appropriate configuration environment variables](/shotputter/server-configuration).
+To run this file, you will need to set the [appropriate configuration environment variables](/shotputter/server-configuration), and make sure you point the functions handlers to `node_modules/dist/lambda.handler`. 
 
 To use s3 to host the images that Shotput will write, edit the iamRoleStatements section of the serverless file and replace S3_BUCKET with the bucket you would like to write to (ensure this bucket has public read permissions).
 
