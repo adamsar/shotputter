@@ -45,7 +45,7 @@ export const HostedGithubPoster = (hostedRequester: HostedRequester): GithubPost
                     title,
                     labels,
                     ...post
-    ***REMOVED***),
+                }),
                 map(_ => true)
             )
         }
@@ -68,15 +68,15 @@ export const GithubPoster = (token: string, imageUploader: ImageUploader): Githu
                             labels,
                             body:  `![Screenshot](${imgUrl})
                             ${post.message || ""}`,
-        ***REMOVED***
+                        },
                         authHeader)),
                 chain(result => {
                     if (result['state']) {
                         return right(true);
-        ***REMOVED*** else {
+                    } else {
                         return left({type: "githubError", error: JSON.stringify(result)});
-        ***REMOVED***
-    ***REMOVED***)
+                    }
+                })
             );
         },
 

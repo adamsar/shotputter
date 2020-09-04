@@ -41,7 +41,7 @@ export const RectangleEditor = observer(({canvas}: {canvas: fabric.Canvas;}) => 
             stroke: tools.color,
             strokeWidth: tools.strokeWidth,
             fill: tools.isFill ? tools.color : 'transparent'
-***REMOVED***
+        });
         canvas.add(rectangle);
     };
 
@@ -67,7 +67,7 @@ export const RectangleEditor = observer(({canvas}: {canvas: fabric.Canvas;}) => 
         canvas.on({
             'mouse:up': onMouseUp,
             'mouse:down': onMouseDown
-***REMOVED***
+        });
          return () => {
              canvas.off('mouse:down');
              canvas.off('mouse:up');

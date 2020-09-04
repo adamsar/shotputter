@@ -23,14 +23,14 @@ export const DrawingSubTool = observer(() => {
             <ul>
                 <li onClick={onClick(-1)} className={isMin ? "shotput-disabled" : undefined}>
                     -Width
-***REMOVED***
-***REMOVED***
+                </li>
+                <li>
                     {tools.strokeWidth}px
-***REMOVED***
+                </li>
                 <li onClick={onClick(1)} className={isMax ? "shotput-disabled" : undefined}>
                     +Width
-***REMOVED***
-***REMOVED***
-***REMOVED***
+                </li>
+            </ul>
+        </div>
     )
 });

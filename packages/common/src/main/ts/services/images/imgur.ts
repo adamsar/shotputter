@@ -19,9 +19,9 @@ export const ImgurUploader = (clientId: string): ImageUploader => {
                 chain(result => {
                     if (!result['success']) {
                         return left({type: "imageUpload", error: JSON.stringify(result)})
-        ***REMOVED***
+                    }
                     return right(result['data']['link']);
-    ***REMOVED***)
+                })
             )
         }
     };

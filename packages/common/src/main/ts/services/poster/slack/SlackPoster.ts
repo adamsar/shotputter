@@ -55,7 +55,7 @@ export const HostedSlackService = (requester: HostedRequester): SlackServiceClie
                 requester.post<any>("/slack/postMessage", {
                     message,
                     channel
-    ***REMOVED***),
+                }),
                 map(_ => true)
             )
         },
@@ -73,7 +73,7 @@ export const HostedSlackService = (requester: HostedRequester): SlackServiceClie
                     message,
                     image: base64File,
                     filename: fileName
-***REMOVED***);
+            });
         }
 
     }
@@ -88,15 +88,15 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                 taskEitherExtensions.fromPromise(client.chat.postMessage({
                     text,
                     channel
-    ***REMOVED***)),
+                })),
                 mapSlackError,
                 chain((result: WebAPICallResult) => {
                     if (result.ok) {
                         return right(true)
-        ***REMOVED*** else {
+                    } else {
                         return left({type: "unknown", error: result.error})
-        ***REMOVED***
-    ***REMOVED***)
+                    }
+                })
             )
         },
 
@@ -111,14 +111,14 @@ export const SlackService = (slackToken: string): SlackServiceClient => {
                             formData.append("filename", fileName);
                             formData.append("token", slackToken);
                             return formData;
-        ***REMOVED*** String)
+                        }, String)
                     ),
                     promiseToTaskEither(fetch(base64File).then(x => x.blob()))
                 ),
                 map(([formData, blob]) => {
                     formData.append("file", blob);
                     return formData
-    ***REMOVED***),
+                }),
                 mapSlackError,
                 chain(formData => postRequest<any>("https://slack.com/api/files.upload", formData)),
                 chain(result => result['error'] ? left({type: "unknown", error: result['error'] as string}) : right(true))

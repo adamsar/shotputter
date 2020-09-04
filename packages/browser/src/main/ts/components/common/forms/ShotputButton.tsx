@@ -15,5 +15,5 @@ export const ShotputButton = ({onClick, color, children}: PropsWithChildren<Shot
     }[color]
     } onClick={onClick}>
         {children}
-***REMOVED***
+    </div>
 }

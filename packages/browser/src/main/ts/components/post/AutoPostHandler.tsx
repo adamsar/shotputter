@@ -58,30 +58,30 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                          const project = createMetadata.projects.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
                          if (!project) {
                              return taskEitherExtensions.left([{type: "configuration", error: `Jira default project ${jiraOptions.defaultProject} not found in metadata`}]);
-             ***REMOVED***
+                         }
                          const issuetype = project.issuetypes.find(({id, name}) => jiraOptions.defaultProject === id || jiraOptions.defaultProject === name);
                          if (!issuetype) {
                              return taskEitherExtensions.left([{type: "configuration", error: `Jira default issue type ${jiraOptions.defaultIssueType} not found in project configuration`}])
-             ***REMOVED***
+                         }
                          const post: JiraPoster$Post$Params = {
                              message,
                              project: project.id,
                              issuetype: issuetype.id,
                              image: screenshot.post.image
-             ***REMOVED***;
+                         };
                          if (issuetype.fields['summary']?.required) {
                              post.summary = summary;
-             ***REMOVED***
+                         }
                          if (issuetype.fields['priorityId']?.required) {
                              const priority = issuetype.fields['priorityId'].allowedValues.find(({id, name}) => id === jiraOptions.defaultPriority || name === jiraOptions.defaultPriority)?.id
                              if (priority) {
                                  post.priorityId = jiraOptions.defaultPriority;
-                 ***REMOVED*** else {
+                             } else {
                                  return taskEitherExtensions.left([{type: "configuration", error: `Jira default priority required but not found`}]);
-                 ***REMOVED***
-             ***REMOVED***
+                             }
+                         }
                          return pipe(global.jiraService.post(post), taskEitherExtensions.mapLeftValidation())
-         ***REMOVED***)
+                     })
                  );
              case "google":
                  return pipe(
@@ -109,7 +109,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                       message,
                       fileName,
                       base64File: post.image
-       ***REMOVED***)),
+                   })),
                    taskEitherExtensions.mapLeftValidation()
                );
 
@@ -140,7 +140,7 @@ export const AutoPostHandler = observer(({onBack}: AutoPostHandlerProps) => {
                                 owner: global.appOptions.github.defaultOwner,
                                 title,
                                 labels: global.appOptions.github.defaultLabels ?? []
-                ***REMOVED***),
+                            }),
                             taskEitherExtensions.mapLeftValidation()
                         )
                     ))

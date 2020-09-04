@@ -23,8 +23,8 @@ export class ScreenshotStore {
                 return (msg: any, ...args2: any[]) => {
                     fn(msg, ...args2);
                     this.logBuffer.enq(level + ": " + msg);
-    ***REMOVED***
-***REMOVED***
+                }
+            }
             console.log = wrapLog("log", console.log);
             console.warn = wrapLog("warn", console.warn);
             console.error = wrapLog("error", console.error);
@@ -41,7 +41,7 @@ export class ScreenshotStore {
             width: window.innerWidth,
             y: window.scrollY,
             ignoreElements: element => element.id === MAIN_ID,
-***REMOVED***
+        });
         this.screenshotCanvas = document.createElement("canvas");
         this.screenshot = canvas.toDataURL("image/png");
     }

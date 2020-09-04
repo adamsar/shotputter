@@ -26,13 +26,13 @@ const jiraFormat = (postData: JiraPoster$Post$Params, imageUrl: string) => ({
         ...(postData.issuetype ? {
             issuetype: {
                 id: postData.issuetype
-***REMOVED***
+            }
         } : {}),
         ...(postData.priorityId ? {
             priority: {
                 id: postData.priorityId
-***REMOVED***
-***REMOVED*** : {}),
+            }
+            } : {}),
         description: `
     !${imageUrl}!
     ${postData.message}
@@ -62,7 +62,7 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
                         mapLeft(error => ServerError({error})),
                         map((response: object) => Ok(response))
                     )
-    ***REMOVED***))));
+                }))));
     }));
 
     router.get("/projects", _route(() => {
@@ -95,7 +95,7 @@ export const getJiraRouter = (jiraConfig: JiraConfig, imageUploader: ImageUpload
                     `https://${jiraConfig.host}/rest/api/3/issue/createmeta?expand=projects.issuetypes.fields`,
                     {
                         Authorization: `Basic ${new Buffer(`${jiraConfig.username}:${jiraConfig.password}`).toString("base64")}`
-        ***REMOVED***
+                    }
                 ),
             mapLeft(error => ServerError({error})),
             map((response: object) => Ok(response))

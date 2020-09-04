@@ -35,9 +35,9 @@ export const PostModal = observer(() => {
             case "auto":
                 if (typeof global.appOptions.service === "object" && global.appOptions.service.autoPostFirst) {
                     return null
-    ***REMOVED*** else {
+                } else {
                     return <li key={"auto"} onClick={() => setRoute("auto")}>Post</li>
-    ***REMOVED***
+                }
             case "custom":
                 return <li key={"custom"} onClick={() => setRoute("custom")}>Custom</li>
         }
@@ -58,14 +58,14 @@ export const PostModal = observer(() => {
                     <h3 className={"shotput-title"}>
                         Post screenshot
                     </h3>
-            ***REMOVED***
+                    <div>
                         <ul className={"shotput-poster-list"}>
                             {...posterButtons}
-    ***REMOVED***
-            ***REMOVED***
+                        </ul>
+                    </div>
                     <div className={"shotput-bottom-buttons"}>
                         <span className={"shotput-editor-button cancel-button"} onClick={onClose}>Close</span>
-            ***REMOVED***
+                    </div>
                 </Modal>
             );
 
@@ -82,9 +82,9 @@ export const PostModal = observer(() => {
             let onBack: () => void;
             if (global.appOptions.download?.enabled === false) {
                 onBack = onClose
-***REMOVED*** else {
+            } else {
                 onBack = () => setRoute("base")
-***REMOVED***
+            }
             return <AutoPostHandler onBack={onBack} />;
 
         case "google":

@@ -23,7 +23,7 @@ export const TextInputEditor = observer(({canvas}: TextInputEditorProps) => {
                 fill: tools.color,
                 fontSize: tools.fontSize,
                 fontWeight: tools.isBold ? "bold" : undefined
-***REMOVED***);
+            });
             canvas.add(store.currentText);
             setTimeout(() => store.currentText.enterEditing(), 0);
         }
@@ -31,7 +31,7 @@ export const TextInputEditor = observer(({canvas}: TextInputEditorProps) => {
     React.useEffect(() => {
         canvas.on({
             'mouse:down': onClickMouse
-***REMOVED***
+        });
         return () => {
             store.currentText?.exitEditing();
             canvas.off('mouse:down');

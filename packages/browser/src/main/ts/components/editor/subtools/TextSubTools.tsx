@@ -21,17 +21,17 @@ export const TextSubTools = observer(() => {
             <ul>
                 <li onClick={onClickFontSize(-1)} className={tools.fontSize === 12 ? "shotput-disabled" : undefined}>
                     -Width
-***REMOVED***
-***REMOVED***
+                </li>
+                <li>
                     {tools.fontSize}px
-***REMOVED***
+                </li>
                 <li onClick={onClickFontSize(1)} className={tools.fontSize === 36 ? "shotput-disabled" : undefined}>
                     +Width
-***REMOVED***
+                </li>
                 <li onClick={onClickBold} className={tools.isBold ? "shotput-active" : undefined}>
                     Bold
-***REMOVED***
-***REMOVED***
-***REMOVED***
+                </li>
+            </ul>
+        </div>
     );
 });

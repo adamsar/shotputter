@@ -127,12 +127,12 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
                     imageUploader = CloudinaryUploader(serverConfig.cloudinary?.cloudName, serverConfig.cloudinary?.apiKey, serverConfig.cloudinary?.apiSecret);
                     updates.push(`Cloudinary:\t${enabled}`);
                     imageUploaderName = "Cloudinary";
-    ***REMOVED*** else {
+                } else {
                     updates.push(`Cloudinary:\t${disabled}\t${chalk.yellow("apiSecret required")}`);
-    ***REMOVED***
-***REMOVED*** else {
+                }
+            } else {
                 updates.push(`Cloudinary:\t${disabled}\t${chalk.yellow("apiKey required")}`);
-***REMOVED***
+            }
         } else {
             updates.push(`Cloudinary:\t${disabled}\t${chalk.yellow("cloudName required")}`);
         }
@@ -171,11 +171,11 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
                         console.error(result.left);
                         console.log("Exiting...");
                         process.exit(2);
-        ***REMOVED***
-    ***REMOVED***);
-***REMOVED*** else {
+                    }
+                });
+            } else {
                 updates.push(`LocalFiles:\t${disabled}\t${chalk.yellow("host required")}`);
-***REMOVED***
+            }
         } else {
             updates.push(`LocalFiles:\t${disabled}\t${chalk.yellow("directory required")}`);
         }
@@ -212,9 +212,9 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
                 app.use("/github", githubRouter(serverConfig.github, imageUploader));
                 updates.push(`Github:\t${enabled}`);
                 services.push("Github");
-***REMOVED*** else {
+            } else {
                 updates.push(`Github:\t${disabled}\t${needImageUploader}`)
-***REMOVED***
+            }
         } else {
             updates.push(`Github:\t${disabled}\t${chalk.yellow("token required")}`)
         }
@@ -227,9 +227,9 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
                 updates.push(`Google:\t${enabled}`);
                 app.use("/google", googleRouter(serverConfig.google?.webhookUrl, imageUploader));
                 services.push("Google")
-***REMOVED*** else {
+            } else {
                 updates.push(`Google:\t${disabled}\t${needImageUploader}`);
-***REMOVED***
+            }
         } else {
             updates.push(`Google:\t${disabled}\t${chalk.yellow("webhookUrl required")}`);
         }
@@ -245,15 +245,15 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
                         app.use("/jira", getJiraRouter(serverConfig.jira, imageUploader));
                         updates.push(`Jira:\t${enabled}`);
                         services.push("Jira");
-        ***REMOVED*** else {
+                    } else {
                         updates.push(`Jira:\t${disabled}\t${needImageUploader}`);
-        ***REMOVED***
-    ***REMOVED*** else {
+                    }
+                } else {
                     updates.push(`Jira:\t${disabled}\t${chalk.yellow("host required")}`);
-    ***REMOVED***
-***REMOVED*** else {
+                }
+            } else {
                 updates.push(`Jira:\t${disabled}\t${chalk.yellow("password required")}`);
-***REMOVED***
+            }
         } else {
             updates.push(`Jira:\t${disabled}\t${chalk.yellow("username required")}`);
         }

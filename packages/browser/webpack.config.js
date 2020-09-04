@@ -37,11 +37,11 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         options: {
-            ***REMOVED***
-    ***REMOVED***
+                        }
+                    },
                     'ts-loader'
                 ]
-***REMOVED***
+            },
 
             {
                 test: /\.scss$/,
@@ -50,7 +50,7 @@ module.exports = {
                     'css-loader',
                     'sass-loader'
                 ]
-***REMOVED***
+            },
 
             {
                 test: /\.html/,
@@ -58,13 +58,13 @@ module.exports = {
                     loader: 'file-loader',
                     options: {
                         name: '[name].[ext]'
-        ***REMOVED***
-    ***REMOVED***]
-***REMOVED***
+                    }
+                }]
+            },
             {
                 test: /\.svg$/,
                 loader: 'svg-inline-loader'
-***REMOVED***
+            }
         ]
     },
     optimization: process.env.NODE_MODE !== "production" ? {} : {
@@ -73,7 +73,7 @@ module.exports = {
             parallel: true,
             sourceMap: true, // Must be set to true if using source-maps in production
             terserOptions: {
-***REMOVED***})],
+            }})],
         namedModules: false,
         namedChunks: false,
         nodeEnv: 'production',

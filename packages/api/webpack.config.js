@@ -27,21 +27,21 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         options: {}
-    ***REMOVED***
+                    },
                     'ts-loader'
                 ]
-***REMOVED***]
+            }]
     },
     plugins: [
         new CopyWebpackPlugin({
             patterns: [{
                 from: "src/main/serverless/serverless-example.yml",
                 to: "serverless/serverless-example.yml"
-***REMOVED***
+            },
                 {
                     from: "src/main/docker/Dockerfile",
                     to: "docker"
-    ***REMOVED***]
+                }]
         }),
         new webpack.BannerPlugin({
             banner: "#!/usr/bin/env node",

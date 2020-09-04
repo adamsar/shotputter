@@ -26,7 +26,7 @@ export function decodeForm<A>(validator: t.Type<A, A>, input: Partial<A>): Valid
                         errors.map(error => ({
                             key: error.context.map(x => x.key).filter(x => Boolean(x) && isNaN(parseFloat(x))).join("."),
                             reason: error.message
-            ***REMOVED***)),
+                        })),
                         x => x.key
                     ), (value, key) => ({key, value:  first(value).reason}))
                     .reduceRight((errors, nextError) => ({...errors, [nextError.key]: nextError.value}), {})

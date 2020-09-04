@@ -19,7 +19,7 @@ export const FeedbackTab = observer<FeedbackTabProps>(({position, text}) => {
         <div className={["shotput-feedback-tab-container", `shotput-tab-${position ?? "right"}`].join(" ")}>
             <div className={"shotput-feedback-tab"} onClick={handleClick}>
                 {text ?? "Report"}
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     );
 })

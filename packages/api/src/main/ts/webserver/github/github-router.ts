@@ -40,21 +40,21 @@ export const githubRouter = (githubConfig: GithubServerConfig, imageUploader: Im
                     owner: postRequest.owner,
                     title: postRequest.title,
                     labels: postRequest.labels || [],
-    ***REMOVED***;
+                };
                 const succeeded = await githubService.postIssue({
                     post: {
                         image: postRequest.image,
                         message: postRequest.message
-    ***REMOVED***
+                    },
                     ...githubConfig
-    ***REMOVED***)();
+                })();
                 if (isLeft(succeeded)) {
                     return liftEither(Left(BadResponse({error: "server", message: JSON.stringify(succeeded.left)})))
-    ***REMOVED*** else {
+                } else {
                     return liftEither(Right(Posted));
-    ***REMOVED***
+                }
 
-***REMOVED***));
+            }));
     }));
 
     router.get("/repos", route(() => EitherAsync(async ({ liftEither }) => {

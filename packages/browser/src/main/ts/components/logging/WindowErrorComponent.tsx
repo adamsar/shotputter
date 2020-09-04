@@ -49,13 +49,13 @@ const slackHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefine
                     systemInfoString: JSON.stringify(systemInfo, null, 2),
                     logsString: logs?.join("\n"),
                     metadataString: JSON.stringify(metadata, null, 2)
-    ***REMOVED***
+                }
             ),
                 mapSlackError,
                 chain(message => slack.postMessage({
                     message,
                     channel: appOptions?.errorReporting.slack.channel
-    ***REMOVED***))
+                }))
         )
     }
 }
@@ -75,7 +75,7 @@ const googleHandler = (appOptions: ShotputBrowserConfig): ErrorHandler | undefin
                     systemInfoString: JSON.stringify(systemInfo, null, 2),
                     logsString: logs?.join("\n"),
                     metadataString: JSON.stringify(metadata, null, 2)
-    ***REMOVED***) as TaskEither<any, string>,
+                }) as TaskEither<any, string>,
                 chain(message => google.message({ message }))
             )
         }
@@ -100,7 +100,7 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
             const handlers: ErrorHandler[] = [];
             if (appOptions.errorReporting?.consoleLog?.enabled) {
                 handlers.push(logHandler);
-***REMOVED***
+            }
             const _slackHandler = slackHandler(appOptions);
             if (_slackHandler) handlers.push(_slackHandler);
             const _customHandler = customHandler(appOptions);
@@ -121,18 +121,18 @@ export const WindowErrorComponent = observer(({appOptions}: WindowErrorComponent
                             systemInfo,
                             logs,
                             metadata})))
-        ***REMOVED***)
+                    })
                 )()
                 if (isLeft(results)) {
                     setFailure(results.left.join("\n"))
-    ***REMOVED***
-***REMOVED***;
+                }
+            };
 
             const oldEventHandler = window.onerror;
             window.onerror = (a, b, c, d, e) => {
                 oldEventHandler?.(a, b, c, d, e);
                 handleError(a, b, c, d, e);
-***REMOVED***
+            }
             return () => window.onerror = oldEventHandler;
         }, []);
     }

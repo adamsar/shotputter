@@ -10,7 +10,7 @@ export const Loader = () => (
         <div className={"shotput-loading-modal"}>
             <div className={"shotput-loading-container"}>
                 <InlineSVG src={loader} style={{width: "100%"}}/>
-    ***REMOVED***
-***REMOVED***
+            </div>
+        </div>
     </>
 )

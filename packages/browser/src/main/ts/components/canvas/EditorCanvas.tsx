@@ -52,14 +52,14 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
             _canvas.on({
                 "object:added": onAddObject,
                 "object:removed": onRemoveObject
-***REMOVED***);
+            });
             setCanvas(_canvas);
         }
         return () => {
             canvas?.dispose();
             while (canvasElement.children.length !== 0) {
                 canvasElement.removeChild(canvasElement.children[0]);
-***REMOVED***
+            }
             setCanvas(null);
             tools.currentTool = null;
         }
@@ -101,7 +101,7 @@ export const EditorCanvas = observer<EditorCanvasProps>(() => {
                 default:
                     canvas.isDrawingMode = false;
                     break;
-***REMOVED***
+            }
         }
     }, [tools.currentTool]);
 

@@ -24,9 +24,9 @@ export function getRequest<A>(path: string, headers?: object): TaskEither<HttpEr
                     fold(task.of, x => task.of(x)),
                     taskMap(x => eitherExtensions.left(x))
                 );
-***REMOVED*** else {
+            } else {
                 return right(response)
-***REMOVED***
+            }
         }),
         chain(response => pipe(taskEitherExtensions.fromPromise<A>(response.json()), mapError)),
     );
@@ -51,8 +51,8 @@ export function doPostRequest(path: string, body?: object | FormData, headers?: 
                     ...(headers ?? {}),
                     // @ts-ignore
                     "Content-Type": body instanceof FormData ? "multipart/form-data" : "application/json"
-    ***REMOVED***
-***REMOVED***)),
+                }
+            })),
         mapError,
         chain((response: Response) => {
             if (response.status >= 400) {
@@ -64,9 +64,9 @@ export function doPostRequest(path: string, body?: object | FormData, headers?: 
                     fold(task.of, x => task.of(x)),
                     taskMap(x => eitherExtensions.left(x))
                 );
-***REMOVED*** else {
+            } else {
                 return right(response)
-***REMOVED***
+            }
         })
     );
 }

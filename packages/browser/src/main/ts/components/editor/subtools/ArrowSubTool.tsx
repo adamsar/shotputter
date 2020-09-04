@@ -15,14 +15,14 @@ export const ArrowSubTool = observer(() => {
             <ul>
                 <li onClick={onClickWidth(-1)} className={tools.strokeWidth === 1 ? "shotput-disabled" : undefined}>
                     -Width
-***REMOVED***
-***REMOVED***
+                </li>
+                <li>
                     {tools.strokeWidth}px
-***REMOVED***
+                </li>
                 <li onClick={onClickWidth(1)} className={tools.strokeWidth === 10 ? "shotput-disabled" : undefined}>
                     +Width
-***REMOVED***
-***REMOVED***
-***REMOVED***
+                </li>
+            </ul>
+        </div>
     )
 });

@@ -25,7 +25,7 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
             store.start = {
                 x: pointer.x,
                 y: pointer.y
-***REMOVED***;
+            };
         }
     };
     const onMouseUp = () => {
@@ -56,14 +56,14 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
             const dimensions = {
                 x: pointer.x,
                 y: pointer.y
-***REMOVED***;
+            };
             const length = Math.sqrt(Math.pow(dimensions.x - store.start.x, 2) + Math.pow(dimensions.y - store.start.y, 2));
             if (length > MIN_LENGTH) {
                 if (!store.line) {
                     store.line = new fabric.Line([store.start.x, store.start.y, dimensions.x, dimensions.y], {
                         stroke: tools.color,
                         strokeWidth: tools.strokeWidth
-        ***REMOVED***);
+                    });
                     canvas.add(store.line);
                     const headLength = 15 * (tools.strokeWidth / 2);
 
@@ -77,21 +77,21 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
                         originX: 'center',
                         originY: 'center',
                         selectable: false
-        ***REMOVED***);
+                    });
 
                     canvas.add(store.lineTip);
-    ***REMOVED*** else {
+                } else {
                     store.line.set('x2', dimensions.x);
                     store.line.set('y2', dimensions.y);
                     store.lineTip.angle = getAngle(dimensions);
                     canvas.renderAll();
-    ***REMOVED***
-***REMOVED*** else if (store.line) {
+                }
+            } else if (store.line) {
                 canvas.remove(store.line);
                 canvas.remove(store.lineTip);
                 store.line = null;
                 store.lineTip = null;
-***REMOVED***
+            }
         }
     };
 
@@ -100,7 +100,7 @@ export const ArrowEditor = observer(({canvas}: ArrowEditorProps) => {
             "mouse:down": onMouseDown,
             "mouse:up": onMouseUp,
             "mouse:move": onMouseMove
-***REMOVED***
+        });
         canvas.selection = false;
         return () => {
             canvas.off("mouse:down");
