@@ -1,9 +1,12 @@
 {
   "name": "@shotputter/api",
-  "version": "1.0.0-3",
+  "version": "1.0.0-4",
   "description": "",
   "main": "dist/index.js",
   "keywords": ["screenshot", "error-reporting", "typescript", "dev-tool"],
+  "bin": {
+      "shotput-server": "./dist/shotput-server.js"
+   },
   "scripts": {
     "build:dev": "webpack --mode=development && chmod +x dist/shotput-server.js",
     "build:production": "webpack --mode=production && chmod +x dist/shotput-server.js"
