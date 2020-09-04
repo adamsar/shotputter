@@ -12,6 +12,7 @@ $secondary: #F4F3BE;
 $cancel: #666666;
 
 #shotputter-id {
+  color: black;
   z-index: 100;
   position: absolute;
   top: 0;
@@ -21,6 +22,7 @@ $cancel: #666666;
 }
 
 .shotput-feedback-tab-container {
+
   position: fixed;
   font-family: Arial;
 
@@ -473,6 +475,7 @@ $cancel: #666666;
 
 .shotput-error-modal {
   text-align: left;
+  color: black;
   background-color: antiquewhite;
   box-shadow: -.5em -.5em 5px black;
   max-height: 80vh;
@@ -498,6 +501,7 @@ $cancel: #666666;
 
 .shotput-success-modal {
   font-family: Arial;
+  color: black;
   word-break: break-word;
   background-color: #f1f1f1;
   max-height: 80vh;
@@ -570,6 +574,6 @@ $cancel: #666666;
 }
 
 .shotput-title {
+  color: black;
   text-align: left;
-
 }
