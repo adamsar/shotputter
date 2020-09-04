@@ -1,5 +1,6 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 
@@ -19,6 +20,9 @@ module.exports = {
     resolve: {
         extensions: [ '.tsx', '.ts', '.js', '.svg' ]
     },
+    plugins: [
+        //new BundleAnalyzerPlugin()
+    ],
 
     module: {
         rules: [

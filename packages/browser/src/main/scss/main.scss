@@ -107,7 +107,8 @@ $cancel: #666666;
   padding: 5px;
   background-color: $black-color;
   color: $white-color;
-  max-height: 200px;
+  max-height: 190px;
+
   overflow-y: auto;
 }
 
@@ -509,9 +510,11 @@ $cancel: #666666;
   overflow-y: auto;
   border: 1px solid $main;
   h4 {
+    text-align:center;
     color: black;
   }
   h2 {
+    text-align:center;
     letter-spacing: .2em;
     color: black;
     svg {
@@ -524,6 +527,7 @@ $cancel: #666666;
     margin-bottom: 1em;
   }
   .shotput-success-button-bar {
+    margin-top: 5px;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;

@@ -10,8 +10,7 @@ export const DownloadModal = observer(({onFinish}: {onClose: () => void; onFinis
     return (
         <SuccessModal onClose={onFinish}>
             <h4>
-                Download with the link below<br/>
-                System information is available with the tabs below.
+                Download with the link below
             </h4>
             <a className={"shotput-download-link"} download={`Screenshot-${new Date().toISOString()}.png`} href={screenshot.post.image}>Download screenshot</a>
             <TabbedComponent>
