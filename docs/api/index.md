@@ -35,7 +35,7 @@ While locally, you will need to use the node_modules directory
 ```
 node node_modules/@shotputter/api/dist/shotput-server.js --port {port} --config {config file}
 ```
-
+        
 The options for running the cli are
 
 * `port` *integer*  What port to run on
