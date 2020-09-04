@@ -20,8 +20,8 @@ export interface SlackPostRequest {
 
 export const slackRouter = (slackServerConfig: SlackServerConfig): express.Router => {
     const router = express.Router({});
-    const slackService = NativeSlackService(slackServerConfig.clientId);
-    const web: WebClient = new WebClient(slackServerConfig.clientId);
+    const slackService = NativeSlackService(slackServerConfig.token);
+    const web: WebClient = new WebClient(slackServerConfig.token);
 
     router.post("/post", [
         messageValidator,

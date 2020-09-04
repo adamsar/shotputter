@@ -2,7 +2,7 @@
 layout: default
 title: Api services
 nav_order: 3
-description: "Template usage in shotputter"
+description: "Api services"
 permalink: /api
 ---
 

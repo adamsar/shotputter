@@ -51,6 +51,9 @@ npm install @shotputter/browser
 
 The API and its associated files are available through the `@shotputter/api` package
 
+This is hosted on a CDN at:
+
+
 ```$xslt
 npm install @shotputter/api
 ```
@@ -72,7 +75,7 @@ Shotput({
             enabled: true,
             channel: "errors"
         }
-    }
+    },
     github: {
         enabled: true,
         defaultOwner: "adamsar",
@@ -88,6 +91,16 @@ Shotput({
     }
 });
 ```
+
+or if you include the Shotput browser library from the CDN, it will be accessible on the `window`.
+
+```$xslt
+window.Shotput({
+    service: false,
+    metadata: {userId: 1}
+});
+```
+
 you can read more about configuring the application in the [browser configuration section of this page](#browser-configuration).
 3. Start your application, use the feedback tab on the right side of the page to begin using the application.
 
@@ -101,7 +114,7 @@ const {Shotput} = require("@shotputter/browser");
 Shotput({service: false});
 ```
 
-* `service.url` *string* URL where the [shotput api service](/api-service) is running.
+* `service.url` *string* URL where the [shotput api service](/shotputter/api) is running.
 * `service.messageTemplate` *string \| function* Override default [template](/shotputter/templates) when posting a message to a service.
 * `service.autoPost` *boolean* Enable [auto posting](#non-technical-users) when submitting screenshots or messages. Default *false*
 * `service.autoPostFirst` *boolean* Posts to endpoints that are configured as [auto post](#non-technical-users) immediately instead of prompting a post. Default *false*

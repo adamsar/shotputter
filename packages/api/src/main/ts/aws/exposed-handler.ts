@@ -1,8 +1,8 @@
-import {applyEnvironmentVars} from "../config/server-config";
+import {parseEnv} from "../config/server-config";
 import {lambdaHandler} from "./lambda-handler";
 import * as awsServerlessExpress from "aws-serverless-express";
 
-const server = lambdaHandler(applyEnvironmentVars({}));
+const server = lambdaHandler(parseEnv({}));
 
 
 // @ts-ignore

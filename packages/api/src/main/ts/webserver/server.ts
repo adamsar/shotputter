@@ -28,8 +28,7 @@ global.Blob = Blob;
 
 export interface SlackServerConfig {
     enabled: boolean;
-    clientId: string;
-    defaultChannel?: string;
+    token: string;
 }
 
 export interface GithubServerConfig {
@@ -105,9 +104,7 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
     let customUploader: ImageUploader;
     let localImageUploader: ImageArchiver;
 
-    app.use(express.json({
-        limit: "10mb"
-    }));
+    app.use(express.json({ limit: "10mb" }));
     app.use(cors());
     if (serverConfig.files?.enabled) {
         localImageUploader = LocalImageArchiver(
@@ -118,7 +115,7 @@ export const getApp = (serverConfig: ServerConfig = {}): Express => {
         app.use("/images", express.static(serverConfig.files.directory));
         console.log("Serving images from " + serverConfig.files.directory);
     }
-    if (serverConfig.slack?.clientId) {
+    if (serverConfig.slack?.token) {
         console.log("Slack enabled");
         app.use("/slack", slackRouter(serverConfig.slack));
         enabledPosters.push("slack");
