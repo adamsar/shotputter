@@ -15,12 +15,12 @@ import * as t from "@shotputter/common/node_modules/io-ts";
 import {withMessage} from "@shotputter/common/node_modules/io-ts-types/lib/withMessage"
 import {NonEmptyString} from "@shotputter/common/node_modules/io-ts-types/lib/NonEmptyString";
 import {decodeForm, ShotputFormError} from "@shotputter/common/src/main/ts/util/form-validation";
-import {pipe} from "fp-ts/lib/pipeable";
-import {fold} from "fp-ts/lib/Either";
+import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
+import {fold} from "@shotputter/common/node_modules/fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {DelayedAction} from "../common/DelayedAction";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
-import {map} from "fp-ts/TaskEither";
+import {map} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 
 interface GithubModal {
