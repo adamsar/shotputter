@@ -26,14 +26,14 @@ npm install @shotput/api
 If you installed it globally, you can simply start up the server with
 
 ```
-shotput-server --port {port} --config {config file}
+shotput-server --port {port} --configFile {config file}
 ```
 
 While locally, you will need to use the node_modules directory
 
 
 ```
-node node_modules/@shotputter/api/dist/shotput-server.js --port {port} --config {config file}
+node node_modules/@shotputter/api/dist/shotput-server.js --port {port} --configFile {config file}
 ```
         
 The options for running the cli are

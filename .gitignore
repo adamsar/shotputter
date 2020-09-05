@@ -1,3 +1,4 @@
+..bfg-report
 *.map
 packages/api/dev/*
 packages/api/config.json
