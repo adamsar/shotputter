@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^5.9.0",
-    "aws-sdk": "^2.687.0",
+    "aws-sdk": "^2.814.0",
     "base64-blob": "^1.4.1",
     "fp-ts": "^2.6.1",
     "io-ts": "^2.2.9",
