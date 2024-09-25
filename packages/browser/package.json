@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "webpack-dev-server"
+    "start:dev": "webpack-dev-server",
+    "build": "NODE_MODE=production webpack --mode production"
   },
   "author": "",
   "license": "ISC",
@@ -29,9 +30,8 @@
     "css-loader": "^4.2.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^9.0.2",
-    "scss-loader": "0.0.1",
+    "sass-loader": "^9.0.3",
+    "sass": "^1.79.3",
     "style-loader": "^1.2.1",
     "svg-inline-loader": "^0.8.2",
     "terser-webpack-plugin": "^4.1.0",

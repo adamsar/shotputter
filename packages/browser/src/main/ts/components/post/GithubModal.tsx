@@ -11,16 +11,16 @@ import {IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "react-asy
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import merge from "lodash/merge";
 import {ErrorModal} from "../common/ErrorModal";
-import * as t from "@shotputter/common/node_modules/io-ts";
-import {withMessage} from "@shotputter/common/node_modules/io-ts-types/lib/withMessage"
-import {NonEmptyString} from "@shotputter/common/node_modules/io-ts-types/lib/NonEmptyString";
+import * as t from "io-ts";
+import {withMessage} from "io-ts-types/lib/withMessage"
+import {NonEmptyString} from "io-ts-types/lib/NonEmptyString";
 import {decodeForm, ShotputFormError} from "@shotputter/common/src/main/ts/util/form-validation";
-import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
-import {fold} from "@shotputter/common/node_modules/fp-ts/lib/Either";
+import {pipe} from "fp-ts/lib/pipeable";
+import {fold} from "fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {DelayedAction} from "../common/DelayedAction";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
-import {map} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {map} from "fp-ts/lib/TaskEither";
 import {Post} from "@shotputter/common/src/main/ts/services/poster/Post";
 
 interface GithubModal {

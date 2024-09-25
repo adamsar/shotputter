@@ -3,10 +3,14 @@ const TerserPlugin = require('terser-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpack = require('webpack');
 
+const mode = process.env.NODE_MODE || "development"
+
 module.exports = {
 
-    entry: ['./src/main/ts/index.tsx'],
-    mode: 'development',
+    entry: [
+        mode === 'development' ? './src/main/ts/index.tsx' : './src/main/ts/index_production.tsx'
+    ],
+    mode,
     output: {
         filename: 'shotputter.js',
         path: path.resolve(__dirname, 'dist'),
@@ -48,7 +52,12 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    'sass-loader'
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: require('sass')
+                        }
+                    }
                 ]
             },
 

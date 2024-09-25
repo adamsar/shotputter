@@ -9,9 +9,9 @@ import {Async, IfFulfilled, IfInitial, IfPending, IfRejected, useAsync} from "re
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
 import {SuccessModal} from "../common/SuccessModal";
 import {ErrorModal} from "../common/ErrorModal";
-import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
+import {pipe} from "fp-ts/lib/pipeable";
 import {applyTemplate, defaultSlackTemplate} from "../../config/ShotputBrowserConfig";
-import {TaskEither, chain} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {TaskEither, chain} from "fp-ts/lib/TaskEither";
 import {ShotputButton} from "../common/forms/ShotputButton";
 
 export const SlackModal = observer(({/*onFinish,*/ onClose}: {onFinish: () => void; onClose: () => void;}) => {

@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@microsoft/teams-js": "^1.7.0",
-
     "atob": "^2.1.2",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",

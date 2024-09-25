@@ -7,8 +7,8 @@ import {applyTemplate, defaultUnformattedTemplate} from "../../config/ShotputBro
 import {Loader} from "../processor/Loader";
 import {ErrorModal} from "../common/ErrorModal";
 import {SuccessModal} from "../common/SuccessModal";
-import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
-import {chain, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {pipe} from "fp-ts/lib/pipeable";
+import {chain, TaskEither} from "fp-ts/lib/TaskEither";
 
 interface GoogleModalProps {
 

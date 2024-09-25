@@ -15,11 +15,11 @@ import {
 import {Loader} from "../processor/Loader";
 import {ErrorModal} from "../common/ErrorModal";
 import {Modal} from "../common/Modal";
-import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
+import {pipe} from "fp-ts/lib/pipeable";
 import {applyTemplate, defaultTemplate} from "../../config/ShotputBrowserConfig";
-import {map, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {map, TaskEither} from "fp-ts/lib/TaskEither";
 import {ioUtils} from "@shotputter/common/src/main/ts/util/io-utils";
-import {fold} from "@shotputter/common/node_modules/fp-ts/lib/Either";
+import {fold} from "fp-ts/lib/Either";
 import {SuccessModal} from "../common/SuccessModal";
 import {ShotputButton} from "../common/forms/ShotputButton";
 

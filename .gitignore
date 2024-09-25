@@ -1,3 +1,4 @@
+.python-version
 ..bfg-report
 *.map
 packages/api/dev/*

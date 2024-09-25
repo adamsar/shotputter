@@ -7,16 +7,16 @@ import {ErrorModal} from "../common/ErrorModal";
 import {SystemInfo} from "@shotputter/common/src/main/ts/models/SystemInfo";
 import {getSystemInfo} from "../../util/system-utils";
 import {applyTemplate, defaultSlackTemplate, ShotputBrowserConfig} from "../../config/ShotputBrowserConfig";
-import {pipe} from "@shotputter/common/node_modules/fp-ts/lib/pipeable";
-import {chain, taskEither, getTaskValidation, TaskEither} from "@shotputter/common/node_modules/fp-ts/lib/TaskEither";
+import {pipe} from "fp-ts/lib/pipeable";
+import {chain, taskEither, getTaskValidation, TaskEither} from "fp-ts/lib/TaskEither";
 import {
     HostedSlackService,
     mapSlackError
 } from "@shotputter/common/src/main/ts/services/poster/slack/SlackPoster";
 import {HttpPoster} from "@shotputter/common/src/main/ts/services/poster/http/HttpPoster";
 import {taskEitherExtensions} from "@shotputter/common/src/main/ts/util/fp-util";
-import {getMonoid, array} from "@shotputter/common/node_modules/fp-ts/lib/Array";
-import {isLeft} from "@shotputter/common/node_modules/fp-ts/lib/Either";
+import {getMonoid, array} from "fp-ts/lib/Array";
+import {isLeft} from "fp-ts/lib/Either";
 import {HostedRequester} from "@shotputter/common/src/main/ts/services/HostedRequester";
 import {HostedGooglePoster} from "@shotputter/common/src/main/ts/services/poster/google/GooglePoster";
 
